@@ -1,0 +1,22 @@
+name: Japanese TTS Listening Test
+on:
+  workflow_dispatch:
+jobs:
+  tts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Japanese TTS
+        run: |
+          pip install "kokoro>=0.9.4" soundfile "misaki[ja]" unidic
+          python -m unidic download
+      - name: Generate samples
+        run: python src/generate_tts_samples.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: japanese-tts-listening-test
+          path: output/
+          retention-days: 7
