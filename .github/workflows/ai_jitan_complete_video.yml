@@ -1,0 +1,57 @@
+name: AI Jitan Complete Video v1
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg curl jq fonts-noto-cjk python3-pip
+          pip3 install --break-system-packages pillow numpy requests
+
+      - name: Prepare AivisSpeech model directory
+        run: |
+          mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
+          curl -L --fail --retry 3 \
+            "https://api.aivis-project.com/v1/aivm-models/9107b8b6-1ed1-43f5-bebe-0de4df4d229d/download?model_type=AIVMX" \
+            -o "$HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx"
+          echo "e4fd1c287f65e1ea32a81333b35ebc0db09435d186a97af4aa3d8aeea6351a40  $HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx" | sha256sum -c -
+
+      - name: Start AivisSpeech Engine
+        run: |
+          mkdir -p "$HOME/.local/share/AivisSpeech-Engine"
+          docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          docker run -d --name aivis -p 10101:10101 \
+            -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" \
+            ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          for i in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:10101/speakers > speakers.json; then break; fi
+            sleep 5
+          done
+          cat speakers.json
+          test -s speakers.json
+
+      - name: Generate narration
+        run: python3 src/synthesize.py
+
+      - name: Build complete vertical video
+        run: python3 src/build_video.py
+
+      - name: Technical QA
+        run: python3 src/qa.py
+
+      - name: Upload finished MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-jitan-complete-video-v1
+          path: |
+            output/AI時短ラボ_01_完成版.mp4
+            output/qa_report.json
+          retention-days: 14
