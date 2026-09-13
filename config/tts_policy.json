@@ -1,0 +1,15 @@
+{
+  "status": "HOLD_FOR_LISTENING_TEST",
+  "requirements": [
+    "Japanese naturalness",
+    "commercial/company use acceptable",
+    "zero recurring subscription",
+    "cloud runnable"
+  ],
+  "hard_fail": [
+    "misreading",
+    "unnatural pause",
+    "unstable dependency"
+  ],
+  "policy": "No TTS becomes production default until a generated Japanese sample is listened to and approved."
+}

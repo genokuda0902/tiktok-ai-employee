@@ -1,0 +1,16 @@
+{
+  "employee_id": "shiomi",
+  "name": "塩見",
+  "account": "便利モノラボ",
+  "niche": "ガジェット・便利グッズ",
+  "posts_per_day": 2,
+  "company_owned": true,
+  "status": "active",
+  "qa_threshold": 85,
+  "hard_fail": [
+    "typo",
+    "reading_error",
+    "subtitle_word_split"
+  ],
+  "human_step": "TikTok投稿のみ"
+}

@@ -1,0 +1,14 @@
+{
+  "statuses": [
+    "正常",
+    "AI対応中",
+    "奥田判断待ち",
+    "停止"
+  ],
+  "rules": {
+    "正常": "QA passed and package ready",
+    "AI対応中": "generation/retry in progress",
+    "奥田判断待ち": "human approval/authentication/listening test required",
+    "停止": "hard fail, security risk, or repeated generation failure"
+  }
+}

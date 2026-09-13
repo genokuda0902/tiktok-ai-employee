@@ -1,0 +1,16 @@
+{
+  "employee_id": "okuda",
+  "name": "奥田",
+  "account": "AI時短ラボ",
+  "niche": "AI・仕事効率化",
+  "posts_per_day": 2,
+  "company_owned": true,
+  "status": "active",
+  "qa_threshold": 85,
+  "hard_fail": [
+    "typo",
+    "reading_error",
+    "subtitle_word_split"
+  ],
+  "human_step": "TikTok投稿のみ"
+}

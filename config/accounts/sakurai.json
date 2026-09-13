@@ -1,0 +1,16 @@
+{
+  "employee_id": "sakurai",
+  "name": "櫻井",
+  "account": "仕事営業ラボ",
+  "niche": "仕事・営業",
+  "posts_per_day": 2,
+  "company_owned": true,
+  "status": "active",
+  "qa_threshold": 85,
+  "hard_fail": [
+    "typo",
+    "reading_error",
+    "subtitle_word_split"
+  ],
+  "human_step": "TikTok投稿のみ"
+}

@@ -1,0 +1,16 @@
+{
+  "employee_id": "minamino",
+  "name": "南野",
+  "account": "恋愛心理ラボ",
+  "niche": "恋愛・男女心理",
+  "posts_per_day": 2,
+  "company_owned": true,
+  "status": "active",
+  "qa_threshold": 85,
+  "hard_fail": [
+    "typo",
+    "reading_error",
+    "subtitle_word_split"
+  ],
+  "human_step": "TikTok投稿のみ"
+}

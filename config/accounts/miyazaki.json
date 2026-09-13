@@ -1,0 +1,16 @@
+{
+  "employee_id": "miyazaki",
+  "name": "宮﨑",
+  "account": "垢抜けラボ",
+  "niche": "美容・垢抜け",
+  "posts_per_day": 2,
+  "company_owned": true,
+  "status": "active",
+  "qa_threshold": 85,
+  "hard_fail": [
+    "typo",
+    "reading_error",
+    "subtitle_word_split"
+  ],
+  "human_step": "TikTok投稿のみ"
+}

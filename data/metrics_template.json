@@ -1,0 +1,17 @@
+{
+  "video_id": "",
+  "employee_id": "",
+  "account": "",
+  "published_at": "",
+  "topic": "",
+  "hook": "",
+  "views": 0,
+  "likes": 0,
+  "comments": 0,
+  "shares": 0,
+  "followers_before": 0,
+  "followers_after": 0,
+  "follower_gain": 0,
+  "status": "draft",
+  "qa_score": 0
+}
