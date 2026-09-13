@@ -1,4 +1,4 @@
-name: TikTok AI Employee v1
+name: TikTok AI Employee v2
 
 on:
   workflow_dispatch:
@@ -10,27 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Install FFmpeg and Japanese fonts
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg fonts-noto-cjk
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Generate AI時短ラボ cloud test video
-        run: python src/generate_test_video.py
-
+      - name: Generate full AI時短ラボ video
+        run: python src/generate_full_video.py
+      - name: Technical QA
+        run: |
+          test -s output/ai_jitan_lab_excel_ai_v1.mp4
+          ffprobe -v error -show_entries stream=width,height -of csv=p=0 output/ai_jitan_lab_excel_ai_v1.mp4 | grep '1080,1920'
       - name: Upload finished video
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-lab-video
+          name: ai-jitan-lab-full-video-v1
           path: output/
           retention-days: 7
