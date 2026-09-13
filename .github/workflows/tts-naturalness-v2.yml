@@ -1,0 +1,22 @@
+name: Japanese TTS Naturalness v2
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          pip install "kokoro>=0.9.4" soundfile "misaki[ja]" unidic
+          python -m unidic download
+      - name: Generate naturalness samples
+        run: python src/tts_naturalness_test.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: japanese-tts-naturalness-v2
+          path: output/
+          retention-days: 7
