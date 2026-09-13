@@ -1,0 +1,36 @@
+name: TikTok AI Employee v1
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 22 * * *"
+
+jobs:
+  build-video:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install FFmpeg and Japanese fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate AI時短ラボ cloud test video
+        run: python src/generate_test_video.py
+
+      - name: Upload finished video
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-jitan-lab-video
+          path: output/
+          retention-days: 7

@@ -1,0 +1,14 @@
+{
+  "system_name": "TikTok AI社員",
+  "account": "AI時短ラボ",
+  "theme": "知らないと損するAI × 仕事効率化",
+  "posts_per_day_initial": 2,
+  "video": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "human_step": "TikTokへの最終投稿のみ",
+  "paid_api_policy": "追加月額・従量課金APIを使わない",
+  "security": "TikTokパスワード・Cookieを保存しない"
+}
