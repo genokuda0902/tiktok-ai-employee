@@ -1,0 +1,33 @@
+name: TikTok AI Employee Daily v2
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 22 * * *"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build two videos
+        run: python src/build_daily.py
+      - name: Build cockpit and learning
+        run: |
+          python src/build_cockpit.py
+          python src/learn.py
+      - name: QA gate
+        run: python src/qa_gate.py output/qa_report.json
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-jitan-lab-daily
+          path: output/
+          retention-days: 7
