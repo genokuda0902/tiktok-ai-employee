@@ -1,4 +1,4 @@
-name: AI Jitan Complete Video v9
+name: AI Jitan Complete Video v10
 
 on:
   workflow_dispatch:
@@ -9,18 +9,18 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Install system packages
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg curl jq fonts-noto-cjk python3-pip
           pip3 install --break-system-packages pillow numpy requests
-      - name: Prepare AivisSpeech model directory
+      - name: Prepare voice model
         run: |
           mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
           curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/9107b8b6-1ed1-43f5-bebe-0de4df4d229d/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx"
           echo "e4fd1c287f65e1ea32a81333b35ebc0db09435d186a97af4aa3d8aeea6351a40  $HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx" | sha256sum -c -
           sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
-      - name: Start AivisSpeech Engine
+      - name: Start voice engine
         run: |
           docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
@@ -28,26 +28,17 @@ jobs:
           test -s speakers.json
       - name: Generate narration
         run: python3 src/synthesize.py
-      - name: Build v9 visual contract
-        run: python3 src/v9_visual_spec.py
-      - name: Build v9 camera plan
-        run: python3 src/v9_camera_plan.py
-      - name: Build v9 operation story
-        run: python3 src/v9_operation_story.py
-      - name: Generate presenter asset
-        run: python3 src/v8_presenter.py
-      - name: Render full-screen operation frames
+      - name: Render operation proof
         run: python3 src/v9_render_operation.py
-      - name: Compose v9 candidate
-        run: python3 src/v9_compose.py
-      - name: Upload v9 candidate
+      - name: Encode operation proof
+        run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf fps=30 -c:v libx264 -crf 18 -pix_fmt yuv420p output/v9_operation.mp4
+      - name: Restore v10 storyboard asset
+        run: python3 -c "import base64,pathlib; p=pathlib.Path('assets/v10'); p.mkdir(exist_ok=True); (p/'storyboard.jpg').write_bytes(base64.b64decode((p/'storyboard.b64').read_text()))"
+      - name: Compose v10 candidate
+        run: python3 src/v10_render.py
+      - name: Upload v10 candidate
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v9
-          path: |
-            output/AI時短ラボ_01_v9.mp4
-            output/v9_operation.mp4
-            output/v9_visual_spec.json
-            output/v9_camera_plan.json
-            output/v9_operation_story.json
+          name: ai-jitan-v10
+          path: output/AI時短ラボ_01_v10.mp4
           retention-days: 14
