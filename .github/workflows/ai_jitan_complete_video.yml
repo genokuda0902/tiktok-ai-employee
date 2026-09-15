@@ -1,10 +1,10 @@
-name: AI Jitan Complete Video v18 Hybrid Studio
+name: AI Jitan Complete Video v19 Premium Studio
 on:
   workflow_dispatch:
 jobs:
   build-video:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Install production stack
@@ -12,6 +12,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg curl jq fonts-noto-cjk python3-pip
           pip3 install --break-system-packages pillow numpy requests
+          cd studio
+          npm install
+          npx playwright install --with-deps chromium
       - name: Prepare voice model
         run: |
           mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
@@ -24,30 +27,44 @@ jobs:
           docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           for i in $(seq 1 120); do curl -fsS http://127.0.0.1:10101/speakers > speakers.json && break; sleep 5; done
           test -s speakers.json
-      - name: Director plan
-        run: python3 src/v18_director.py
+      - name: Build v19 director contracts
+        run: |
+          python3 src/v19_scene_plan.py
+          python3 src/v19_asset_contract.py
+          python3 src/v19_hero_spec.py
+          python3 src/v19_timeline_validate.py
       - name: Generate narration
         run: python3 src/synthesize.py
-      - name: Generate realistic operation proof
-        run: python3 src/v9_render_operation.py
-      - name: Encode proof master
-        run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf "fps=30,scale=1080:1920:flags=lanczos" -c:v libx264 -preset slow -crf 10 -pix_fmt yuv420p output/v9_operation.mp4
-      - name: Hybrid studio compose
-        run: python3 src/v18_studio.py
-      - name: Hard QA and visual samples
+      - name: Generate browser proof motion
+        run: node studio/v19-proof.mjs
+      - name: Render independent motion masters
+        run: node studio/v19_scene_renderer.mjs
+      - name: Validate premium hero assets
+        run: python3 src/v19_asset_validate.py
+      - name: Production readiness gate
+        run: python3 src/v19_preflight.py
+      - name: Compose v19 premium candidate
+        run: python3 src/v19_compose.py
+      - name: Strict technical and structural QA
         run: |
-          test -s output/AI時短ラボ_01_v18.mp4
+          python3 src/v19_quality_gate.py
           mkdir -p output/qa
-          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v18.mp4 | tee output/qa/probe.txt
-          ffmpeg -y -i output/AI時短ラボ_01_v18.mp4 -vf "fps=1/2.5,scale=270:480,tile=4x4:padding=8:margin=8:color=black" -frames:v 1 output/qa/contact.jpg
-          ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v18.mp4 -frames:v 1 output/qa/tail.jpg
-      - name: Upload v18 candidate and QA
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v19.mp4 | tee output/qa/probe.txt
+          ffmpeg -y -i output/AI時短ラボ_01_v19.mp4 -vf "fps=1/2.25,scale=270:480,tile=4x4:padding=8:margin=8:color=black" -frames:v 1 output/qa/contact.jpg
+          ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v19.mp4 -frames:v 1 output/qa/tail.jpg
+      - name: Upload v19 candidate and QA
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v18
+          name: ai-jitan-v19
           path: |
-            output/AI時短ラボ_01_v18.mp4
-            output/v18_plan.json
+            output/AI時短ラボ_01_v19.mp4
+            output/v19_plan.json
+            output/v19_asset_manifest.json
+            output/v19_hero_spec.json
+            output/v19_timeline_validation.json
+            output/v19_preflight.json
+            output/v19_assets/validation.json
+            output/qa/v19_quality.json
             output/qa/contact.jpg
             output/qa/tail.jpg
             output/qa/probe.txt
