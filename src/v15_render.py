@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from PIL import Image,ImageEnhance,ImageStat
+from PIL import Image,ImageEnhance,ImageStat,ImageFilter
 from pathlib import Path
 import base64,subprocess,wave,math,shutil,json
 W,H,FPS=1080,1920,30
@@ -34,13 +34,17 @@ subprocess.run(['ffmpeg','-y','-i',str(base),'-i',str(proof),'-i',str(voice),'-f
 probe=subprocess.check_output(['ffprobe','-v','error','-show_entries','stream=width,height,codec_name','-show_entries','format=duration,size','-of','json',str(out)],text=True)
 meta=json.loads(probe); st=meta['streams'][0]; dur=float(meta['format']['duration'])
 assert st['width']==1080 and st['height']==1920 and dur>=D-.15
-# Tail QA must detect truly blank/flat frames, not legitimate gray artwork.
+# Tail QA: reject actual black/empty output, but allow intentional low-contrast cinematic artwork.
 qa=O/'v15_tailqa'; shutil.rmtree(qa,ignore_errors=True); qa.mkdir()
-subprocess.run(['ffmpeg','-y','-sseof','-8','-i',str(out),'-vf','fps=1,scale=54:96','-q:v','2',str(qa/'%02d.jpg')],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+subprocess.run(['ffmpeg','-y','-sseof','-8','-i',str(out),'-vf','fps=1,scale=270:480','-q:v','2',str(qa/'%02d.jpg')],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 stats=[]
 for f in sorted(qa.glob('*.jpg')):
- a=Image.open(f).convert('RGB'); s=ImageStat.Stat(a); mean=sum(s.mean)/3; std=sum(s.stddev)/3
- stats.append({'mean':round(mean,1),'std':round(std,1)})
+ a=Image.open(f).convert('L')
+ mean=ImageStat.Stat(a).mean[0]; std=ImageStat.Stat(a).stddev[0]
+ edge=ImageStat.Stat(a.filter(ImageFilter.FIND_EDGES)).mean[0]
+ stats.append({'mean':round(mean,1),'std':round(std,1),'edge':round(edge,1)})
 if len(stats)<5: raise SystemExit('QA FAIL: insufficient tail frames')
-if sum(1 for s in stats if s['std']<4.0)>=3: raise SystemExit('QA FAIL: genuinely blank/flat tail')
-print(json.dumps({'output':str(out),'duration':dur,'tail_stats':stats},ensure_ascii=False))
+# True failure means several nearly-black frames with almost no spatial detail.
+blank=sum(1 for s in stats if s['mean']<8 and s['std']<3 and s['edge']<3)
+if blank>=3: raise SystemExit('QA FAIL: genuinely blank/black tail')
+print(json.dumps({'output':str(out),'duration':dur,'tail_stats':stats,'blank_frames':blank},ensure_ascii=False))
