@@ -1,4 +1,4 @@
-name: AI Jitan Complete Video v17 Proof First
+name: AI Jitan Complete Video v18 Hybrid Studio
 on:
   workflow_dispatch:
 jobs:
@@ -7,7 +7,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
+      - name: Install production stack
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg curl jq fonts-noto-cjk python3-pip
@@ -24,27 +24,31 @@ jobs:
           docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           for i in $(seq 1 120); do curl -fsS http://127.0.0.1:10101/speakers > speakers.json && break; sleep 5; done
           test -s speakers.json
+      - name: Director plan
+        run: python3 src/v18_director.py
       - name: Generate narration
         run: python3 src/synthesize.py
-      - name: Render operation proof
+      - name: Generate realistic operation proof
         run: python3 src/v9_render_operation.py
-      - name: Encode operation proof HQ
-        run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf "fps=30,scale=1080:1920:flags=lanczos" -c:v libx264 -preset slow -crf 11 -pix_fmt yuv420p output/v9_operation.mp4
-      - name: Compose v17 proof-first candidate
-        run: python3 src/v17_render.py
-      - name: Verify v17 hard gate
+      - name: Encode proof master
+        run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf "fps=30,scale=1080:1920:flags=lanczos" -c:v libx264 -preset slow -crf 10 -pix_fmt yuv420p output/v9_operation.mp4
+      - name: Hybrid studio compose
+        run: python3 src/v18_studio.py
+      - name: Hard QA and visual samples
         run: |
-          test -s output/AI時短ラボ_01_v17.mp4
-          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v17.mp4
+          test -s output/AI時短ラボ_01_v18.mp4
           mkdir -p output/qa
-          ffmpeg -y -ss 0 -i output/AI時短ラボ_01_v17.mp4 -vf "fps=1/3,scale=270:480,tile=4x3" -frames:v 1 output/qa/contact.jpg
-          ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v17.mp4 -frames:v 1 output/qa/tail.jpg
-      - name: Upload v17 candidate and QA
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v18.mp4 | tee output/qa/probe.txt
+          ffmpeg -y -i output/AI時短ラボ_01_v18.mp4 -vf "fps=1/2.5,scale=270:480,tile=4x4:padding=8:margin=8:color=black" -frames:v 1 output/qa/contact.jpg
+          ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v18.mp4 -frames:v 1 output/qa/tail.jpg
+      - name: Upload v18 candidate and QA
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v17
+          name: ai-jitan-v18
           path: |
-            output/AI時短ラボ_01_v17.mp4
+            output/AI時短ラボ_01_v18.mp4
+            output/v18_plan.json
             output/qa/contact.jpg
             output/qa/tail.jpg
+            output/qa/probe.txt
           retention-days: 14
