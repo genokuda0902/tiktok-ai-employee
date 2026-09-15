@@ -1,0 +1,1 @@
+{"name":"tiktok-ai-studio","private":true,"type":"module","scripts":{"render:ui":"node render-ui.mjs"},"dependencies":{"playwright":"^1.59.0"}}
