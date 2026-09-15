@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+import json
+from pathlib import Path
+plan={"version":"v18","engine":"hybrid_studio","quality_target":"human-edited premium TikTok","resolution":"1080x1920","fps":30,"rules":{"pillow_as_primary":False,"ffmpeg_role":"final_compositor","max_static_seconds":1.8,"proof_share_min":0.45,"scene_change_seconds_max":2.2,"require_depth":True,"require_real_or_realistic_ui":True,"require_motion_caption":True},"tracks":[{"type":"cinematic_asset","role":"hook","duration":2.2},{"type":"browser_motion","role":"problem","duration":2.3},{"type":"browser_proof","role":"demo","duration":12.0},{"type":"motion_graphics","role":"before_after","duration":4.0},{"type":"cinematic_asset","role":"reaction","duration":3.0},{"type":"motion_graphics","role":"cta","duration":4.0}],"qa":{"technical_hard_fail":True,"visual_quality_gate":85,"compare_to_reference":True,"reject_slide_deck_feel":True}}
+Path('output').mkdir(exist_ok=True); Path('output/v18_plan.json').write_text(json.dumps(plan,ensure_ascii=False,indent=2))
+print(json.dumps(plan,ensure_ascii=False))
