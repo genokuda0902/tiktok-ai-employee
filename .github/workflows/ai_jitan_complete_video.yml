@@ -1,4 +1,4 @@
-name: AI Jitan Complete Video v12
+name: AI Jitan Complete Video v13
 
 on:
   workflow_dispatch:
@@ -32,15 +32,15 @@ jobs:
         run: python3 src/v9_render_operation.py
       - name: Encode operation proof HQ
         run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf "fps=30,scale=1080:1920:flags=lanczos" -c:v libx264 -preset slow -crf 13 -pix_fmt yuv420p output/v9_operation.mp4
-      - name: Compose v12 unified brand candidate
-        run: python3 src/v12_render.py
-      - name: Verify v12
+      - name: Compose v13 TikTok candidate
+        run: python3 src/v13_render.py
+      - name: Verify v13
         run: |
-          test -s output/AI時短ラボ_01_v12.mp4
-          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v12.mp4
-      - name: Upload v12 candidate
+          test -s output/AI時短ラボ_01_v13.mp4
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v13.mp4
+      - name: Upload v13 candidate
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v12
-          path: output/AI時短ラボ_01_v12.mp4
+          name: ai-jitan-v13
+          path: output/AI時短ラボ_01_v13.mp4
           retention-days: 14
