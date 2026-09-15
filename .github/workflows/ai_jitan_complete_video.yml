@@ -1,4 +1,4 @@
-name: AI Jitan Complete Video v14 Cinematic
+name: AI Jitan Complete Video v15 Full Timeline
 on:
   workflow_dispatch:
 jobs:
@@ -30,15 +30,21 @@ jobs:
         run: python3 src/v9_render_operation.py
       - name: Encode operation proof HQ
         run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf "fps=30,scale=1080:1920:flags=lanczos" -c:v libx264 -preset slow -crf 13 -pix_fmt yuv420p output/v9_operation.mp4
-      - name: Compose v14 cinematic candidate
-        run: python3 src/v14_cinematic.py
-      - name: Verify v14
+      - name: Compose v15 full timeline
+        run: python3 src/v15_render.py
+      - name: Verify v15 hard gate
         run: |
-          test -s output/AI時短ラボ_01_v14.mp4
-          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v14.mp4
-      - name: Upload v14 candidate
+          test -s output/AI時短ラボ_01_v15.mp4
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v15.mp4
+          mkdir -p output/qa
+          ffmpeg -y -ss 0 -i output/AI時短ラボ_01_v15.mp4 -vf "fps=1/4,scale=270:480,tile=4x3" -frames:v 1 output/qa/contact.jpg
+          ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v15.mp4 -frames:v 1 output/qa/tail.jpg
+      - name: Upload v15 candidate and QA
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v14
-          path: output/AI時短ラボ_01_v14.mp4
+          name: ai-jitan-v15
+          path: |
+            output/AI時短ラボ_01_v15.mp4
+            output/qa/contact.jpg
+            output/qa/tail.jpg
           retention-days: 14
