@@ -1,0 +1,41 @@
+{
+  "product": "AI TikTok Studio",
+  "version": "v19",
+  "goal": "Generate human-edited-quality vertical TikTok videos from one Japanese instruction",
+  "input": {
+    "account": "AI時短ラボ",
+    "topic": "string",
+    "instruction": "string",
+    "style": ["premium_3d", "cinematic", "work_demo", "beauty_ad", "love_cinema", "money_explainer", "sales_drama", "gadget_commercial"]
+  },
+  "pipeline": [
+    "market_and_intent",
+    "director_16_scene_plan",
+    "voice",
+    "premium_scene_assets",
+    "browser_operation_capture",
+    "motion_graphics",
+    "edit_and_sound",
+    "visual_qa",
+    "mp4",
+    "tiktok_draft"
+  ],
+  "quality_gate": {
+    "resolution": "1080x1920",
+    "fps": 30,
+    "max_static_seconds": 2.2,
+    "proof_share_min": 0.35,
+    "reject_slide_deck_feel": true,
+    "reject_low_resolution_hero_assets": true,
+    "require_scene_variety": true,
+    "require_depth_or_real_visuals": true,
+    "reference_target": "polished human-edited TikTok / premium video generation app output"
+  },
+  "employee_experience": {
+    "touch_github": false,
+    "manual_editing": false,
+    "natural_language_revision": true,
+    "final_manual_tiktok_post": true
+  },
+  "architecture_rule": "FFmpeg is final compositor, not primary hero-visual generator"
+}
