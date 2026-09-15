@@ -35,14 +35,16 @@ jobs:
         run: python3 src/synthesize.py
       - name: Build v8 asset contract
         run: python3 src/v8_asset_manifest.py
+      - name: Generate presenter motion frames
+        run: python3 src/v8_presenter.py
       - name: Generate operation capture
         run: python3 src/v8_capture.py
       - name: Build edit plan
         run: python3 src/v7_storyboard.py
-      - name: Verify branded presenter
+      - name: Verify v8 assets
         run: |
-          mkdir -p assets/robot
-          test -f assets/robot/presenter.png || { echo 'V8 BLOCKED: branded 3D robot presenter asset is required'; exit 1; }
+          test -f assets/robot/presenter.png
+          test -f output/operation_demo.mp4
       - name: Build complete vertical video
         run: python3 src/build_video.py
       - name: Technical QA
