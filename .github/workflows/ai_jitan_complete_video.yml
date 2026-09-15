@@ -1,4 +1,4 @@
-name: AI Jitan Complete Video v16 Quality Candidate
+name: AI Jitan Complete Video v17 Proof First
 on:
   workflow_dispatch:
 jobs:
@@ -29,22 +29,22 @@ jobs:
       - name: Render operation proof
         run: python3 src/v9_render_operation.py
       - name: Encode operation proof HQ
-        run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf "fps=30,scale=1080:1920:flags=lanczos" -c:v libx264 -preset slow -crf 12 -pix_fmt yuv420p output/v9_operation.mp4
-      - name: Compose v16 quality candidate
-        run: python3 src/v15_render.py
-      - name: Verify v16 hard gate
+        run: ffmpeg -y -framerate 15 -i output/v9_operation_frames/%04d.jpg -vf "fps=30,scale=1080:1920:flags=lanczos" -c:v libx264 -preset slow -crf 11 -pix_fmt yuv420p output/v9_operation.mp4
+      - name: Compose v17 proof-first candidate
+        run: python3 src/v17_render.py
+      - name: Verify v17 hard gate
         run: |
-          test -s output/AI時短ラボ_01_v16.mp4
-          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v16.mp4
+          test -s output/AI時短ラボ_01_v17.mp4
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v17.mp4
           mkdir -p output/qa
-          ffmpeg -y -ss 0 -i output/AI時短ラボ_01_v16.mp4 -vf "fps=1/3,scale=270:480,tile=4x3" -frames:v 1 output/qa/contact.jpg
-          ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v16.mp4 -frames:v 1 output/qa/tail.jpg
-      - name: Upload v16 candidate and QA
+          ffmpeg -y -ss 0 -i output/AI時短ラボ_01_v17.mp4 -vf "fps=1/3,scale=270:480,tile=4x3" -frames:v 1 output/qa/contact.jpg
+          ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v17.mp4 -frames:v 1 output/qa/tail.jpg
+      - name: Upload v17 candidate and QA
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v16
+          name: ai-jitan-v17
           path: |
-            output/AI時短ラボ_01_v16.mp4
+            output/AI時短ラボ_01_v17.mp4
             output/qa/contact.jpg
             output/qa/tail.jpg
           retention-days: 14
