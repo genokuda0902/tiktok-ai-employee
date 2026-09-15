@@ -6,14 +6,16 @@ audio=out/'narration.wav'; video=out/'AI時短ラボ_01_完成版.mp4'; sfx=out/
 if not audio.exists(): raise SystemExit('Missing narration')
 FONT='/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'; REG='/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
 sr=44100; dur=35.5; cues=[0.15,3.5,8.0,11.0,15.0,19.0,23.0,26.0,30.0]
+# Generate rights-clean UI sound effects efficiently in memory.
+frames=bytearray(int(sr*dur)*2)
+for c in cues:
+ start=int(c*sr); length=int(0.11*sr)
+ for j in range(length):
+  d=j/sr; v=math.sin(2*math.pi*(820+260*d)*d)*math.exp(-30*d)*0.20
+  idx=(start+j)*2
+  if idx+1 < len(frames): struct.pack_into('<h',frames,idx,max(-32767,min(32767,int(v*32767))))
 with wave.open(str(sfx),'w') as w:
- w.setparams((1,2,sr,int(sr*dur),'NONE','not compressed'))
- for i in range(int(sr*dur)):
-  t=i/sr; v=0.0
-  for c in cues:
-   d=t-c
-   if 0<=d<0.11: v += math.sin(2*math.pi*(820+260*d)*d)*math.exp(-30*d)*0.20
-  w.writeframesraw(struct.pack('<h',max(-32767,min(32767,int(v*32767)))))
+ w.setparams((1,2,sr,len(frames)//2,'NONE','not compressed')); w.writeframes(frames)
 f=["drawbox=x=0:y=0:w=1080:h=1920:color=0x07111f:t=fill",f"drawtext=fontfile={FONT}:text='AI時短ラボ':fontcolor=0x6ee7ff:fontsize=34:x=62:y=78"]
 subs=[(0,2.1,'そのExcelコピペ','まだ手作業？','0xffe45e'),(2.1,4.5,'長文の情報整理','AIなら一気にラク','0x70f0b1'),(4.5,8,'まず元の文章を','そのまま貼る','0xffe45e'),(8,12,'必要な項目を指定','表形式で出して','0x70f0b1'),(12,16,'たったこれだけ','AIが整理','0xffe45e'),(16,20.5,'バラバラな情報が','一瞬で表に','0x70f0b1'),(20.5,25,'内容を確認して','コピー','0xffe45e'),(25,30,'Excelに','貼り付けるだけ','0x70f0b1'),(30,35.5,'明日使うなら','保存して試して','0xffe45e')]
 for a,b,l1,l2,col in subs:
@@ -26,6 +28,6 @@ f += [f"drawtext=fontfile={FONT}:text='Excelへ貼り付け':fontcolor=white:fon
 f += ["drawbox=x=85:y=430:w=910:h=750:color=0x101d31:t=fill:enable='gte(t,30)'",f"drawtext=fontfile={FONT}:text='仕事のAI時短術':fontcolor=white:fontsize=64:x=(w-text_w)/2:y=570:enable='gte(t,30)'",f"drawtext=fontfile={FONT}:text='毎日1つだけ紹介':fontcolor=0x70f0b1:fontsize=58:x=(w-text_w)/2:y=690:enable='gte(t,30)'",f"drawtext=fontfile={FONT}:text='保存 → 明日試す':fontcolor=0xffe45e:fontsize=76:x=(w-text_w)/2:y=890:enable='gte(t,30)'"]
 f += ["drawbox=x='120+mod(t*240,760)':y=1070:w=28:h=28:color=0xffe45e:t=fill:enable='between(t,4,29)'","drawbox=x=0:y=1875:w='min(1080,1080*t/35)':h=10:color=0x38d9ff:t=fill"]
 fg=','.join(f)
-cmd=['ffmpeg','-y','-f','lavfi','-i','color=c=0x07111f:s=1080x1920:r=30','-i',str(audio),'-i',str(sfx),'-filter_complex',f"[0:v]{fg}[v];[1:a]volume=1.0[voice];[2:a]volume=0.38[fx];[voice][fx]amix=inputs=2:duration=first:normalize=0[a]",'-map','[v]','-map','[a]','-c:v','libx264','-preset','medium','-crf','19','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-ar','44100','-shortest','-movflags','+faststart',str(video)]
+cmd=['ffmpeg','-y','-f','lavfi','-i','color=c=0x07111f:s=1080x1920:r=30:d=35.5','-i',str(audio),'-i',str(sfx),'-filter_complex',f"[0:v]{fg}[v];[1:a]volume=1.0[voice];[2:a]volume=0.38[fx];[voice][fx]amix=inputs=2:duration=first:normalize=0[a]",'-map','[v]','-map','[a]','-c:v','libx264','-preset','ultrafast','-crf','21','-threads','0','-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-ar','44100','-t','35.5','-movflags','+faststart',str(video)]
 subprocess.run(cmd,check=True)
 print(video)
