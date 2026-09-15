@@ -1,4 +1,4 @@
-name: AI Jitan Complete Video v8
+name: AI Jitan Complete Video v9
 
 on:
   workflow_dispatch:
@@ -24,42 +24,30 @@ jobs:
         run: |
           docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
-          READY=0
-          for i in $(seq 1 120); do
-            if curl -fsS http://127.0.0.1:10101/speakers > speakers.json; then READY=1; break; fi
-            if ! docker ps --format '{{.Names}}' | grep -qx aivis; then docker logs aivis || true; exit 1; fi
-            sleep 5
-          done
-          test "$READY" = "1"
+          for i in $(seq 1 120); do curl -fsS http://127.0.0.1:10101/speakers > speakers.json && break; sleep 5; done
+          test -s speakers.json
       - name: Generate narration
         run: python3 src/synthesize.py
-      - name: Build v8 asset contract
-        run: python3 src/v8_asset_manifest.py
-      - name: Generate presenter motion frames
+      - name: Build v9 visual contract
+        run: python3 src/v9_visual_spec.py
+      - name: Build v9 camera plan
+        run: python3 src/v9_camera_plan.py
+      - name: Build v9 operation story
+        run: python3 src/v9_operation_story.py
+      - name: Generate presenter asset
         run: python3 src/v8_presenter.py
-      - name: Generate operation capture
-        run: python3 src/v8_capture.py
-      - name: Build edit plan
-        run: python3 src/v7_storyboard.py
-      - name: Verify v8 assets
-        run: |
-          test -f assets/robot/presenter.png
-          test -f output/operation_demo.mp4
-      - name: Build complete vertical video
-        run: python3 src/build_video.py
-      - name: Technical QA
-        run: python3 src/qa.py
-      - name: Creative quality gate
-        run: python3 src/quality_gate.py
-      - name: Upload finished MP4 and QA
+      - name: Render full-screen operation frames
+        run: python3 src/v9_render_operation.py
+      - name: Compose v9 candidate
+        run: python3 src/v9_compose.py
+      - name: Upload v9 candidate
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v8
+          name: ai-jitan-v9
           path: |
-            output/AI時短ラボ_01_完成版.mp4
-            output/operation_demo.mp4
-            output/v8_asset_manifest.json
-            output/v7_storyboard.json
-            output/qa_report.json
-            output/creative_qa.json
+            output/AI時短ラボ_01_v9.mp4
+            output/v9_operation.mp4
+            output/v9_visual_spec.json
+            output/v9_camera_plan.json
+            output/v9_operation_story.json
           retention-days: 14
