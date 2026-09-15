@@ -35,13 +35,14 @@ jobs:
         run: python3 src/synthesize.py
       - name: Build v8 asset contract
         run: python3 src/v8_asset_manifest.py
+      - name: Generate operation capture
+        run: python3 src/v8_capture.py
       - name: Build edit plan
         run: python3 src/v7_storyboard.py
-      - name: Verify v8 production assets
+      - name: Verify branded presenter
         run: |
-          mkdir -p assets/robot assets/captures
+          mkdir -p assets/robot
           test -f assets/robot/presenter.png || { echo 'V8 BLOCKED: branded 3D robot presenter asset is required'; exit 1; }
-          test -f assets/captures/chatgpt_demo.mp4 || { echo 'V8 BLOCKED: operation capture is required'; exit 1; }
       - name: Build complete vertical video
         run: python3 src/build_video.py
       - name: Technical QA
@@ -54,6 +55,7 @@ jobs:
           name: ai-jitan-v8
           path: |
             output/AI時短ラボ_01_完成版.mp4
+            output/operation_demo.mp4
             output/v8_asset_manifest.json
             output/v7_storyboard.json
             output/qa_report.json
