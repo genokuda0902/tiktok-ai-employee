@@ -34,20 +34,10 @@ jobs:
           READY=0
           for i in $(seq 1 120); do
             if curl -fsS http://127.0.0.1:10101/speakers > speakers.json; then READY=1; break; fi
-            if ! docker ps --format '{{.Names}}' | grep -qx aivis; then
-              echo 'AivisSpeech container exited.'
-              docker logs aivis || true
-              exit 1
-            fi
+            if ! docker ps --format '{{.Names}}' | grep -qx aivis; then docker logs aivis || true; exit 1; fi
             sleep 5
           done
-          if [ "$READY" != "1" ]; then
-            echo 'AivisSpeech startup timed out.'
-            docker logs aivis || true
-            exit 1
-          fi
-          cat speakers.json
-          test -s speakers.json
+          test "$READY" = "1"
 
       - name: Generate narration
         run: python3 src/synthesize.py
@@ -58,6 +48,9 @@ jobs:
       - name: Technical QA
         run: python3 src/qa.py
 
+      - name: Creative quality gate
+        run: python3 src/quality_gate.py
+
       - name: Upload finished MP4
         uses: actions/upload-artifact@v4
         with:
@@ -65,4 +58,5 @@ jobs:
           path: |
             output/AI時短ラボ_01_完成版.mp4
             output/qa_report.json
+            output/creative_qa.json
           retention-days: 14
