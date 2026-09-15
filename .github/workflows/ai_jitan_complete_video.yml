@@ -1,4 +1,4 @@
-name: AI Jitan Complete Video v7
+name: AI Jitan Complete Video v8
 
 on:
   workflow_dispatch:
@@ -33,8 +33,15 @@ jobs:
           test "$READY" = "1"
       - name: Generate narration
         run: python3 src/synthesize.py
-      - name: Build v7 edit plan
+      - name: Build v8 asset contract
+        run: python3 src/v8_asset_manifest.py
+      - name: Build edit plan
         run: python3 src/v7_storyboard.py
+      - name: Verify v8 production assets
+        run: |
+          mkdir -p assets/robot assets/captures
+          test -f assets/robot/presenter.png || { echo 'V8 BLOCKED: branded 3D robot presenter asset is required'; exit 1; }
+          test -f assets/captures/chatgpt_demo.mp4 || { echo 'V8 BLOCKED: operation capture is required'; exit 1; }
       - name: Build complete vertical video
         run: python3 src/build_video.py
       - name: Technical QA
@@ -44,9 +51,10 @@ jobs:
       - name: Upload finished MP4 and QA
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v7
+          name: ai-jitan-v8
           path: |
             output/AI時短ラボ_01_完成版.mp4
+            output/v8_asset_manifest.json
             output/v7_storyboard.json
             output/qa_report.json
             output/creative_qa.json
