@@ -3,6 +3,7 @@ import json, os, time, urllib.parse, urllib.request, wave
 from pathlib import Path
 BASE=os.environ.get('AIVIS_URL','http://127.0.0.1:10101')
 OUT=Path(os.environ.get('NARRATION_OUT','output/narration.wav')); OUT.parent.mkdir(parents=True,exist_ok=True)
+VOICE_PERSONA=os.environ.get('AIVIS_VOICE_PERSONA','male').lower()
 CHUNKS=[
 ('そのExcelコピペ、まだ手作業？',0.10),
 ('例えば、このバラバラな顧客情報。',0.08),
@@ -27,12 +28,24 @@ def wait_engine():
 def choose_style(speakers):
  wanted=os.environ.get('AIVIS_STYLE_ID')
  if wanted:return int(wanted)
+ # Director policy: male-led visuals default to a male voice if a male-labelled model/style is installed.
+ male_keys=('男','男性','male','青年','少年','お兄','兄','低音')
+ female_keys=('女','女性','female','少女','中2')
+ if VOICE_PERSONA=='male':
+  for sp in speakers:
+   hay=(str(sp.get('name',''))+' '+json.dumps(sp.get('styles',[]),ensure_ascii=False)).lower()
+   if any(k.lower() in hay for k in male_keys) and sp.get('styles'): return int(sp['styles'][0]['id'])
+ if VOICE_PERSONA=='female':
+  for sp in speakers:
+   hay=(str(sp.get('name',''))+' '+json.dumps(sp.get('styles',[]),ensure_ascii=False)).lower()
+   if any(k.lower() in hay for k in female_keys) and sp.get('styles'): return int(sp['styles'][0]['id'])
+ # Do not silently pretend a female model is male. Fall back explicitly and report it.
  for sp in speakers:
-  if '中2' in str(sp.get('name','')) and sp.get('styles'):return int(sp['styles'][0]['id'])
- for sp in speakers:
-  if sp.get('styles'):return int(sp['styles'][0]['id'])
+  if sp.get('styles'):
+   print(f'WARNING requested persona={VOICE_PERSONA} unavailable; fallback speaker={sp.get("name")}')
+   return int(sp['styles'][0]['id'])
  return 604166016
-speakers=wait_engine(); style=choose_style(speakers); print(f'Using AivisSpeech style_id={style}')
+speakers=wait_engine(); style=choose_style(speakers); print(f'Using AivisSpeech persona={VOICE_PERSONA} style_id={style}')
 parts=[]; timings=[]; cursor=0.0; sr=None; sw=None; ch=None
 for text,pause in CHUNKS:
  params=urllib.parse.urlencode({'text':text,'speaker':style})
@@ -44,7 +57,7 @@ for text,pause in CHUNKS:
  with wave.open(str(tmp),'rb') as w:
   if sr is None: sr=w.getframerate(); sw=w.getsampwidth(); ch=w.getnchannels()
   data=w.readframes(w.getnframes()); seconds=w.getnframes()/w.getframerate()
- parts.append(data); timings.append({'text':text,'start':round(cursor,3),'end':round(cursor+seconds,3)})
+ parts.append(data); timings.append({'text':text,'start':round(cursor,3),'end':round(cursor+seconds,3),'persona':VOICE_PERSONA,'style_id':style})
  cursor+=seconds
  if pause:
   silence=b'\x00'*(int(sr*pause)*sw*ch); parts.append(silence); cursor+=pause
