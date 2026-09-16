@@ -1,0 +1,21 @@
+import { chromium } from 'playwright';
+import fs from 'fs';
+import { execFileSync } from 'child_process';
+fs.mkdirSync('output/v19_scenes',{recursive:true});
+fs.mkdirSync('output/v19',{recursive:true});
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1080,height:1920}});
+await page.setContent(`<!doctype html><meta charset="utf-8"><style>*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#061425,#0b3150);font-family:'Noto Sans JP','Noto Sans CJK JP',sans-serif;color:#132}.brand{position:absolute;top:72px;left:64px;color:#62e9ff;font-size:38px;font-weight:900}.sheet{position:absolute;left:55px;top:215px;width:970px;height:1440px;background:#fff;border-radius:30px;overflow:hidden;box-shadow:0 35px 100px #0009}.toolbar{height:105px;background:#f3f6f8;border-bottom:1px solid #ccd4da;padding:28px 38px;font-size:30px;font-weight:800;color:#176b45}.grid{padding:42px}.row{display:grid;grid-template-columns:1.1fr 1.25fr 1.65fr 1.1fr}.cell{border:1px solid #cfd7dd;padding:18px 12px;min-height:70px;font-size:24px;opacity:0;transform:translateY(15px);transition:.3s}.head .cell{background:#167d52;color:white;font-weight:900;opacity:1;transform:none}.row.show .cell{opacity:1;transform:none}.chart{position:absolute;left:120px;bottom:160px;width:730px;height:420px;background:#f8fbfd;border:1px solid #d7e0e6;border-radius:20px;padding:28px;opacity:0;transform:scale(.9);transition:.55s}.chart.show{opacity:1;transform:scale(1)}.bars{height:270px;display:flex;gap:45px;align-items:flex-end;padding:20px 45px;border-left:2px solid #94a3ad;border-bottom:2px solid #94a3ad}.bar{width:85px;background:linear-gradient(#39c986,#147a52);height:0;transition:.8s}.caption{position:absolute;bottom:78px;left:65px;width:950px;background:#03111de8;color:#fff;border-radius:28px;padding:27px;text-align:center;font-size:46px;font-weight:900}.accent{color:#67f1ff}</style><div class="brand">AI時短ラボ</div><div class="sheet"><div class="toolbar">Spreadsheet / 顧客リスト</div><div class="grid"><div class="row head"><div class="cell">氏名</div><div class="cell">電話番号</div><div class="cell">メール</div><div class="cell">希望日時</div></div><div class="row data"><div class="cell">山田 太郎</div><div class="cell">090-1234-5678</div><div class="cell">taro@example.jp</div><div class="cell">9/18 14:00</div></div><div class="row data"><div class="cell">佐藤 花子</div><div class="cell">080-9876-5432</div><div class="cell">hana@example.jp</div><div class="cell">9/19 11:00</div></div></div><div class="chart"><b style="font-size:28px">希望時間帯</b><div class="bars"><div class="bar" style="height:68%"></div><div class="bar" style="height:92%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:78%"></div></div></div></div><div class="caption" id="cap">AIの表を <span class="accent">そのまま貼る</span></div>`);
+await page.screencast.start({path:'output/v19/spreadsheet_proof.webm',size:{width:1080,height:1920},quality:92});
+await page.waitForTimeout(400);
+for (const row of await page.locator('.data').all()) { await row.evaluate(el=>el.classList.add('show')); await page.waitForTimeout(650); }
+await page.waitForTimeout(300);
+await page.locator('#cap').evaluate(el=>el.innerHTML='貼るだけで <span class="accent">表が完成</span>');
+await page.waitForTimeout(700);
+await page.locator('.chart').evaluate(el=>el.classList.add('show'));
+await page.waitForTimeout(300);
+await page.locator('#cap').evaluate(el=>el.innerHTML='さらに <span class="accent">グラフ化</span>');
+await page.waitForTimeout(1900);
+await page.screencast.stop(); await browser.close();
+execFileSync('ffmpeg',['-y','-i','output/v19/spreadsheet_proof.webm','-ss','0','-t','2','-vf','fps=30,scale=1080:1920','-c:v','libx264','-pix_fmt','yuv420p','-an','output/v19_scenes/scene_07.mp4'],{stdio:'inherit'});
+execFileSync('ffmpeg',['-y','-i','output/v19/spreadsheet_proof.webm','-ss','2','-t','2','-vf','fps=30,scale=1080:1920','-c:v','libx264','-pix_fmt','yuv420p','-an','output/v19_scenes/scene_08.mp4'],{stdio:'inherit'});
