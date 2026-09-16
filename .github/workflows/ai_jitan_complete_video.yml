@@ -37,6 +37,8 @@ jobs:
         run: python3 src/synthesize.py
       - name: Generate browser proof motion
         run: node studio/v19-proof.mjs
+      - name: Generate spreadsheet proof motion
+        run: node studio/v19_spreadsheet.mjs
       - name: Render independent motion masters
         run: node studio/v19_scene_renderer.mjs
       - name: Validate premium hero assets
