@@ -1,6 +1,12 @@
-name: AI Jitan Complete Video v19 Premium Studio
+name: AI Jitan Complete Video v19 Reference Studio
 on:
   workflow_dispatch:
+    inputs:
+      reference_mode:
+        description: 'Use MP4 files in references/v19 as editing-DNA references'
+        required: false
+        default: true
+        type: boolean
 jobs:
   build-video:
     runs-on: ubuntu-latest
@@ -12,14 +18,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg curl jq fonts-noto-cjk python3-pip
           pip3 install --break-system-packages pillow numpy requests
-          cd studio
-          npm install
-          npx playwright install --with-deps chromium
+          cd studio && npm install && npx playwright install --with-deps chromium
       - name: Prepare voice models
         run: |
           mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
-          curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/9107b8b6-1ed1-43f5-bebe-0de4df4d229d/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx"
-          echo "e4fd1c287f65e1ea32a81333b35ebc0db09435d186a97af4aa3d8aeea6351a40  $HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx" | sha256sum -c -
           curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/00f29eb2-e12b-4f64-a5e8-4188be62de33/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/male_young.aivmx"
           echo "9accc3be3b8a97b31be9e918ab4e15bafc295e40f3b47b2d30df9a9bedd4b1ad  $HOME/.local/share/AivisSpeech-Engine/Models/male_young.aivmx" | sha256sum -c -
           sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
@@ -29,53 +31,66 @@ jobs:
           docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           for i in $(seq 1 120); do curl -fsS http://127.0.0.1:10101/speakers > speakers.json && break; sleep 5; done
           test -s speakers.json
-      - name: Build v19 director contracts
+      - name: Build native v19 plan
         run: |
           python3 src/v19_scene_plan.py
           python3 src/v19_asset_contract.py
           python3 src/v19_hero_spec.py
-          python3 src/v19_timeline_validate.py
-      - name: Generate narration
+      - name: Extract and apply reference editing DNA
+        if: ${{ inputs.reference_mode == true }}
+        run: |
+          shopt -s nullglob
+          refs=(references/v19/*.mp4)
+          if [ ${#refs[@]} -gt 0 ]; then
+            python3 src/v19_reference_director.py "${refs[@]}"
+            python3 src/v19_reference_apply.py
+          else
+            echo 'No reference MP4 in references/v19; native Director plan retained.'
+          fi
+      - name: Validate final timeline
+        run: python3 src/v19_timeline_validate.py
+      - name: Generate male narration
         env:
           AIVIS_VOICE_PERSONA: male
           AIVIS_SPEED: '1.18'
         run: python3 src/synthesize.py
-      - name: Generate browser proof motion
-        run: node studio/v19-proof.mjs
-      - name: Generate spreadsheet proof motion
-        run: node studio/v19_spreadsheet.mjs
+      - name: Generate real proof motion
+        run: |
+          node studio/v19-proof.mjs
+          node studio/v19_spreadsheet.mjs
       - name: Render independent motion masters
         run: node studio/v19_scene_renderer.mjs
-      - name: Stage premium hero assets
-        run: python3 src/v19_asset_bootstrap.py
-      - name: Validate premium hero assets
-        run: python3 src/v19_asset_validate.py
-      - name: Production readiness gate
-        run: python3 src/v19_preflight.py
-      - name: Compose v19 premium candidate
+      - name: Stage and validate premium heroes
+        run: |
+          python3 src/v19_asset_bootstrap.py
+          python3 src/v19_asset_validate.py
+          python3 src/v19_preflight.py
+      - name: Compose v19 reference-driven candidate
         run: python3 src/v19_compose.py
-      - name: Strict technical and structural QA
+      - name: Technical and reference QA
         run: |
           python3 src/v19_quality_gate.py
+          python3 src/v19_reference_qa.py
           mkdir -p output/qa
           ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size,bit_rate -of default=nw=1 output/AI時短ラボ_01_v19.mp4 | tee output/qa/probe.txt
-          ffmpeg -y -i output/AI時短ラボ_01_v19.mp4 -vf "fps=1/2.25,scale=270:480,tile=4x4:padding=8:margin=8:color=black" -frames:v 1 output/qa/contact.jpg
+          ffmpeg -y -i output/AI時短ラボ_01_v19.mp4 -vf "fps=1/2.0,scale=270:480,tile=4x4:padding=8:margin=8:color=black" -frames:v 1 output/qa/contact.jpg
           ffmpeg -y -sseof -2 -i output/AI時短ラボ_01_v19.mp4 -frames:v 1 output/qa/tail.jpg
       - name: Upload v19 candidate and QA
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v19
+          name: ai-jitan-v19-reference-studio
           path: |
             output/AI時短ラボ_01_v19.mp4
             output/v19_plan.json
-            output/v19_asset_manifest.json
+            output/v19_reference_dna.json
             output/v19_hero_spec.json
-            output/v19_timeline_validation.json
             output/v19_preflight.json
             output/v19_assets/bootstrap.json
             output/v19_assets/validation.json
             output/qa/v19_quality.json
+            output/qa/v19_reference_qa.json
             output/qa/contact.jpg
             output/qa/tail.jpg
             output/qa/probe.txt
+          if-no-files-found: warn
           retention-days: 14
