@@ -15,11 +15,13 @@ jobs:
           cd studio
           npm install
           npx playwright install --with-deps chromium
-      - name: Prepare voice model
+      - name: Prepare voice models
         run: |
           mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
           curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/9107b8b6-1ed1-43f5-bebe-0de4df4d229d/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx"
           echo "e4fd1c287f65e1ea32a81333b35ebc0db09435d186a97af4aa3d8aeea6351a40  $HOME/.local/share/AivisSpeech-Engine/Models/chu2.aivmx" | sha256sum -c -
+          curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/00f29eb2-e12b-4f64-a5e8-4188be62de33/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/male_young.aivmx"
+          echo "9accc3be3b8a97b31be9e918ab4e15bafc295e40f3b47b2d30df9a9bedd4b1ad  $HOME/.local/share/AivisSpeech-Engine/Models/male_young.aivmx" | sha256sum -c -
           sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
       - name: Start voice engine
         run: |
@@ -34,6 +36,9 @@ jobs:
           python3 src/v19_hero_spec.py
           python3 src/v19_timeline_validate.py
       - name: Generate narration
+        env:
+          AIVIS_VOICE_PERSONA: male
+          AIVIS_SPEED: '1.18'
         run: python3 src/synthesize.py
       - name: Generate browser proof motion
         run: node studio/v19-proof.mjs
