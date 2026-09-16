@@ -46,6 +46,8 @@ jobs:
         run: node studio/v19_spreadsheet.mjs
       - name: Render independent motion masters
         run: node studio/v19_scene_renderer.mjs
+      - name: Stage premium hero assets
+        run: python3 src/v19_asset_bootstrap.py
       - name: Validate premium hero assets
         run: python3 src/v19_asset_validate.py
       - name: Production readiness gate
@@ -70,6 +72,7 @@ jobs:
             output/v19_hero_spec.json
             output/v19_timeline_validation.json
             output/v19_preflight.json
+            output/v19_assets/bootstrap.json
             output/v19_assets/validation.json
             output/qa/v19_quality.json
             output/qa/contact.jpg
