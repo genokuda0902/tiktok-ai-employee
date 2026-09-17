@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'src/v20_zero_cost_motion.py'
+      - 'src/synthesize.py'
       - 'assets/v20/storyboard.jpg'
       - '.github/workflows/ai_jitan_zero_cost_v20.yml'
 jobs:
@@ -26,7 +27,7 @@ jobs:
           docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           for i in $(seq 1 120); do curl -fsS http://127.0.0.1:10101/speakers > speakers.json && break; sleep 5; done
           test -s speakers.json
-      - name: Generate Japanese narration
+      - name: Generate Japanese male narration
         env:
           AIVIS_VOICE_PERSONA: male
           AIVIS_SPEED: '1.18'
