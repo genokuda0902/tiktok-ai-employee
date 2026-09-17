@@ -23,6 +23,8 @@ jobs:
         run: |
           python src/build_cockpit.py
           python src/learn.py
+      - name: Verify actual video and audio (fail closed)
+        run: python src/verify_video.py
       - name: QA gate
         run: python src/qa_gate.py output/qa_report.json
       - name: Upload package
