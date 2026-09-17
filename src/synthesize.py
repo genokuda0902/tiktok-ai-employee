@@ -4,6 +4,8 @@ from pathlib import Path
 BASE=os.environ.get('AIVIS_URL','http://127.0.0.1:10101')
 OUT=Path(os.environ.get('NARRATION_OUT','output/narration.wav')); OUT.parent.mkdir(parents=True,exist_ok=True)
 VOICE_PERSONA=os.environ.get('AIVIS_VOICE_PERSONA','male').lower()
+PREFERRED_SPEAKER=os.environ.get('AIVIS_SPEAKER_NAME','').strip().lower()
+PREFERRED_STYLE=os.environ.get('AIVIS_STYLE_NAME','').strip().lower()
 CHUNKS=[('そのExcelコピペ、まだ手作業？',0.10),('例えば、このバラバラな顧客情報。',0.08),('普通なら、一件ずつExcelに移しますよね。',0.08),('でもAIなら、元の文章をそのまま貼って、',0.05),('氏名、電話番号、メール、希望日時を、表にして。これだけ。',0.10),('はい。もう整理できました。',0.08),('あとは内容を確認して、コピー。',0.06),('Excelに貼り付けるだけ。',0.08),('問い合わせ整理や、営業リストでも使えます。',0.08),('明日会社で使うなら、保存して試してみて。',0.0)]
 def req(path,method='GET',data=None,content_type=None,timeout=120):
  headers={'Content-Type':content_type} if content_type else {}
@@ -18,9 +20,19 @@ def wait_engine():
 def choose_style(speakers):
  wanted=os.environ.get('AIVIS_STYLE_ID')
  if wanted:return int(wanted)
- # The v20 workflow installs the young male AivisHub model 宗周定昌.
+ if PREFERRED_SPEAKER:
+  for sp in speakers:
+   if PREFERRED_SPEAKER in str(sp.get('name','')).lower() and sp.get('styles'):
+    styles=sp['styles']
+    if PREFERRED_STYLE:
+     for st in styles:
+      if PREFERRED_STYLE in str(st.get('name','')).lower():
+       print(f'Selected preferred speaker={sp.get("name")} style={st.get("name")}')
+       return int(st['id'])
+    print(f'Selected preferred speaker={sp.get("name")} style={styles[0].get("name")}')
+    return int(styles[0]['id'])
  male_keys=('宗周定昌','男','男性','male','青年','少年','お兄','兄','低音')
- female_keys=('女','女性','female','少女','中2')
+ female_keys=('まお','女','女性','female','少女','中2')
  keys=male_keys if VOICE_PERSONA=='male' else female_keys
  for sp in speakers:
   hay=(str(sp.get('name',''))+' '+json.dumps(sp.get('styles',[]),ensure_ascii=False)).lower()
@@ -38,6 +50,7 @@ for text,pause in CHUNKS:
  params=urllib.parse.urlencode({'text':text,'speaker':style})
  q=json.loads(req('/audio_query?'+params,method='POST').decode())
  q['speedScale']=float(os.environ.get('AIVIS_SPEED','1.18')); q['volumeScale']=1.0
+ q['intonationScale']=float(os.environ.get('AIVIS_INTONATION','1.12'))
  raw=req('/synthesis?'+urllib.parse.urlencode({'speaker':style}),method='POST',data=json.dumps(q,ensure_ascii=False).encode(),content_type='application/json',timeout=300)
  tmp=OUT.parent/'_chunk.wav'; tmp.write_bytes(raw)
  with wave.open(str(tmp),'rb') as w:
