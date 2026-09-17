@@ -1,19 +1,51 @@
-name: AI Jitan v20 Zero Cost Motion
+name: AI Jitan v20 Final Zero Cost
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/v20_zero_cost_motion.py'
+      - 'assets/v20/storyboard.jpg'
+      - '.github/workflows/ai_jitan_zero_cost_v20.yml'
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - name: Render fast motion clips from hero stills
+      - name: Install production stack
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg imagemagick fonts-noto-cjk curl
+      - name: Prepare AivisSpeech male voice
+        run: |
+          mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
+          curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/00f29eb2-e12b-4f64-a5e8-4188be62de33/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/male_young.aivmx"
+          sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
+          docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          for i in $(seq 1 120); do curl -fsS http://127.0.0.1:10101/speakers > speakers.json && break; sleep 5; done
+          test -s speakers.json
+      - name: Generate Japanese narration
+        env:
+          AIVIS_VOICE_PERSONA: male
+          AIVIS_SPEED: '1.18'
+          NARRATION_OUT: output/narration.wav
+        run: python3 src/synthesize.py
+      - name: Render final v20
         run: python3 src/v20_zero_cost_motion.py
-      - name: Upload proof clips
+      - name: Final QA
+        run: |
+          test -s 'output/v20_motion/AI時短ラボ_01_v20_final.mp4'
+          ffprobe -v error -show_entries stream=width,height,codec_name -show_entries format=duration,size -of default=nw=1 'output/v20_motion/AI時短ラボ_01_v20_final.mp4'
+      - name: Upload final post
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v20-zero-cost-motion
-          path: output/v20_motion/
-          retention-days: 7
+          name: ai-jitan-v20-final
+          path: |
+            output/v20_motion/AI時短ラボ_01_v20_final.mp4
+            output/v20_motion/report.json
+            output/narration.wav
+            output/narration_timing.json
+          if-no-files-found: error
+          retention-days: 14
