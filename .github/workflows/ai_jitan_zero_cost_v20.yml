@@ -18,19 +18,22 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick fonts-noto-cjk curl
-      - name: Prepare AivisSpeech male voice
+      - name: Prepare AivisSpeech bright young voice
         run: |
           mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
-          curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/00f29eb2-e12b-4f64-a5e8-4188be62de33/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/male_young.aivmx"
+          curl -L --fail --retry 3 "https://api.aivis-project.com/v1/aivm-models/a59cb814-0083-4369-8542-f51a29e72af7/download?model_type=AIVMX" -o "$HOME/.local/share/AivisSpeech-Engine/Models/mao.aivmx"
           sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
           docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
           for i in $(seq 1 120); do curl -fsS http://127.0.0.1:10101/speakers > speakers.json && break; sleep 5; done
           test -s speakers.json
-      - name: Generate Japanese male narration
+      - name: Generate bright Japanese narration
         env:
-          AIVIS_VOICE_PERSONA: male
-          AIVIS_SPEED: '1.18'
+          AIVIS_VOICE_PERSONA: female
+          AIVIS_SPEAKER_NAME: 'まお'
+          AIVIS_STYLE_NAME: 'ふつー'
+          AIVIS_SPEED: '1.20'
+          AIVIS_INTONATION: '1.16'
           NARRATION_OUT: output/narration.wav
         run: python3 src/synthesize.py
       - name: Render final v20
@@ -42,7 +45,7 @@ jobs:
       - name: Upload final post
         uses: actions/upload-artifact@v4
         with:
-          name: ai-jitan-v20-final
+          name: ai-jitan-v20-final-bright
           path: |
             output/v20_motion/AI時短ラボ_01_v20_final.mp4
             output/v20_motion/report.json
