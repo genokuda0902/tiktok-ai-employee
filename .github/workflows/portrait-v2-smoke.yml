@@ -1,0 +1,64 @@
+name: Portrait v2 isolated smoke test
+
+on:
+  push:
+    branches:
+      - feature/portrait-media-pipeline-v2-20260918
+    paths:
+      - '.github/workflows/portrait-v2-smoke.yml'
+      - 'video_engine/portrait_v2/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout tested revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Record exact source revision
+        run: |
+          set -euo pipefail
+          echo "Requested revision: $GITHUB_SHA"
+          echo "Checked out revision: $(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git merge-base --is-ancestor 3b640a85be5f1f43b0c5e86ed99ce19dfc60d691 HEAD
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install isolated test dependencies
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow==11.3.0'
+          ffmpeg -version | sed -n '1p'
+          ffprobe -version | sed -n '1p'
+      - name: Compile and render synthetic two-second test
+        run: |
+          set -euo pipefail
+          python -m py_compile video_engine/portrait_v2/build.py video_engine/portrait_v2/test_smoke.py
+          python video_engine/portrait_v2/test_smoke.py 2>&1 | tee smoke.log
+          grep -F 'PASS: mixed image/video' smoke.log
+      - name: Save minimal test evidence
+        if: always()
+        run: |
+          { echo "workflow_sha=$GITHUB_SHA"; echo "checkout_sha=$(git rev-parse HEAD)"; echo "run_id=$GITHUB_RUN_ID"; } > smoke-revision.txt
+      - name: Upload logs only (no media)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portrait-v2-smoke-logs
+          path: |
+            smoke.log
+            smoke-revision.txt
+          if-no-files-found: warn
+          retention-days: 3
