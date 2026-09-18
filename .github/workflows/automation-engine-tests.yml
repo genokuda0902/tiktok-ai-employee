@@ -7,23 +7,48 @@ on:
       - 'src/automation_engine.py'
       - 'src/automation_pipeline.py'
       - 'src/persistent_jobs.py'
+      - 'src/drive_delivery.py'
+      - 'src/daily_schedule.py'
       - 'tests/test_automation_engine.py'
       - 'tests/test_automation_pipeline.py'
       - 'tests/test_persistent_jobs.py'
+      - 'tests/test_postgres_integration.py'
+      - 'tests/test_drive_delivery.py'
+      - 'tests/test_daily_schedule.py'
       - '.github/workflows/automation-engine-tests.yml'
 jobs:
   unit:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test-only-not-production
+          POSTGRES_DB: automation_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd 'pg_isready -U test -d automation_test'
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://test:test-only-not-production@localhost:5432/automation_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install ffmpeg and psycopg
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          python -m pip install 'psycopg[binary]>=3,<4'
       - name: Run isolated tests
         run: |
           python -m unittest discover -s tests -p 'test_automation_*.py' -v
           python -m unittest discover -s tests -p 'test_persistent_jobs.py' -v
+      - name: Run real PostgreSQL integration tests
+        run: python -m unittest discover -s tests -p 'test_postgres_integration.py' -v
