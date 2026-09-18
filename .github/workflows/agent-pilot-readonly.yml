@@ -1,0 +1,39 @@
+name: Agent pilot read-only preflight
+
+# This is NOT a coding agent. Manual, read-only prerequisite check only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-pilot-preflight
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify authoritative handoff and pilot safety contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s PROJECT_HANDOFF.md
+          test -s recovery/v33/RECOVERY_STATUS.md
+          test -s docs/architecture/agent-runner-mvp.md
+          python3 - <<'PY'
+          from pathlib import Path
+          handoff = Path('PROJECT_HANDOFF.md').read_text(encoding='utf-8')
+          spec = Path('docs/architecture/agent-runner-mvp.md').read_text(encoding='utf-8')
+          for phrase in ('manually posts to TikTok', 'v33'):
+              assert phrase in handoff, f'Missing handoff requirement: {phrase}'
+          for phrase in ('DESIGN ONLY', 'human', 'least-privilege', 'prompt injection'):
+              assert phrase.lower() in spec.lower(), f'Missing pilot safeguard: {phrase}'
+          print('PASS: read-only preflight contract; no agent execution performed')
+          PY
