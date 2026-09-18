@@ -1,4 +1,4 @@
-"""Isolated employee workflow. No TikTok API, credentials, or production integration."""
+"""Employee registry: trusted server-side storage only; expose via AuthenticatedService."""
 import re
 import sqlite3
 import uuid
@@ -23,6 +23,9 @@ class Registry:
           status TEXT NOT NULL CHECK(status IN ('pending','approved','rejected','suspended')),
           role TEXT NOT NULL CHECK(role IN ('employee','admin')),
           created_at TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS identities (
+          provider TEXT NOT NULL, subject TEXT NOT NULL, employee_id TEXT NOT NULL UNIQUE REFERENCES employees(id),
+          PRIMARY KEY(provider,subject));
         CREATE TABLE IF NOT EXISTS accounts (
           id TEXT PRIMARY KEY, employee_id TEXT NOT NULL REFERENCES employees(id),
           handle TEXT NOT NULL UNIQUE COLLATE NOCASE);
@@ -32,8 +35,8 @@ class Registry:
           status TEXT NOT NULL CHECK(status IN ('requested','generating','qa_failed','ready','revision','posted')),
           artifact_ref TEXT, post_url TEXT, created_at TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit (
-          id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, action TEXT NOT NULL,
-          target_id TEXT NOT NULL, created_at TEXT NOT NULL);
+          id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, actor_subject TEXT NOT NULL,
+          action TEXT NOT NULL, target_id TEXT NOT NULL, created_at TEXT NOT NULL);
         ''')
 
     def _actor(self, actor_id):
@@ -47,13 +50,16 @@ class Registry:
             raise Denied('admin required')
 
     def _audit(self, actor, action, target):
-        self.db.execute('INSERT INTO audit VALUES(?,?,?,?,?)', (uuid.uuid4().hex, actor, action, target, now()))
+        subject = self.db.execute('SELECT subject FROM identities WHERE employee_id=?', (actor,)).fetchone()
+        self.db.execute('INSERT INTO audit VALUES(?,?,?,?,?,?)', (uuid.uuid4().hex, actor, subject[0] if subject else 'UNBOUND_LOCAL_ONLY', action, target, now()))
 
-    def bootstrap_admin(self, employee_id, email):
-        """One-time local setup only; never expose to untrusted form/web input."""
+    def bootstrap_admin(self, employee_id, email, google_subject=None):
+        """Offline one-time trusted setup; never expose as an HTTP/form endpoint."""
         if self.db.execute('SELECT COUNT(*) FROM employees').fetchone()[0]:
             raise Denied('bootstrap disabled after first employee')
         self._insert(employee_id, email, 'approved', 'admin')
+        if google_subject:
+            self.bind_identity(employee_id, google_subject)
         self.db.commit()
 
     def _insert(self, employee_id, email, status, role):
@@ -64,8 +70,20 @@ class Registry:
             raise ValueError('invalid employee id')
         self.db.execute('INSERT INTO employees VALUES(?,?,?,?,?)', (employee_id, email, status, role, now()))
 
+    def bind_identity(self, employee_id, google_subject):
+        """Trusted server operation only, after Google ID token verification and admin approval."""
+        if not isinstance(google_subject, str) or not re.fullmatch(r'[0-9]{1,255}', google_subject):
+            raise ValueError('invalid Google subject')
+        self.db.execute('INSERT INTO identities VALUES(?,?,?)', ('google', google_subject, employee_id))
+
+    def resolve_identity(self, google_subject):
+        row = self.db.execute('SELECT employee_id FROM identities WHERE provider=? AND subject=?', ('google', google_subject)).fetchone()
+        if not row:
+            raise Denied('identity not linked')
+        self._actor(row[0])
+        return row[0]
+
     def register(self, employee_id, email):
-        """Untrusted requests can create pending records only; never grant permissions."""
         with self.db:
             self._insert(employee_id, email, 'pending', 'employee')
         return employee_id
@@ -79,6 +97,16 @@ class Registry:
             if cur.rowcount != 1:
                 raise ValueError('employee not found or protected')
             self._audit(admin_id, 'employee.' + decision, employee_id)
+
+    def change_role(self, admin_id, employee_id, role):
+        self._admin(admin_id)
+        if role not in ('employee', 'admin') or admin_id == employee_id:
+            raise Denied('invalid role change')
+        with self.db:
+            cur = self.db.execute('UPDATE employees SET role=? WHERE id=?', (role, employee_id))
+            if cur.rowcount != 1:
+                raise ValueError('employee not found')
+            self._audit(admin_id, 'employee.role.' + role, employee_id)
 
     def link_account(self, actor_id, employee_id, account_id, handle):
         self._admin(actor_id)
@@ -132,3 +160,10 @@ class Registry:
         if role != 'admin' and target != actor_id:
             raise Denied('cross-employee access')
         return self.db.execute('SELECT id,account_id,status,artifact_ref,post_url,created_at FROM jobs WHERE employee_id=? ORDER BY created_at,id', (target,)).fetchall()
+
+    def job_for_employee(self, actor_id, job_id):
+        role = self._actor(actor_id)
+        row = self.db.execute('SELECT id,employee_id,account_id,status,artifact_ref,post_url FROM jobs WHERE id=?', (job_id,)).fetchone()
+        if not row or (role != 'admin' and row[1] != actor_id):
+            raise Denied('job not accessible')
+        return row
