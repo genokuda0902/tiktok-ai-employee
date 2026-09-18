@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT=Path(__file__).resolve().parents[2]
 PHOTO=Path(os.environ['PI5_PHOTO'])
-OUT=Path(os.environ.get('PI5_OUTPUT',str(ROOT/'output/pi5_review_20s.mp4')))
+OUT=Path(os.environ.get('PI5_OUTPUT',str(ROOT/'output/pi5_review_20s.mp4'))).resolve()
 OUT.parent.mkdir(parents=True,exist_ok=True)
 FONT='/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
 SOURCE='https://commons.wikimedia.org/wiki/File:Raspberry-Pi_5.jpg'
