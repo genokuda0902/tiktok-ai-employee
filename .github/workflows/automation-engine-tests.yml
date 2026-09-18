@@ -5,7 +5,9 @@ on:
   pull_request:
     paths:
       - 'src/automation_engine.py'
+      - 'src/automation_pipeline.py'
       - 'tests/test_automation_engine.py'
+      - 'tests/test_automation_pipeline.py'
       - '.github/workflows/automation-engine-tests.yml'
 jobs:
   unit:
@@ -20,4 +22,4 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Run isolated tests
-        run: python -m unittest discover -s tests -p 'test_automation_engine.py' -v
+        run: python -m unittest discover -s tests -p 'test_automation_*.py' -v
