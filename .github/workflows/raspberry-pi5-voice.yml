@@ -1,0 +1,48 @@
+name: Raspberry Pi 5 narration recovery
+on:
+  workflow_dispatch:
+jobs:
+  generate-voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Aivis voice model and start engine
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
+          curl -L --fail --retry 3 'https://api.aivis-project.com/v1/aivm-models/76a774e4-cc4d-4d8c-879e-8d2be3d30dad/download?model_type=AIVMX' -o "$HOME/.local/share/AivisSpeech-Engine/Models/flow.aivmx"
+          sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
+          docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          for i in $(seq 1 120); do if curl -fsS http://127.0.0.1:10101/speakers > speakers.json; then break; fi; sleep 5; done
+          test -s speakers.json
+      - name: Generate new Japanese narration
+        env:
+          AIVIS_SPEAKER_NAME: Flow
+          AIVIS_STYLE_NAME: 04_FUN
+          AIVIS_SPEED: '1.13'
+          AIVIS_INTONATION: '1.12'
+        run: python3 src/gadget_voice.py
+      - name: Verify WAV contains audio
+        run: |
+          python3 - <<'PY'
+          import wave
+          from pathlib import Path
+          p=Path('output/raspberry_pi5_narration.wav')
+          with wave.open(str(p)) as w:
+              assert w.getnframes()>w.getframerate(), 'Narration must exceed one second'
+              print('Narration duration:', w.getnframes()/w.getframerate())
+          assert Path('output/raspberry_pi5_timing.json').is_file()
+          PY
+      - name: Upload narration and timing
+        uses: actions/upload-artifact@v4
+        with:
+          name: raspberry-pi5-japanese-narration
+          path: |
+            output/raspberry_pi5_narration.wav
+            output/raspberry_pi5_timing.json
+          if-no-files-found: error
+          retention-days: 14
