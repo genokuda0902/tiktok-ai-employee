@@ -42,13 +42,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install ffmpeg and psycopg
+      - name: Install ffmpeg and test dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y ffmpeg
-          python -m pip install 'psycopg[binary]>=3,<4'
+          python -m pip install 'psycopg[binary]>=3,<4' 'google-api-python-client>=2,<3'
       - name: Run isolated tests
         run: |
           python -m unittest discover -s tests -p 'test_automation_*.py' -v
           python -m unittest discover -s tests -p 'test_persistent_jobs.py' -v
+          python -m unittest discover -s tests -p 'test_drive_delivery.py' -v
+          python -m unittest discover -s tests -p 'test_daily_schedule.py' -v
       - name: Run real PostgreSQL integration tests
         run: python -m unittest discover -s tests -p 'test_postgres_integration.py' -v
