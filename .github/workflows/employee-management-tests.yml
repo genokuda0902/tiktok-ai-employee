@@ -1,0 +1,26 @@
+name: Employee management tests
+on:
+  pull_request:
+    paths:
+      - 'employee_management/**'
+      - 'tests/test_employee_management.py'
+      - '.github/workflows/employee-management-tests.yml'
+  push:
+    branches: [feature/employee-management-secure]
+    paths:
+      - 'employee_management/**'
+      - 'tests/test_employee_management.py'
+      - '.github/workflows/employee-management-tests.yml'
+  workflow_dispatch:
+jobs:
+  employee-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run employee tests
+        run: python -m unittest discover -s tests -p 'test_employee_management.py' -v
