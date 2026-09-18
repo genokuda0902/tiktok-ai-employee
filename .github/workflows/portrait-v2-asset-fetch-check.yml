@@ -1,0 +1,26 @@
+name: Portrait v2 licensed asset fetch diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/portrait-media-pipeline-v2-20260918]
+    paths: [.github/workflows/portrait-v2-asset-fetch-check.yml]
+permissions:
+  contents: read
+jobs:
+  check-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download only confirmed CC0 Raspberry Pi 5 photo to runner temp
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'Source: https://commons.wikimedia.org/wiki/File:Raspberry-Pi_5.jpg'
+          echo 'Creator: LeGeekLinux; license: CC0 1.0; credit not required (source recorded)'
+          mkdir -p "$RUNNER_TEMP/raspberry-assets"
+          curl --fail --location --retry 2 --max-time 60 --user-agent 'TikTokVideoResearch/1.0 (licensed asset validation)' 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Raspberry-Pi%205.jpg' --output "$RUNNER_TEMP/raspberry-assets/raspberry_pi5_cc0.jpg"
+          file "$RUNNER_TEMP/raspberry-assets/raspberry_pi5_cc0.jpg"
+          file --mime-type "$RUNNER_TEMP/raspberry-assets/raspberry_pi5_cc0.jpg" | grep -q 'image/jpeg'
+          sha256sum "$RUNNER_TEMP/raspberry-assets/raspberry_pi5_cc0.jpg"
+          echo 'PASS: downloaded to temporary runner only. No image artifact or repository commit.'
