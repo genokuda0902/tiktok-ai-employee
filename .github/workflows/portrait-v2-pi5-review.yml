@@ -1,0 +1,88 @@
+name: Portrait v2 Pi 5 review render (not for posting)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/portrait-media-pipeline-v2-20260918]
+    paths: [.github/workflows/portrait-v2-pi5-review.yml]
+permissions:
+  contents: read
+jobs:
+  render-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk python3-pil
+          python3 -c 'from PIL import Image; print(Image.__version__)'
+      - name: Fetch checksum-verified CC0 Pi 5 photo to runner only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/pi5"
+          curl --fail --location --retry 3 --max-time 90 --user-agent 'TikTokVideoResearch/1.0 (licensed asset validation)' 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Raspberry-Pi%205.jpg' -o "$RUNNER_TEMP/pi5/pi5.jpg"
+          echo '62fbc077641e2db042b6c17ecc977ab05a82bc7c864e624eaa044de0cba0b01c  '"$RUNNER_TEMP/pi5/pi5.jpg" | sha256sum --check
+          echo "PI5_PHOTO=$RUNNER_TEMP/pi5/pi5.jpg" >> "$GITHUB_ENV"
+          printf 'Retrieved UTC: '; date -u +%FT%TZ
+          echo 'Source https://commons.wikimedia.org/wiki/File:Raspberry-Pi_5.jpg; creator LeGeekLinux; CC0 1.0; no mandatory credit'
+      - name: Start existing AivisSpeech engine with existing voice model
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
+          curl --fail --location --retry 3 'https://api.aivis-project.com/v1/aivm-models/76a774e4-cc4d-4d8c-879e-8d2be3d30dad/download?model_type=AIVMX' -o "$HOME/.local/share/AivisSpeech-Engine/Models/flow.aivmx"
+          sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
+          docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          for i in $(seq 1 120); do if curl -fsS http://127.0.0.1:10101/speakers > "$RUNNER_TEMP/pi5/speakers.json"; then break; fi; sleep 5; done
+          test -s "$RUNNER_TEMP/pi5/speakers.json"
+      - name: Generate fresh expanded narration and word-group timings
+        env:
+          AIVIS_SPEAKER_NAME: Flow
+          AIVIS_STYLE_NAME: 04_FUN
+          AIVIS_SPEED: '0.97'
+          AIVIS_INTONATION: '1.05'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          source=Path('src/gadget_voice.py').read_text(encoding='utf-8')
+          start=source.index('lines = [')
+          end=source.index('\ndef request(',start)
+          lines="""lines = [
+          ('これ、ただの基板じゃない。', 'これ、ただの基板じゃない。'),
+          ('ラズベリーパイ、ファイブ。', 'ラズベリーパイ、ファイブ。'),
+          ('手のひらサイズの、小さなパソコンです。', '手のひらサイズの、小さなパソコンです。'),
+          ('画面やキーボードをつないで、使います。', '画面やキーボードをつないで、使います。'),
+          ('プログラミングや、電子工作にも使えます。', 'プログラミングや、電子工作にも使えます。'),
+          ('気になったら、公式サイトで確認してみてください。', '気になったら、公式サイトで確認してみてください。'),
+          ]"""
+          Path('pi5_voice_review.py').write_text(source[:start]+lines+source[end:],encoding='utf-8')
+          PY
+          python3 pi5_voice_review.py
+      - name: Generate and decode 20-second MP4 from PR 21 renderer
+        env:
+          PI5_OUTPUT: output/pi5_review_20s.mp4
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile video_engine/portrait_v2/build.py video_engine/portrait_v2/raspberry_v9_pipeline.py
+          python3 video_engine/portrait_v2/raspberry_v9_pipeline.py
+          ffprobe -v error -show_entries stream=codec_type,width,height,duration -show_entries format=duration -of json output/pi5_review_20s.mp4
+          ffmpeg -v error -xerror -i output/pi5_review_20s.mp4 -f null -
+      - name: Upload review-only video, timing and technical report (1 day)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi5-v9-review-only
+          path: |
+            output/pi5_review_20s.mp4
+            output/pi5_v9_report.json
+            output/raspberry_pi5_timing.json
+          if-no-files-found: error
+          retention-days: 1
