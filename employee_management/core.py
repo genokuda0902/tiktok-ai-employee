@@ -124,7 +124,7 @@ class Registry:
             raise Denied('account is not yours')
         job_id = uuid.uuid4().hex
         with self.db:
-            self.db.execute('INSERT INTO jobs VALUES(?,?,?,?,?,?,?,?)', (job_id, actor_id, account_id, 'requested', None, None, now()))
+            self.db.execute('INSERT INTO jobs VALUES(?,?,?,?,?,?,?)', (job_id, actor_id, account_id, 'requested', None, None, now()))
             self._audit(actor_id, 'job.requested', job_id)
         return job_id
 
