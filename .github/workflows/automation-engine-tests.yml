@@ -6,8 +6,10 @@ on:
     paths:
       - 'src/automation_engine.py'
       - 'src/automation_pipeline.py'
+      - 'src/persistent_jobs.py'
       - 'tests/test_automation_engine.py'
       - 'tests/test_automation_pipeline.py'
+      - 'tests/test_persistent_jobs.py'
       - '.github/workflows/automation-engine-tests.yml'
 jobs:
   unit:
@@ -22,4 +24,6 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Run isolated tests
-        run: python -m unittest discover -s tests -p 'test_automation_*.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_automation_*.py' -v
+          python -m unittest discover -s tests -p 'test_persistent_jobs.py' -v
