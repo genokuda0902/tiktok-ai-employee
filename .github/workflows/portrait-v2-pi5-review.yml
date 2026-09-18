@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [feature/portrait-media-pipeline-v2-20260918]
-    paths: [.github/workflows/portrait-v2-pi5-review.yml]
+    paths: [.github/workflows/portrait-v2-pi5-review.yml, video_engine/portrait_v2/raspberry_v9_pipeline.py]
 permissions:
   contents: read
 jobs:
