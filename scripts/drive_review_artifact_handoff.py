@@ -6,9 +6,9 @@ import os
 import sys
 from pathlib import Path
 
-EXPECTED = 'c5b0bc27be175b9c990cb4ef91d63ef2c35d045ed890c95cb6c02d329c0ae472'
+EXPECTED = '2543b274b9a6467400b6559483390ad366d54e01d36f35293e19d5663fb88e5b'
 FOLDER = '14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk'
-NAME = 'pi5_review_20s_REVIEW_ONLY.mp4'
+NAME = 'pi5_review_20s_REVIEW_ONLY_run35321564044_attempt2.mp4'
 
 
 def require_restricted_permissions(service, file_id):
