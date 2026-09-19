@@ -11,6 +11,21 @@ FOLDER = '14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk'
 NAME = 'pi5_review_20s_REVIEW_ONLY.mp4'
 
 
+def require_restricted_permissions(service, file_id):
+    """Explicitly reject public/domain permissions; restricted user sharing is allowed."""
+    try:
+        permissions = service.permissions().list(
+            fileId=file_id, fields='nextPageToken,permissions(id,type,role)',
+            pageSize=100, supportsAllDrives=True,
+        ).execute()
+    except Exception:
+        raise RuntimeError('BLOCKED: cannot verify Drive permissions') from None
+    if permissions.get('nextPageToken'):
+        raise RuntimeError('BLOCKED: Drive permission list incomplete')
+    if any(p.get('type') not in ('user', 'group') for p in permissions.get('permissions', [])):
+        raise RuntimeError('BLOCKED: public/domain/unknown Drive permission detected')
+
+
 def main(path):
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
@@ -19,7 +34,6 @@ def main(path):
     raw = os.environ.get('DRIVE_SERVICE_ACCOUNT_JSON', '')
     if not raw:
         raise RuntimeError('BLOCKED: DRIVE_REVIEW_SERVICE_ACCOUNT_JSON missing')
-    # Never log secret material or credential exceptions that may contain private data.
     try:
         info = json.loads(raw)
         credentials = service_account.Credentials.from_service_account_info(
@@ -33,14 +47,12 @@ def main(path):
         raise RuntimeError('BLOCKED: source MP4 SHA-256 mismatch')
     print('SOURCE_SHA256=' + digest, flush=True)
     try:
-        folder = service.files().get(fileId=FOLDER, fields='id,mimeType,shared,permissions(id,type,role)', supportsAllDrives=True).execute()
+        folder = service.files().get(fileId=FOLDER, fields='id,mimeType', supportsAllDrives=True).execute()
     except Exception:
         raise RuntimeError('BLOCKED: cannot read destination folder; grant service account access and Drive API scope') from None
-    if folder.get('mimeType') != 'application/vnd.google-apps.folder' or folder.get('shared') is True:
-        raise RuntimeError('BLOCKED: destination is not an unshared folder')
-    if any(p.get('type') in ('anyone', 'domain') for p in folder.get('permissions', [])):
-        raise RuntimeError('BLOCKED: public/domain folder permission detected')
-    # Idempotent lookup: never overwrite or silently accept an existing file.
+    if folder.get('mimeType') != 'application/vnd.google-apps.folder':
+        raise RuntimeError('BLOCKED: destination is not a Drive folder')
+    require_restricted_permissions(service, FOLDER)
     try:
         existing = service.files().list(q=f"name = '{NAME}' and '{FOLDER}' in parents and trashed = false", fields='files(id,name),nextPageToken', pageSize=100).execute()
     except Exception:
@@ -53,15 +65,16 @@ def main(path):
     else:
         try:
             media = MediaFileUpload(path, mimetype='video/mp4', resumable=True)
-            created = service.files().create(body={'name': NAME, 'parents': [FOLDER], 'description': 'UNAPPROVED REVIEW ONLY; NOT FOR POSTING'}, media_body=media, fields='id,name,parents,mimeType,shared', supportsAllDrives=True).execute()
+            created = service.files().create(body={'name': NAME, 'parents': [FOLDER], 'description': 'UNAPPROVED REVIEW ONLY; NOT FOR POSTING'}, media_body=media, fields='id', supportsAllDrives=True).execute()
             file_id = created['id']
         except Exception:
             raise RuntimeError('BLOCKED: Drive upload failed; verify service account writer access, Drive API and storage policy') from None
         print('DRIVE_CREATED_FILE_ID=' + file_id, flush=True)
     try:
-        metadata = service.files().get(fileId=file_id, fields='id,name,parents,mimeType,shared', supportsAllDrives=True).execute()
-        if FOLDER not in metadata.get('parents', []) or metadata.get('mimeType') != 'video/mp4' or metadata.get('shared') is True:
+        metadata = service.files().get(fileId=file_id, fields='id,name,parents,mimeType', supportsAllDrives=True).execute()
+        if FOLDER not in metadata.get('parents', []) or metadata.get('mimeType') != 'video/mp4':
             raise RuntimeError('BLOCKED: uploaded file metadata/private location verification failed')
+        require_restricted_permissions(service, file_id)
         request = service.files().get_media(fileId=file_id, supportsAllDrives=True)
         sink = io.BytesIO()
         downloader = MediaIoBaseDownload(sink, request)
