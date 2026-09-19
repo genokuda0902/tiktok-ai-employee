@@ -2,7 +2,7 @@ name: Review-only Actions artifact to private Drive (no publishing)
 on:
   workflow_dispatch:
   push:
-    branches: [feature/automation-engine-isolated]
+    branches: [feature/drive-delivery-proof-20260919]
     paths: [.github/workflows/drive-review-artifact-handoff.yml, scripts/drive_review_artifact_handoff.py]
 permissions:
   contents: read
