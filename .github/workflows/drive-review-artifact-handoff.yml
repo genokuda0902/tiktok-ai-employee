@@ -15,9 +15,9 @@ jobs:
     env:
       SOURCE_RUN_ID: '35321564044'
       SOURCE_ARTIFACT_NAME: pi5-v9-review-only
-      SOURCE_ARTIFACT_ID: '10537910824'
+      SOURCE_ARTIFACT_ID: '10585523343'
       DESTINATION_FOLDER_ID: 14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk
-      EXPECTED_SHA256: c5b0bc27be175b9c990cb4ef91d63ef2c35d045ed890c95cb6c02d329c0ae472
+      EXPECTED_SHA256: 2543b274b9a6467400b6559483390ad366d54e01d36f35293e19d5663fb88e5b
       DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.DRIVE_REVIEW_SERVICE_ACCOUNT_JSON }}
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -32,7 +32,7 @@ jobs:
           fi
       - name: Install Google Drive client
         run: python -m pip install 'google-api-python-client>=2,<3' 'google-auth>=2,<3'
-      - name: Download original GitHub Actions artifact ZIP (no regeneration)
+      - name: Download fresh GitHub Actions artifact ZIP (no regeneration)
         shell: bash
         run: |
           set -euo pipefail
