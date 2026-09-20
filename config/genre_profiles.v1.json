@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "experimental_not_connected_to_production",
+  "default_policy": {
+    "publish_mode": "employee_manual_only",
+    "quality_approval_required": true,
+    "asset_policy": "approved_or_public_safe_only",
+    "missing_metrics": "null_not_zero",
+    "claims": "verify_or_block",
+    "private_data": "block",
+    "optimization": "compare_within_genre_and_account; do_not_promise_virality"
+  },
+  "genres": {
+    "ai_productivity": {"label": "AI・業務時短", "hook": "show_concrete_before_after", "visual": ["sanitized_screen_recording", "approved_demo"], "beats": ["result", "problem", "demonstration", "conditions", "takeaway"], "primary_metric": "follows_per_1000_views", "qa": ["no_confidential_screen", "no_unverified_time_saved"]},
+    "trivia": {"label": "雑学・知識", "hook": "specific_question", "visual": ["verified_diagram", "licensed_illustration"], "beats": ["question", "answer", "evidence", "context"], "primary_metric": "completion_rate", "qa": ["fact_sources_recorded"]},
+    "cooking": {"label": "料理・グルメ", "hook": "show_finished_dish", "visual": ["approved_food_footage", "process_closeups"], "beats": ["finished_dish", "ingredients", "steps", "result"], "primary_metric": "saves_per_1000_views", "qa": ["recipe_steps_consistent", "no_fake_taste_test"]},
+    "beauty": {"label": "美容・身だしなみ", "hook": "identify_specific_problem", "visual": ["approved_product_demo", "controlled_comparison"], "beats": ["problem", "method", "comparison", "limitations"], "primary_metric": "saves_per_1000_views", "qa": ["no_misleading_retouch", "no_unverified_efficacy"]},
+    "finance": {"label": "お金・節約", "hook": "specific_cost_question", "visual": ["calculation_overlay", "verified_table"], "beats": ["cost", "assumptions", "calculation", "caveats"], "primary_metric": "saves_per_1000_views", "qa": ["numbers_and_sources_verified", "no_guaranteed_returns"]},
+    "wellness": {"label": "健康・生活習慣", "hook": "everyday_problem", "visual": ["safe_demonstration", "approved_illustration"], "beats": ["problem", "method", "limitations", "when_to_seek_help"], "primary_metric": "completion_rate", "qa": ["no_unverified_medical_claim", "no_unsafe_instruction"]},
+    "travel": {"label": "旅行・観光", "hook": "show_real_destination", "visual": ["licensed_location_footage", "route_map"], "beats": ["destination", "access", "budget_date", "itinerary"], "primary_metric": "saves_per_1000_views", "qa": ["location_footage_matches", "prices_dates_verified"]},
+    "product_demo": {"label": "商品紹介・便利グッズ", "hook": "show_problem_and_use", "visual": ["actual_product_demo", "detail_closeup"], "beats": ["problem", "demonstration", "pros_cons", "fit"], "primary_metric": "shares_per_1000_views", "qa": ["no_fabricated_personal_use", "disclose_sponsorship_if_applicable"]},
+    "story": {"label": "ストーリー・エンタメ", "hook": "establish_conflict", "visual": ["consistent_character_scenes", "approved_animation"], "beats": ["setup", "conflict", "development", "resolution"], "primary_metric": "completion_rate", "qa": ["character_consistency", "fiction_labeled_when_needed"]},
+    "business": {"label": "仕事術・ビジネス", "hook": "concrete_workplace_problem", "visual": ["sanitized_workflow", "approved_office_footage"], "beats": ["problem", "process", "example", "application"], "primary_metric": "follows_per_1000_views", "qa": ["no_customer_or_employee_data", "no_unverified_results"]}
+  }
+}
