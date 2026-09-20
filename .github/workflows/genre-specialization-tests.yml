@@ -1,0 +1,26 @@
+name: Genre specialization isolated tests
+on:
+  pull_request:
+    paths:
+      - 'config/genre_profiles.v1.json'
+      - 'src/genre_profiles.py'
+      - 'src/genre_scene_planner.py'
+      - 'tests/test_genre_profiles.py'
+      - 'tests/test_genre_scene_planner.py'
+      - '.github/workflows/genre-specialization-tests.yml'
+  push:
+    branches:
+      - feature/genre-specialization-v1-20260921
+permissions:
+  contents: read
+jobs:
+  genre-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run genre tests without credentials or publishing
+        run: python -m unittest discover -s tests -p 'test_genre*.py' -v
