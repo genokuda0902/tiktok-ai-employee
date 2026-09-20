@@ -11,6 +11,14 @@ FOLDER = '14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk'
 NAME = 'pi5_review_20s_REVIEW_ONLY_run35321564044_attempt2.mp4'
 
 
+def drive_error(stage, exc):
+    """Report only HTTP status and reason; never print request URLs, response bodies or credentials."""
+    status = getattr(getattr(exc, 'resp', None), 'status', None)
+    reason = getattr(getattr(exc, 'resp', None), 'reason', None)
+    safe_reason = str(reason) if reason in ('Forbidden', 'Not Found', 'Unauthorized', 'Bad Request', 'Conflict') else 'unknown'
+    raise RuntimeError(f'BLOCKED: {stage}; Drive HTTP status={status or "unknown"}, reason={safe_reason}') from None
+
+
 def require_restricted_permissions(service, file_id):
     """Explicitly reject public/domain permissions; restricted user sharing is allowed."""
     try:
@@ -18,8 +26,8 @@ def require_restricted_permissions(service, file_id):
             fileId=file_id, fields='nextPageToken,permissions(id,type,role)',
             pageSize=100, supportsAllDrives=True,
         ).execute()
-    except Exception:
-        raise RuntimeError('BLOCKED: cannot verify Drive permissions') from None
+    except Exception as exc:
+        drive_error('cannot verify Drive permissions', exc)
     if permissions.get('nextPageToken'):
         raise RuntimeError('BLOCKED: Drive permission list incomplete')
     if any(p.get('type') not in ('user', 'group') for p in permissions.get('permissions', [])):
@@ -37,7 +45,7 @@ def main(path):
     try:
         info = json.loads(raw)
         credentials = service_account.Credentials.from_service_account_info(
-            info, scopes=['https://www.googleapis.com/auth/drive.file'])
+            info, scopes=['https://www.googleapis.com/auth/drive'])
     except Exception:
         raise RuntimeError('BLOCKED: invalid Drive service account JSON; check secret configuration') from None
     service = build('drive', 'v3', credentials=credentials, cache_discovery=False)
@@ -48,15 +56,15 @@ def main(path):
     print('SOURCE_SHA256=' + digest, flush=True)
     try:
         folder = service.files().get(fileId=FOLDER, fields='id,mimeType', supportsAllDrives=True).execute()
-    except Exception:
-        raise RuntimeError('BLOCKED: cannot read destination folder; grant service account access and Drive API scope') from None
+    except Exception as exc:
+        drive_error('cannot read destination folder', exc)
     if folder.get('mimeType') != 'application/vnd.google-apps.folder':
         raise RuntimeError('BLOCKED: destination is not a Drive folder')
     require_restricted_permissions(service, FOLDER)
     try:
         existing = service.files().list(q=f"name = '{NAME}' and '{FOLDER}' in parents and trashed = false", fields='files(id,name),nextPageToken', pageSize=100).execute()
-    except Exception:
-        raise RuntimeError('BLOCKED: cannot list private folder; grant service account folder access') from None
+    except Exception as exc:
+        drive_error('cannot list private folder', exc)
     if existing.get('nextPageToken') or len(existing.get('files', [])) > 1:
         raise RuntimeError('BLOCKED: ambiguous existing Drive files; manual reconciliation required')
     if existing.get('files'):
@@ -67,8 +75,8 @@ def main(path):
             media = MediaFileUpload(path, mimetype='video/mp4', resumable=True)
             created = service.files().create(body={'name': NAME, 'parents': [FOLDER], 'description': 'UNAPPROVED REVIEW ONLY; NOT FOR POSTING'}, media_body=media, fields='id', supportsAllDrives=True).execute()
             file_id = created['id']
-        except Exception:
-            raise RuntimeError('BLOCKED: Drive upload failed; verify service account writer access, Drive API and storage policy') from None
+        except Exception as exc:
+            drive_error('Drive upload failed', exc)
         print('DRIVE_CREATED_FILE_ID=' + file_id, flush=True)
     try:
         metadata = service.files().get(fileId=file_id, fields='id,name,parents,mimeType', supportsAllDrives=True).execute()
@@ -84,8 +92,8 @@ def main(path):
         actual = hashlib.sha256(sink.getvalue()).hexdigest()
     except RuntimeError:
         raise
-    except Exception:
-        raise RuntimeError('BLOCKED: Drive authenticated readback failed; verify service account reader access') from None
+    except Exception as exc:
+        drive_error('Drive authenticated readback failed', exc)
     print('DRIVE_FILE_ID=' + file_id, flush=True)
     print('DRIVE_READBACK_SHA256=' + actual, flush=True)
     if actual != EXPECTED:
