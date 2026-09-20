@@ -28,12 +28,14 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_genre*.py' -v
       - name: Build zero-budget review MP4
         run: |
+          set -euxo pipefail
           mkdir -p review_assets review_output
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x111827:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/result.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x1f2937:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/problem.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x374151:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/demonstration.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x4b5563:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/conditions.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x6b7280:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/takeaway.png
+          # Ubuntu runner PNG encoding can fail during frame-thread init; force one encoder thread.
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x111827:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/result.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x1f2937:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/problem.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x374151:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/demonstration.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x4b5563:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/conditions.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x6b7280:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/takeaway.png
           for beat in result problem demonstration conditions takeaway; do ffmpeg -hide_banner -loglevel error -y -f lavfi -i "sine=frequency=440:sample_rate=48000:duration=4" -filter:a "volume=0.04" -ac 2 review_assets/${beat}.wav; done
           PYTHONPATH=src python - <<'PY'
           import json
