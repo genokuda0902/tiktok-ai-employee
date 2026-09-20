@@ -30,12 +30,24 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p review_assets review_output
-          # Ubuntu runner PNG encoding can fail during frame-thread init; force one encoder thread.
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x111827:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/result.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x1f2937:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/problem.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x374151:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/demonstration.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x4b5563:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/conditions.png
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x6b7280:s=1080x1920:d=1:r=30" -frames:v 1 -threads 1 review_assets/takeaway.png
+          # Create deterministic solid PNGs with Python stdlib only. This removes the
+          # Ubuntu FFmpeg PNG encoder path that failed before rendering began.
+          python - <<'PY'
+          import struct, zlib
+          from pathlib import Path
+          colors = {
+              'result': (17,24,39), 'problem': (31,41,55),
+              'demonstration': (55,65,81), 'conditions': (75,85,99),
+              'takeaway': (107,114,128),
+          }
+          w,h=1080,1920
+          for name,(r,g,b) in colors.items():
+              raw = b''.join(b'\x00' + bytes((r,g,b))*w for _ in range(h))
+              def chunk(kind,data):
+                  return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data)&0xffffffff)
+              png = b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR',struct.pack('>IIBBBBB',w,h,8,2,0,0,0)) + chunk(b'IDAT',zlib.compress(raw,6)) + chunk(b'IEND',b'')
+              Path(f'review_assets/{name}.png').write_bytes(png)
+          PY
           for beat in result problem demonstration conditions takeaway; do ffmpeg -hide_banner -loglevel error -y -f lavfi -i "sine=frequency=440:sample_rate=48000:duration=4" -filter:a "volume=0.04" -ac 2 review_assets/${beat}.wav; done
           PYTHONPATH=src python - <<'PY'
           import json
