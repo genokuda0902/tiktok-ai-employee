@@ -5,8 +5,10 @@ on:
       - 'config/genre_profiles.v1.json'
       - 'src/genre_profiles.py'
       - 'src/genre_scene_planner.py'
+      - 'src/genre_video_renderer.py'
       - 'tests/test_genre_profiles.py'
       - 'tests/test_genre_scene_planner.py'
+      - 'tests/test_genre_video_renderer.py'
       - '.github/workflows/genre-specialization-tests.yml'
   push:
     branches:
@@ -16,7 +18,7 @@ permissions:
 jobs:
   genre-tests:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,3 +26,35 @@ jobs:
           python-version: '3.11'
       - name: Run genre tests without credentials or publishing
         run: python -m unittest discover -s tests -p 'test_genre*.py' -v
+      - name: Build zero-budget review MP4
+        run: |
+          mkdir -p review_assets review_output
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x111827:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/result.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x1f2937:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/problem.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x374151:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/demonstration.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x4b5563:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/conditions.png
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x6b7280:s=1080x1920:d=4:r=30" -frames:v 1 review_assets/takeaway.png
+          for beat in result problem demonstration conditions takeaway; do ffmpeg -hide_banner -loglevel error -y -f lavfi -i "sine=frequency=440:sample_rate=48000:duration=4" -filter:a "volume=0.04" -ac 2 review_assets/${beat}.wav; done
+          PYTHONPATH=src python - <<'PY'
+          import json
+          from pathlib import Path
+          from genre_video_renderer import render_review_video
+          beats=['result','problem','demonstration','conditions','takeaway']
+          captions=['結論を先に見せる','その作業、まだ手入力？','3ステップで時短','条件を確認して使う','保存してあとで試す']
+          scenes=[]
+          for i,(beat,caption) in enumerate(zip(beats,captions)):
+              scenes.append({'index':i,'beat':beat,'asset_id':'ci-'+beat,'visual_kind':'approved_demo','asset_approved':True,'audio_approved':True,'narration':caption,'caption':caption,'duration_seconds':4,'image_path':beat+'.png','audio_path':beat+'.wav'})
+          manifest={'schema_version':1,'status':'draft_review_only','genre_id':'ai_productivity','genre_label':'AI・業務時短','topic':'ゼロ予算動画品質改善','hook_strategy':'show_concrete_before_after','scenes':scenes,'qa_requirements':['no_confidential_screen','no_unverified_time_saved'],'primary_metric':'follows_per_1000_views','evidence':[],'quality_approved':False,'delivery_approved':False,'publish_mode':'employee_manual_only','render_ready':False}
+          Path('review_manifest.json').write_text(json.dumps(manifest,ensure_ascii=False),encoding='utf-8')
+          print(render_review_video('review_manifest.json','review_assets','review_output/ai_productivity_review.mp4'))
+          PY
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of default=nw=1 review_output/ai_productivity_review.mp4
+          ffprobe -v error -select_streams a:0 -show_entries stream=codec_name,sample_rate,channels -of default=nw=1 review_output/ai_productivity_review.mp4
+          ffmpeg -v error -i review_output/ai_productivity_review.mp4 -f null -
+      - name: Upload review MP4 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zero-budget-ai-productivity-review
+          path: review_output/ai_productivity_review.mp4
+          if-no-files-found: error
+          retention-days: 7
