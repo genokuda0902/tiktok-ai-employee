@@ -12,20 +12,25 @@ NAME = 'pi5_review_20s_REVIEW_ONLY_run35321564044_attempt2.mp4'
 
 
 def drive_error(stage, exc):
-    """Report only HTTP status and reason; never print request URLs, response bodies or credentials."""
+    """Only emit status and an explicitly allowlisted API error code, never bodies or credentials."""
     status = getattr(getattr(exc, 'resp', None), 'status', None)
-    reason = getattr(getattr(exc, 'resp', None), 'reason', None)
-    safe_reason = str(reason) if reason in ('Forbidden', 'Not Found', 'Unauthorized', 'Bad Request', 'Conflict') else 'unknown'
-    raise RuntimeError(f'BLOCKED: {stage}; Drive HTTP status={status or "unknown"}, reason={safe_reason}') from None
+    reason = 'unknown'
+    allowed = {'storageQuotaExceeded', 'teamDriveFileLimitExceeded', 'insufficientFilePermissions', 'insufficientPermissions', 'forbidden', 'rateLimitExceeded', 'userRateLimitExceeded', 'dailyLimitExceeded', 'domainPolicy', 'appNotAuthorizedToFile', 'cannotShareAcrossDomains', 'notFound', 'fileNotFound', 'activeItemCreationLimitExceeded', 'sharedDriveNotFound', 'invalidSharingRequest'}
+    try:
+        payload = json.loads(getattr(exc, 'content', b'{}'))
+        errors = payload.get('error', {}).get('errors', [])
+        code = errors[0].get('reason') if errors else None
+        if isinstance(code, str) and code in allowed:
+            reason = code
+    except (ValueError, TypeError, AttributeError, IndexError):
+        pass
+    raise RuntimeError(f'BLOCKED: {stage}; Drive HTTP status={status or "unknown"}, code={reason}') from None
 
 
 def require_restricted_permissions(service, file_id):
-    """Explicitly reject public/domain permissions; restricted user sharing is allowed."""
+    """Reject public/domain permissions; restricted user sharing is allowed."""
     try:
-        permissions = service.permissions().list(
-            fileId=file_id, fields='nextPageToken,permissions(id,type,role)',
-            pageSize=100, supportsAllDrives=True,
-        ).execute()
+        permissions = service.permissions().list(fileId=file_id, fields='nextPageToken,permissions(id,type,role)', pageSize=100, supportsAllDrives=True).execute()
     except Exception as exc:
         drive_error('cannot verify Drive permissions', exc)
     if permissions.get('nextPageToken'):
@@ -38,14 +43,12 @@ def main(path):
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
-
     raw = os.environ.get('DRIVE_SERVICE_ACCOUNT_JSON', '')
     if not raw:
         raise RuntimeError('BLOCKED: DRIVE_REVIEW_SERVICE_ACCOUNT_JSON missing')
     try:
         info = json.loads(raw)
-        credentials = service_account.Credentials.from_service_account_info(
-            info, scopes=['https://www.googleapis.com/auth/drive'])
+        credentials = service_account.Credentials.from_service_account_info(info, scopes=['https://www.googleapis.com/auth/drive'])
     except Exception:
         raise RuntimeError('BLOCKED: invalid Drive service account JSON; check secret configuration') from None
     service = build('drive', 'v3', credentials=credentials, cache_discovery=False)
