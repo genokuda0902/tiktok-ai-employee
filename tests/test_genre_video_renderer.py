@@ -24,7 +24,7 @@ class RendererTests(unittest.TestCase):
             with patch('genre_video_renderer.subprocess.run') as run:
                 with self.assertRaises(ValueError): render_review_video(path, root, root / 'review.mp4')
                 run.assert_not_called()
-    def test_renderer_applies_typing_processing_result_before_after_and_mobile_hook(self):
+    def test_renderer_applies_typing_processing_measurable_proof_and_mobile_hook(self):
         profile = load_profiles()['genres']['ai_productivity']; beats = profile['beats']
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); scenes = []
@@ -35,11 +35,12 @@ class RendererTests(unittest.TestCase):
             path = root / 'manifest.json'; path.write_text(json.dumps(manifest), encoding='utf-8')
             with patch('genre_video_renderer.subprocess.run') as run: render_review_video(path, root, root / 'review.mp4')
             scene_calls = [call.args[0] for call in run.call_args_list if '-vf' in call.args[0]]; self.assertEqual(len(scene_calls), len(beats)); filters=[]
-            for command in scene_calls:
+            expected_before=('15分','12行','8項目','3画面','5操作'); expected_after=('1分','1行','3項目','1画面','1操作')
+            for index, command in enumerate(scene_calls):
                 vf=command[command.index('-vf')+1]; filters.append(vf)
                 self.assertIn('s=1080x1920:fps=30', vf); self.assertIn("drawtext=text='●'", vf); self.assertIn("drawtext=text='○'", vf); self.assertIn("drawtext=text='処理中…'", vf)
-                self.assertIn("drawtext=text='BEFORE'", vf); self.assertIn("drawtext=text='AFTER'", vf); self.assertIn("drawtext=text='手作業'", vf); self.assertIn("drawtext=text='自動化'", vf)
-                self.assertIn("enable='gte(t,3.040)'", vf); self.assertIn('x=100:y=820:w=410:h=210', vf); self.assertIn('x=570:y=820:w=410:h=210', vf); self.assertIn('x=54:y=1450:w=972:h=280', vf)
+                self.assertIn("drawtext=text='BEFORE'", vf); self.assertIn("drawtext=text='AFTER'", vf); self.assertIn(expected_before[index], vf); self.assertIn(expected_after[index], vf)
+                self.assertIn('x=100:y=820:w=410:h=210', vf); self.assertIn('x=570:y=820:w=410:h=210', vf); self.assertIn('x=54:y=1450:w=972:h=280', vf)
             self.assertIn('fontsize=72', filters[0]); self.assertIn("enable='between(t,0,2.2)'", filters[0]); self.assertGreaterEqual(len(set(filters)), 4)
 
 if __name__ == '__main__': unittest.main()
