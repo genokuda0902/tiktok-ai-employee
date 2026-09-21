@@ -73,6 +73,7 @@ def main(path):
     except Exception:
         raise RuntimeError(
             'BLOCKED: invalid Drive credential JSON; check secret configuration') from None
+    print('DRIVE_AUTH_KIND=' + credential_kind, flush=True)
     service = build('drive', 'v3', credentials=credentials, cache_discovery=False)
     data = Path(path).read_bytes()
     digest = hashlib.sha256(data).hexdigest()
@@ -85,9 +86,11 @@ def main(path):
             fields=('id,mimeType,driveId,capabilities(canAddChildren),'
                     'permissions(id,type,role)'),
             supportsAllDrives=True).execute()
-    except Exception:
+    except Exception as exc:
+        reason = _drive_error_reason(exc) or 'unknown'
         raise RuntimeError(
-            'BLOCKED: cannot read destination folder; grant the selected Drive identity access') from None
+            'BLOCKED: cannot read destination folder; grant the selected Drive '
+            f'identity access; reason={reason}') from None
     _validate_destination(folder, credential_kind)
     # Idempotent lookup: never overwrite or silently accept an existing file.
     try:
