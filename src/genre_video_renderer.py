@@ -25,23 +25,31 @@ def _motion_filter(scene_index):
 
 
 def _interaction_filter(scene_index, seconds):
-    """Add review-only cursor, click pulse, and visible post-click UI state change."""
+    """Add cursor/click plus a staged processing -> result transition."""
     targets = ((760, 620), (520, 860), (820, 1110), (610, 1320), (850, 720))
     labels = ('完了', '入力済み', '実行中', '確認済み', '保存済み')
     tx, ty = targets[scene_index % len(targets)]
     label = labels[scene_index % len(labels)]
     duration = max(float(seconds), 1.0)
-    click_at = min(max(duration * 0.62, 0.7), duration - 0.2)
-    click_end = min(click_at + 0.18, duration)
-    result_at = min(click_end + 0.04, duration)
+    click_at = min(max(duration * 0.50, 0.7), duration - 0.7)
+    click_end = min(click_at + 0.16, duration)
+    processing_at = min(click_end + 0.04, duration)
+    result_at = min(processing_at + 0.55, duration)
+    bar_end = min(result_at, duration)
     return (
         "drawtext=text='●':fontcolor=white:fontsize=34:borderw=3:bordercolor=black:"
-        f"x='120+({tx}-120)*min(t/{duration:.3f},1)':"
-        f"y='520+({ty}-520)*min(t/{duration:.3f},1)',"
+        f"x='120+({tx}-120)*min(t/{click_at:.3f},1)':"
+        f"y='520+({ty}-520)*min(t/{click_at:.3f},1)',"
         "drawtext=text='○':fontcolor=white@0.95:fontsize=64:borderw=2:bordercolor=black:"
         f"x={tx}-32:y={ty}-40:enable='between(t,{click_at:.3f},{click_end:.3f})',"
         "drawbox=x=650:y=520:w=330:h=150:color=black@0.84:t=fill:"
-        f"enable='gte(t,{result_at:.3f})',"
+        f"enable='gte(t,{processing_at:.3f})',"
+        "drawtext=text='処理中…':fontcolor=white:fontsize=40:borderw=3:bordercolor=black:"
+        f"x=715:y=555:enable='between(t,{processing_at:.3f},{result_at:.3f})',"
+        "drawbox=x=700:y=625:w=230:h=12:color=white@0.25:t=fill:"
+        f"enable='between(t,{processing_at:.3f},{bar_end:.3f})',"
+        "drawbox=x=700:y=625:w='230*min(max((t-" + f"{processing_at:.3f})/0.55,0),1)'" + ":h=12:color=white@0.95:t=fill:"
+        f"enable='between(t,{processing_at:.3f},{bar_end:.3f})',"
         f"drawtext=text='{label}':fontcolor=white:fontsize=46:borderw=3:bordercolor=black:"
         f"x=715:y=570:enable='gte(t,{result_at:.3f})'"
     )
