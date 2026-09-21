@@ -39,7 +39,7 @@ class RendererTests(unittest.TestCase):
                     render_review_video(path, root, root / 'review.mp4')
                 run.assert_not_called()
 
-    def test_renderer_applies_varied_motion_to_every_scene(self):
+    def test_renderer_applies_varied_motion_and_mobile_hook_captions(self):
         profile = load_profiles()['genres']['ai_productivity']
         beats = profile['beats']
         with tempfile.TemporaryDirectory() as directory:
@@ -65,6 +65,14 @@ class RendererTests(unittest.TestCase):
                 self.assertIn('zoompan=', vf)
                 self.assertIn('s=1080x1920:fps=30', vf)
                 self.assertIn('drawtext=', vf)
+                self.assertIn('borderw=3', vf)
+                self.assertIn('x=54:y=1450:w=972:h=280', vf)
+            first = filters[0]
+            self.assertIn('fontsize=72', first)
+            self.assertIn("enable='between(t,0,2.2)'", first)
+            self.assertIn('x=54:y=180:w=972:h=330', first)
+            for later in filters[1:]:
+                self.assertNotIn('fontsize=72', later)
             self.assertGreaterEqual(len(set(filters)), 4)
 
 
