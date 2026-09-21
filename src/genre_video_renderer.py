@@ -25,21 +25,25 @@ def _motion_filter(scene_index):
 
 
 def _interaction_filter(scene_index, seconds):
-    """Add a deterministic moving cursor and brief click pulse to imply an operation sequence.
-
-    This is deliberately an abstract review cue, not a claim that a real app was operated.
-    """
+    """Add review-only cursor, click pulse, and visible post-click UI state change."""
     targets = ((760, 620), (520, 860), (820, 1110), (610, 1320), (850, 720))
+    labels = ('完了', '入力済み', '実行中', '確認済み', '保存済み')
     tx, ty = targets[scene_index % len(targets)]
+    label = labels[scene_index % len(labels)]
     duration = max(float(seconds), 1.0)
     click_at = min(max(duration * 0.62, 0.7), duration - 0.2)
     click_end = min(click_at + 0.18, duration)
+    result_at = min(click_end + 0.04, duration)
     return (
         "drawtext=text='●':fontcolor=white:fontsize=34:borderw=3:bordercolor=black:"
         f"x='120+({tx}-120)*min(t/{duration:.3f},1)':"
         f"y='520+({ty}-520)*min(t/{duration:.3f},1)',"
         "drawtext=text='○':fontcolor=white@0.95:fontsize=64:borderw=2:bordercolor=black:"
-        f"x={tx}-32:y={ty}-40:enable='between(t,{click_at:.3f},{click_end:.3f})'"
+        f"x={tx}-32:y={ty}-40:enable='between(t,{click_at:.3f},{click_end:.3f})',"
+        "drawbox=x=650:y=520:w=330:h=150:color=black@0.84:t=fill:"
+        f"enable='gte(t,{result_at:.3f})',"
+        f"drawtext=text='{label}':fontcolor=white:fontsize=46:borderw=3:bordercolor=black:"
+        f"x=715:y=570:enable='gte(t,{result_at:.3f})'"
     )
 
 
