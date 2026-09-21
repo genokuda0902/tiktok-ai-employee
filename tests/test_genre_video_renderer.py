@@ -24,7 +24,7 @@ class RendererTests(unittest.TestCase):
             with patch('genre_video_renderer.subprocess.run') as run:
                 with self.assertRaises(ValueError): render_review_video(path, root, root / 'review.mp4')
                 run.assert_not_called()
-    def test_renderer_applies_typing_processing_measurable_proof_and_mobile_hook(self):
+    def test_renderer_applies_typing_processing_measurable_proof_animated_graph_and_mobile_hook(self):
         profile = load_profiles()['genres']['ai_productivity']; beats = profile['beats']
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory); scenes = []
@@ -41,6 +41,7 @@ class RendererTests(unittest.TestCase):
                 self.assertIn('s=1080x1920:fps=30', vf); self.assertIn("drawtext=text='●'", vf); self.assertIn("drawtext=text='○'", vf); self.assertIn("drawtext=text='処理中…'", vf)
                 self.assertIn("drawtext=text='BEFORE'", vf); self.assertIn("drawtext=text='AFTER'", vf); self.assertIn(expected_before[index], vf); self.assertIn(expected_after[index], vf)
                 self.assertIn('x=100:y=820:w=410:h=210', vf); self.assertIn('x=570:y=820:w=410:h=210', vf); self.assertIn('x=54:y=1450:w=972:h=280', vf)
+                self.assertIn('x=150:y=1060:w=780:h=18', vf); self.assertIn("780*min(max((t-", vf); self.assertIn("drawtext=text='変化を可視化'", vf)
             self.assertIn('fontsize=72', filters[0]); self.assertIn("enable='between(t,0,2.2)'", filters[0]); self.assertGreaterEqual(len(set(filters)), 4)
 
 if __name__ == '__main__': unittest.main()
