@@ -39,7 +39,7 @@ class RendererTests(unittest.TestCase):
                     render_review_video(path, root, root / 'review.mp4')
                 run.assert_not_called()
 
-    def test_renderer_applies_motion_filter_to_every_scene(self):
+    def test_renderer_applies_varied_motion_to_every_scene(self):
         profile = load_profiles()['genres']['ai_productivity']
         beats = profile['beats']
         with tempfile.TemporaryDirectory() as directory:
@@ -58,11 +58,14 @@ class RendererTests(unittest.TestCase):
                 render_review_video(path, root, root / 'review.mp4')
             scene_calls = [call.args[0] for call in run.call_args_list if '-vf' in call.args[0]]
             self.assertEqual(len(scene_calls), len(beats))
+            filters = []
             for command in scene_calls:
                 vf = command[command.index('-vf') + 1]
+                filters.append(vf)
                 self.assertIn('zoompan=', vf)
                 self.assertIn('s=1080x1920:fps=30', vf)
                 self.assertIn('drawtext=', vf)
+            self.assertGreaterEqual(len(set(filters)), 4)
 
 
 if __name__ == '__main__':
