@@ -32,6 +32,8 @@ jobs:
           ffmpeg -version | head -1
           ffprobe -version | head -1
           open_jtalk -h 2>&1 | head -2 || true
+          dpkg -L open-jtalk-mecab-naist-jdic | grep '/sys.dic$' | head -1
+          dpkg -L hts-voice-nitech-jp-atr503-m001 | grep '\.htsvoice$' | head -1
       - name: Run genre tests without credentials or publishing
         run: python -m unittest discover -s tests -p 'test_genre*.py' -v
       - name: Create deterministic review images
@@ -54,10 +56,11 @@ jobs:
       - name: Create zero-budget Japanese review narration
         run: |
           set -euxo pipefail
-          VOICE=$(find /usr/share -name '*.htsvoice' | head -1)
-          DIC=$(find /var/lib /usr/share -type d -name 'naist-jdic' 2>/dev/null | head -1)
-          test -n "$VOICE"
-          test -n "$DIC"
+          VOICE=$(dpkg -L hts-voice-nitech-jp-atr503-m001 | grep '\.htsvoice$' | head -1)
+          SYS_DIC=$(dpkg -L open-jtalk-mecab-naist-jdic | grep '/sys.dic$' | head -1)
+          DIC=$(dirname "$SYS_DIC")
+          test -f "$VOICE"
+          test -f "$SYS_DIC"
           printf '%s\n' '結論を先に見せます。' > review_assets/result.txt
           printf '%s\n' 'その作業、まだ手入力ですか。' > review_assets/problem.txt
           printf '%s\n' '三つのステップで時短します。' > review_assets/demonstration.txt
