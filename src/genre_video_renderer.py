@@ -24,6 +24,25 @@ def _motion_filter(scene_index):
     return base + ',' + motions[scene_index % len(motions)]
 
 
+def _interaction_filter(scene_index, seconds):
+    """Add a deterministic moving cursor and brief click pulse to imply an operation sequence.
+
+    This is deliberately an abstract review cue, not a claim that a real app was operated.
+    """
+    targets = ((760, 620), (520, 860), (820, 1110), (610, 1320), (850, 720))
+    tx, ty = targets[scene_index % len(targets)]
+    duration = max(float(seconds), 1.0)
+    click_at = min(max(duration * 0.62, 0.7), duration - 0.2)
+    click_end = min(click_at + 0.18, duration)
+    return (
+        "drawtext=text='●':fontcolor=white:fontsize=34:borderw=3:bordercolor=black:"
+        f"x='120+({tx}-120)*min(t/{duration:.3f},1)':"
+        f"y='520+({ty}-520)*min(t/{duration:.3f},1)',"
+        "drawtext=text='○':fontcolor=white@0.95:fontsize=64:borderw=2:bordercolor=black:"
+        f"x={tx}-32:y={ty}-40:enable='between(t,{click_at:.3f},{click_end:.3f})'"
+    )
+
+
 def _caption_filter(scene_index, caption_path):
     """High-contrast mobile-safe captions; scene zero gets a stronger 0-2s hook treatment."""
     if scene_index == 0:
@@ -88,7 +107,7 @@ def render_review_video(manifest_path, asset_root, output_path, ffmpeg='ffmpeg')
             caption.write_text(scene['caption'], encoding='utf-8')
             clip = tmp / f'scene_{i}.mp4'
             motion = _motion_filter(i)
-            vf = motion + ',' + _caption_filter(i, caption)
+            vf = motion + ',' + _interaction_filter(i, seconds) + ',' + _caption_filter(i, caption)
             subprocess.run([ffmpeg, '-hide_banner', '-loglevel', 'error', '-y', '-loop', '1', '-framerate', '30', '-i', str(image), '-i', str(audio), '-t', str(seconds), '-vf', vf, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-r', '30', '-c:a', 'aac', '-ar', '48000', '-ac', '2', '-af', 'apad', '-movflags', '+faststart', str(clip)], check=True)
             clips.append(clip)
         listing = tmp / 'clips.txt'
