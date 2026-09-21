@@ -25,23 +25,41 @@ def _motion_filter(scene_index):
 
 
 def _interaction_filter(scene_index, seconds):
-    """Add cursor/click plus a staged processing -> result transition."""
+    """Add cursor/click, staged typing, processing progress, then result state."""
     targets = ((760, 620), (520, 860), (820, 1110), (610, 1320), (850, 720))
     labels = ('完了', '入力済み', '実行中', '確認済み', '保存済み')
+    prompts = ('AIで集計', '表を更新', '要点を抽出', '結果を確認', '内容を保存')
     tx, ty = targets[scene_index % len(targets)]
     label = labels[scene_index % len(labels)]
+    prompt = prompts[scene_index % len(prompts)]
     duration = max(float(seconds), 1.0)
-    click_at = min(max(duration * 0.50, 0.7), duration - 0.7)
-    click_end = min(click_at + 0.16, duration)
-    processing_at = min(click_end + 0.04, duration)
+    click_at = min(max(duration * 0.38, 0.65), duration - 1.35)
+    click_end = min(click_at + 0.14, duration)
+    typing_at = min(click_end + 0.04, duration)
+    typing_end = min(typing_at + 0.62, duration)
+    processing_at = min(typing_end + 0.05, duration)
     result_at = min(processing_at + 0.55, duration)
     bar_end = min(result_at, duration)
+    # Reveal the prompt in three deterministic chunks. This avoids external screen
+    # recording while giving all ten genres a reusable input -> process -> result beat.
+    p1 = prompt[:max(1, len(prompt)//3)]
+    p2 = prompt[:max(2, (len(prompt)*2)//3)]
     return (
         "drawtext=text='●':fontcolor=white:fontsize=34:borderw=3:bordercolor=black:"
         f"x='120+({tx}-120)*min(t/{click_at:.3f},1)':"
         f"y='520+({ty}-520)*min(t/{click_at:.3f},1)',"
         "drawtext=text='○':fontcolor=white@0.95:fontsize=64:borderw=2:bordercolor=black:"
         f"x={tx}-32:y={ty}-40:enable='between(t,{click_at:.3f},{click_end:.3f})',"
+        "drawbox=x=170:y=1180:w=740:h=120:color=black@0.82:t=fill:"
+        f"enable='between(t,{typing_at:.3f},{processing_at:.3f})',"
+        f"drawtext=text='{p1}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:"
+        f"enable='between(t,{typing_at:.3f},{typing_at + 0.20:.3f})',"
+        f"drawtext=text='{p2}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:"
+        f"enable='between(t,{typing_at + 0.20:.3f},{typing_at + 0.40:.3f})',"
+        f"drawtext=text='{prompt}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:"
+        f"enable='between(t,{typing_at + 0.40:.3f},{processing_at:.3f})',"
+        "drawtext=text='▌':fontcolor=white:fontsize=40:x=840:y=1213:"
+        f"enable='between(t,{typing_at:.3f},{processing_at:.3f})',"
         "drawbox=x=650:y=520:w=330:h=150:color=black@0.84:t=fill:"
         f"enable='gte(t,{processing_at:.3f})',"
         "drawtext=text='処理中…':fontcolor=white:fontsize=40:borderw=3:bordercolor=black:"
