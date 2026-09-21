@@ -6,7 +6,7 @@ import os
 import sys
 from pathlib import Path
 
-EXPECTED = 'c5b0bc27be175b9c990cb4ef91d63ef2c35d045ed890c95cb6c02d329c0ae472'
+EXPECTED = 'd8b3c0736dbf29cbf528ccca19acdd7172175b73ec00e7d23a9b3b4f5933838f'
 FOLDER = '14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk'
 NAME = 'pi5_review_20s_REVIEW_ONLY.mp4'
 
