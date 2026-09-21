@@ -11,6 +11,19 @@ from pathlib import Path
 from genre_profiles import plan_for_genre
 
 
+def _motion_filter(scene_index):
+    """Deterministic per-scene motion to avoid a repetitive static-slideshow feel."""
+    base = "scale=1200:2134:force_original_aspect_ratio=increase,crop=1200:2134"
+    motions = (
+        "zoompan=z='min(zoom+0.0010,1.10)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps=30",
+        "zoompan=z='min(zoom+0.0008,1.08)':x='max(0,(iw-iw/zoom)*on/(30*4))':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps=30",
+        "zoompan=z='min(zoom+0.0008,1.08)':x='max(0,iw-iw/zoom-(iw-iw/zoom)*on/(30*4))':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps=30",
+        "zoompan=z='min(zoom+0.0007,1.07)':x='iw/2-(iw/zoom/2)':y='max(0,(ih-ih/zoom)*on/(30*4))':d=1:s=1080x1920:fps=30",
+        "zoompan=z='min(zoom+0.0012,1.12)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps=30",
+    )
+    return base + ',' + motions[scene_index % len(motions)]
+
+
 def render_review_video(manifest_path, asset_root, output_path, ffmpeg='ffmpeg'):
     manifest = json.loads(Path(manifest_path).read_text(encoding='utf-8'))
     if manifest.get('schema_version') != 1 or manifest.get('status') != 'draft_review_only' or manifest.get('render_ready') is not False or manifest.get('quality_approved') is not False or manifest.get('publish_mode') != 'employee_manual_only':
@@ -56,9 +69,7 @@ def render_review_video(manifest_path, asset_root, output_path, ffmpeg='ffmpeg')
             caption = tmp / f'caption_{i}.txt'
             caption.write_text(scene['caption'], encoding='utf-8')
             clip = tmp / f'scene_{i}.mp4'
-            # Add deterministic slow push-in motion so approved stills do not render as a static slideshow.
-            # The source is oversized first, then zoompan emits exact 1080x1920 frames at 30 fps.
-            motion = "scale=1200:2134:force_original_aspect_ratio=increase,crop=1200:2134,zoompan=z='min(zoom+0.0008,1.08)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s=1080x1920:fps=30"
+            motion = _motion_filter(i)
             caption_filter = f"drawbox=x=0:y=1450:w=1080:h=280:color=black@0.75:t=fill,drawtext=textfile={caption}:fontcolor=white:fontsize=44:x=(w-text_w)/2:y=1510"
             vf = motion + ',' + caption_filter
             subprocess.run([ffmpeg, '-hide_banner', '-loglevel', 'error', '-y', '-loop', '1', '-framerate', '30', '-i', str(image), '-i', str(audio), '-t', str(seconds), '-vf', vf, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-r', '30', '-c:a', 'aac', '-ar', '48000', '-ac', '2', '-af', 'apad', '-movflags', '+faststart', str(clip)], check=True)
