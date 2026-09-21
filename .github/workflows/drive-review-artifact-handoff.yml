@@ -18,7 +18,9 @@ jobs:
       SOURCE_ARTIFACT_ID: '10537910824'
       DESTINATION_FOLDER_ID: 14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk
       EXPECTED_SHA256: c5b0bc27be175b9c990cb4ef91d63ef2c35d045ed890c95cb6c02d329c0ae472
-      DRIVE_SERVICE_ACCOUNT_JSON: ${{ secrets.DRIVE_REVIEW_SERVICE_ACCOUNT_JSON }}
+      # Preferred: authorized_user JSON for a private My Drive folder.
+      # Backward compatible: service-account JSON works only with Workspace shared drives.
+      DRIVE_AUTH_JSON: ${{ secrets.DRIVE_REVIEW_AUTH_JSON || secrets.DRIVE_REVIEW_SERVICE_ACCOUNT_JSON }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
@@ -26,8 +28,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -z "$DRIVE_SERVICE_ACCOUNT_JSON" ]]; then
-            echo 'BLOCKED: DRIVE_REVIEW_SERVICE_ACCOUNT_JSON is not configured in drive-review-only environment/repository secrets.' >&2
+          if [[ -z "$DRIVE_AUTH_JSON" ]]; then
+            echo 'BLOCKED: DRIVE_REVIEW_AUTH_JSON (or legacy DRIVE_REVIEW_SERVICE_ACCOUNT_JSON) is not configured in drive-review-only environment/repository secrets.' >&2
             exit 20
           fi
       - name: Install Google Drive client
