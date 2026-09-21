@@ -25,7 +25,7 @@ def _motion_filter(scene_index):
 
 
 def _interaction_filter(scene_index, seconds):
-    """Add cursor/click, staged typing, processing progress, result, and measurable proof."""
+    """Add cursor/click, typing, processing, measurable proof, and animated proof bars."""
     targets = ((760, 620), (520, 860), (820, 1110), (610, 1320), (850, 720))
     labels = ('完了', '入力済み', '実行中', '確認済み', '保存済み')
     prompts = ('AIで集計', '表を更新', '要点を抽出', '結果を確認', '内容を保存')
@@ -44,6 +44,7 @@ def _interaction_filter(scene_index, seconds):
     result_at = min(processing_at + 0.55, duration)
     proof_at = min(result_at + 0.12, duration)
     metric_at = min(proof_at + 0.18, duration)
+    graph_at = min(metric_at + 0.10, duration)
     bar_end = min(result_at, duration)
     p1 = prompt[:max(1, len(prompt)//3)]
     p2 = prompt[:max(2, (len(prompt)*2)//3)]
@@ -81,7 +82,13 @@ def _interaction_filter(scene_index, seconds):
         "drawtext=text='手作業':fontcolor=white:fontsize=30:borderw=2:bordercolor=black:x=220:y=975:"
         f"enable='gte(t,{proof_at:.3f})',"
         "drawtext=text='自動化':fontcolor=black:fontsize=30:x=700:y=975:"
-        f"enable='gte(t,{proof_at:.3f})'"
+        f"enable='gte(t,{proof_at:.3f})',"
+        "drawbox=x=150:y=1060:w=780:h=18:color=black@0.22:t=fill:"
+        f"enable='gte(t,{graph_at:.3f})',"
+        "drawbox=x=150:y=1060:w='780*min(max((t-" + f"{graph_at:.3f})/0.55,0),1)'" + ":h=18:color=white@0.92:t=fill:"
+        f"enable='gte(t,{graph_at:.3f})',"
+        "drawtext=text='変化を可視化':fontcolor=white:fontsize=28:borderw=2:bordercolor=black:x=150:y=1092:"
+        f"enable='gte(t,{graph_at:.3f})'"
     )
 
 
