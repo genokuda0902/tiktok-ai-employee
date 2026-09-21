@@ -15,7 +15,6 @@ jobs:
     env:
       SOURCE_RUN_ID: '35321564044'
       SOURCE_ARTIFACT_NAME: pi5-v9-review-only
-      SOURCE_ARTIFACT_ID: '10537910824'
       DESTINATION_FOLDER_ID: 14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk
       EXPECTED_SHA256: c5b0bc27be175b9c990cb4ef91d63ef2c35d045ed890c95cb6c02d329c0ae472
       # Preferred: authorized_user JSON for a private My Drive folder.
@@ -39,7 +38,19 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/review_artifact"
-          gh run download "$SOURCE_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "$SOURCE_ARTIFACT_NAME" --dir "$RUNNER_TEMP/review_artifact"
+          artifact_id="$(
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN_ID/artifacts" \
+              --paginate \
+              --jq ".artifacts | map(select(.name == \"$SOURCE_ARTIFACT_NAME\" and (.expired | not))) | sort_by(.created_at) | last | .id"
+          )"
+          if [[ -z "$artifact_id" || "$artifact_id" == "null" ]]; then
+            echo 'BLOCKED: no non-expired source artifact found.' >&2
+            exit 21
+          fi
+          echo "SOURCE_ARTIFACT_ID=$artifact_id"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip" \
+            > "$RUNNER_TEMP/review_artifact.zip"
+          unzip -q "$RUNNER_TEMP/review_artifact.zip" -d "$RUNNER_TEMP/review_artifact"
           test -s "$RUNNER_TEMP/review_artifact/pi5_review_20s.mp4"
           echo "$EXPECTED_SHA256  $RUNNER_TEMP/review_artifact/pi5_review_20s.mp4" | sha256sum --check
       - name: Upload MP4 to private Drive, download actual bytes and verify SHA-256
