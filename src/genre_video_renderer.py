@@ -25,7 +25,7 @@ def _motion_filter(scene_index):
 
 
 def _interaction_filter(scene_index, seconds):
-    """Add cursor/click, staged typing, processing progress, then result state."""
+    """Add cursor/click, staged typing, processing progress, result, and before/after proof."""
     targets = ((760, 620), (520, 860), (820, 1110), (610, 1320), (850, 720))
     labels = ('完了', '入力済み', '実行中', '確認済み', '保存済み')
     prompts = ('AIで集計', '表を更新', '要点を抽出', '結果を確認', '内容を保存')
@@ -39,56 +39,55 @@ def _interaction_filter(scene_index, seconds):
     typing_end = min(typing_at + 0.62, duration)
     processing_at = min(typing_end + 0.05, duration)
     result_at = min(processing_at + 0.55, duration)
+    proof_at = min(result_at + 0.12, duration)
     bar_end = min(result_at, duration)
-    # Reveal the prompt in three deterministic chunks. This avoids external screen
-    # recording while giving all ten genres a reusable input -> process -> result beat.
     p1 = prompt[:max(1, len(prompt)//3)]
     p2 = prompt[:max(2, (len(prompt)*2)//3)]
     return (
         "drawtext=text='●':fontcolor=white:fontsize=34:borderw=3:bordercolor=black:"
-        f"x='120+({tx}-120)*min(t/{click_at:.3f},1)':"
-        f"y='520+({ty}-520)*min(t/{click_at:.3f},1)',"
+        f"x='120+({tx}-120)*min(t/{click_at:.3f},1)':y='520+({ty}-520)*min(t/{click_at:.3f},1)',"
         "drawtext=text='○':fontcolor=white@0.95:fontsize=64:borderw=2:bordercolor=black:"
         f"x={tx}-32:y={ty}-40:enable='between(t,{click_at:.3f},{click_end:.3f})',"
         "drawbox=x=170:y=1180:w=740:h=120:color=black@0.82:t=fill:"
         f"enable='between(t,{typing_at:.3f},{processing_at:.3f})',"
-        f"drawtext=text='{p1}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:"
-        f"enable='between(t,{typing_at:.3f},{typing_at + 0.20:.3f})',"
-        f"drawtext=text='{p2}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:"
-        f"enable='between(t,{typing_at + 0.20:.3f},{typing_at + 0.40:.3f})',"
-        f"drawtext=text='{prompt}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:"
-        f"enable='between(t,{typing_at + 0.40:.3f},{processing_at:.3f})',"
+        f"drawtext=text='{p1}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:enable='between(t,{typing_at:.3f},{typing_at + 0.20:.3f})',"
+        f"drawtext=text='{p2}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:enable='between(t,{typing_at + 0.20:.3f},{typing_at + 0.40:.3f})',"
+        f"drawtext=text='{prompt}':fontcolor=white:fontsize=38:borderw=2:bordercolor=black:x=205:y=1215:enable='between(t,{typing_at + 0.40:.3f},{processing_at:.3f})',"
         "drawtext=text='▌':fontcolor=white:fontsize=40:x=840:y=1213:"
         f"enable='between(t,{typing_at:.3f},{processing_at:.3f})',"
         "drawbox=x=650:y=520:w=330:h=150:color=black@0.84:t=fill:"
         f"enable='gte(t,{processing_at:.3f})',"
-        "drawtext=text='処理中…':fontcolor=white:fontsize=40:borderw=3:bordercolor=black:"
-        f"x=715:y=555:enable='between(t,{processing_at:.3f},{result_at:.3f})',"
+        "drawtext=text='処理中…':fontcolor=white:fontsize=40:borderw=3:bordercolor=black:x=715:y=555:"
+        f"enable='between(t,{processing_at:.3f},{result_at:.3f})',"
         "drawbox=x=700:y=625:w=230:h=12:color=white@0.25:t=fill:"
         f"enable='between(t,{processing_at:.3f},{bar_end:.3f})',"
         "drawbox=x=700:y=625:w='230*min(max((t-" + f"{processing_at:.3f})/0.55,0),1)'" + ":h=12:color=white@0.95:t=fill:"
         f"enable='between(t,{processing_at:.3f},{bar_end:.3f})',"
-        f"drawtext=text='{label}':fontcolor=white:fontsize=46:borderw=3:bordercolor=black:"
-        f"x=715:y=570:enable='gte(t,{result_at:.3f})'"
+        f"drawtext=text='{label}':fontcolor=white:fontsize=46:borderw=3:bordercolor=black:x=715:y=570:enable='gte(t,{result_at:.3f})',"
+        "drawbox=x=100:y=820:w=410:h=210:color=black@0.78:t=fill:"
+        f"enable='gte(t,{proof_at:.3f})',"
+        "drawbox=x=570:y=820:w=410:h=210:color=white@0.90:t=fill:"
+        f"enable='gte(t,{proof_at:.3f})',"
+        "drawtext=text='BEFORE':fontcolor=white:fontsize=34:borderw=2:bordercolor=black:x=225:y=850:"
+        f"enable='gte(t,{proof_at:.3f})',"
+        "drawtext=text='AFTER':fontcolor=black:fontsize=34:x=705:y=850:"
+        f"enable='gte(t,{proof_at:.3f})',"
+        "drawtext=text='手作業':fontcolor=white:fontsize=46:borderw=2:bordercolor=black:x=220:y=920:"
+        f"enable='gte(t,{proof_at:.3f})',"
+        "drawtext=text='自動化':fontcolor=black:fontsize=46:x=700:y=920:"
+        f"enable='gte(t,{proof_at:.3f})'"
     )
 
 
 def _caption_filter(scene_index, caption_path):
     """High-contrast mobile-safe captions; scene zero gets a stronger 0-2s hook treatment."""
     if scene_index == 0:
-        return (
-            "drawbox=x=54:y=180:w=972:h=330:color=black@0.82:t=fill,"
-            f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=72:borderw=4:bordercolor=black:"
-            "x=(w-text_w)/2:y=275:enable='between(t,0,2.2)',"
-            "drawbox=x=54:y=1450:w=972:h=280:color=black@0.78:t=fill,"
-            f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=52:borderw=3:bordercolor=black:"
-            "x=(w-text_w)/2:y=1510:enable='gte(t,2.2)'"
-        )
-    return (
-        "drawbox=x=54:y=1450:w=972:h=280:color=black@0.78:t=fill,"
-        f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=52:borderw=3:bordercolor=black:"
-        "x=(w-text_w)/2:y=1510"
-    )
+        return ("drawbox=x=54:y=180:w=972:h=330:color=black@0.82:t=fill,"
+                f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=72:borderw=4:bordercolor=black:x=(w-text_w)/2:y=275:enable='between(t,0,2.2)',"
+                "drawbox=x=54:y=1450:w=972:h=280:color=black@0.78:t=fill,"
+                f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=52:borderw=3:bordercolor=black:x=(w-text_w)/2:y=1510:enable='gte(t,2.2)'")
+    return ("drawbox=x=54:y=1450:w=972:h=280:color=black@0.78:t=fill,"
+            f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=52:borderw=3:bordercolor=black:x=(w-text_w)/2:y=1510")
 
 
 def render_review_video(manifest_path, asset_root, output_path, ffmpeg='ffmpeg'):
@@ -130,17 +129,13 @@ def render_review_video(manifest_path, asset_root, output_path, ffmpeg='ffmpeg')
         raise ValueError('Total video duration outside review limits')
     out.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as temp:
-        tmp = Path(temp)
-        clips = []
+        tmp = Path(temp); clips = []
         for i, (scene, image, audio, seconds) in enumerate(prepared):
-            caption = tmp / f'caption_{i}.txt'
-            caption.write_text(scene['caption'], encoding='utf-8')
+            caption = tmp / f'caption_{i}.txt'; caption.write_text(scene['caption'], encoding='utf-8')
             clip = tmp / f'scene_{i}.mp4'
-            motion = _motion_filter(i)
-            vf = motion + ',' + _interaction_filter(i, seconds) + ',' + _caption_filter(i, caption)
+            vf = _motion_filter(i) + ',' + _interaction_filter(i, seconds) + ',' + _caption_filter(i, caption)
             subprocess.run([ffmpeg, '-hide_banner', '-loglevel', 'error', '-y', '-loop', '1', '-framerate', '30', '-i', str(image), '-i', str(audio), '-t', str(seconds), '-vf', vf, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-r', '30', '-c:a', 'aac', '-ar', '48000', '-ac', '2', '-af', 'apad', '-movflags', '+faststart', str(clip)], check=True)
             clips.append(clip)
-        listing = tmp / 'clips.txt'
-        listing.write_text(''.join("file '" + str(clip) + "'\n" for clip in clips), encoding='utf-8')
+        listing = tmp / 'clips.txt'; listing.write_text(''.join("file '" + str(c) + "'\n" for c in clips), encoding='utf-8')
         subprocess.run([ffmpeg, '-hide_banner', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', str(listing), '-c', 'copy', '-movflags', '+faststart', str(out)], check=True)
     return {'output': str(out), 'status': 'rendered_unverified_review_only', 'quality_approved': False, 'publish_mode': 'employee_manual_only'}
