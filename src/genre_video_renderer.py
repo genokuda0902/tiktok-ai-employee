@@ -24,6 +24,24 @@ def _motion_filter(scene_index):
     return base + ',' + motions[scene_index % len(motions)]
 
 
+def _caption_filter(scene_index, caption_path):
+    """High-contrast mobile-safe captions; scene zero gets a stronger 0-2s hook treatment."""
+    if scene_index == 0:
+        return (
+            "drawbox=x=54:y=180:w=972:h=330:color=black@0.82:t=fill,"
+            f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=72:borderw=4:bordercolor=black:"
+            "x=(w-text_w)/2:y=275:enable='between(t,0,2.2)',"
+            "drawbox=x=54:y=1450:w=972:h=280:color=black@0.78:t=fill,"
+            f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=52:borderw=3:bordercolor=black:"
+            "x=(w-text_w)/2:y=1510:enable='gte(t,2.2)'"
+        )
+    return (
+        "drawbox=x=54:y=1450:w=972:h=280:color=black@0.78:t=fill,"
+        f"drawtext=textfile={caption_path}:fontcolor=white:fontsize=52:borderw=3:bordercolor=black:"
+        "x=(w-text_w)/2:y=1510"
+    )
+
+
 def render_review_video(manifest_path, asset_root, output_path, ffmpeg='ffmpeg'):
     manifest = json.loads(Path(manifest_path).read_text(encoding='utf-8'))
     if manifest.get('schema_version') != 1 or manifest.get('status') != 'draft_review_only' or manifest.get('render_ready') is not False or manifest.get('quality_approved') is not False or manifest.get('publish_mode') != 'employee_manual_only':
@@ -70,8 +88,7 @@ def render_review_video(manifest_path, asset_root, output_path, ffmpeg='ffmpeg')
             caption.write_text(scene['caption'], encoding='utf-8')
             clip = tmp / f'scene_{i}.mp4'
             motion = _motion_filter(i)
-            caption_filter = f"drawbox=x=0:y=1450:w=1080:h=280:color=black@0.75:t=fill,drawtext=textfile={caption}:fontcolor=white:fontsize=44:x=(w-text_w)/2:y=1510"
-            vf = motion + ',' + caption_filter
+            vf = motion + ',' + _caption_filter(i, caption)
             subprocess.run([ffmpeg, '-hide_banner', '-loglevel', 'error', '-y', '-loop', '1', '-framerate', '30', '-i', str(image), '-i', str(audio), '-t', str(seconds), '-vf', vf, '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-r', '30', '-c:a', 'aac', '-ar', '48000', '-ac', '2', '-af', 'apad', '-movflags', '+faststart', str(clip)], check=True)
             clips.append(clip)
         listing = tmp / 'clips.txt'
