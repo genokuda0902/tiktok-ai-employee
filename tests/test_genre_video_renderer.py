@@ -39,7 +39,7 @@ class RendererTests(unittest.TestCase):
                     render_review_video(path, root, root / 'review.mp4')
                 run.assert_not_called()
 
-    def test_renderer_applies_varied_motion_interaction_and_mobile_hook_captions(self):
+    def test_renderer_applies_varied_motion_interaction_state_change_and_mobile_hook_captions(self):
         profile = load_profiles()['genres']['ai_productivity']
         beats = profile['beats']
         with tempfile.TemporaryDirectory() as directory:
@@ -59,7 +59,8 @@ class RendererTests(unittest.TestCase):
             scene_calls = [call.args[0] for call in run.call_args_list if '-vf' in call.args[0]]
             self.assertEqual(len(scene_calls), len(beats))
             filters = []
-            for command in scene_calls:
+            expected_labels = ('完了', '入力済み', '実行中', '確認済み', '保存済み')
+            for index, command in enumerate(scene_calls):
                 vf = command[command.index('-vf') + 1]
                 filters.append(vf)
                 self.assertIn('zoompan=', vf)
@@ -68,6 +69,9 @@ class RendererTests(unittest.TestCase):
                 self.assertIn("drawtext=text='○'", vf)
                 self.assertIn('min(t/4.000,1)', vf)
                 self.assertIn("enable='between(t,2.480,2.660)'", vf)
+                self.assertIn('drawbox=x=650:y=520:w=330:h=150', vf)
+                self.assertIn("enable='gte(t,2.700)'", vf)
+                self.assertIn(f"drawtext=text='{expected_labels[index]}'", vf)
                 self.assertIn('drawtext=', vf)
                 self.assertIn('borderw=3', vf)
                 self.assertIn('x=54:y=1450:w=972:h=280', vf)
