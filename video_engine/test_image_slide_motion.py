@@ -3,6 +3,7 @@ import unittest
 from image_slide_motion import (
     DEFAULT_EVENTS,
     MOTION_PROFILES,
+    comparison_filter,
     event_manifest_filter,
     hook_hierarchy_filter,
     interaction_filter,
@@ -51,6 +52,22 @@ class ImageSlideMotionTests(unittest.TestCase):
             hook_hierarchy_filter("", "便益", "/tmp/font.ttc")
         with self.assertRaises(ValueError):
             hook_hierarchy_filter("問題", "", "/tmp/font.ttc")
+
+    def test_comparison_beat_is_copy_driven_and_timed(self):
+        value = comparison_filter("手作業", "AIで短縮", "/tmp/font.ttc", 8.0, 12.0)
+        self.assertIn("BEFORE", value)
+        self.assertIn("AFTER", value)
+        self.assertIn("手作業", value)
+        self.assertIn("AIで短縮", value)
+        self.assertIn("between(t,8.000,12.000)", value)
+
+    def test_comparison_beat_fails_closed(self):
+        with self.assertRaises(ValueError):
+            comparison_filter("", "改善", "/tmp/font.ttc")
+        with self.assertRaises(ValueError):
+            comparison_filter("現状", "改善", "/tmp/font.ttc", 12.0, 8.0)
+        with self.assertRaises(ValueError):
+            comparison_filter("現状", "改善", "/tmp/font.ttc", width=720, height=1280)
 
     def test_semantic_reaction_remains_backward_compatible(self):
         value = semantic_reaction_filter()
