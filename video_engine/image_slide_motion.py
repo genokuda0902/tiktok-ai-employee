@@ -74,10 +74,7 @@ def event_manifest_filter(events=DEFAULT_EVENTS, width: int = 1080, height: int 
 
 
 def hook_hierarchy_filter(hook: str, benefit: str, fontfile: str, width: int = 1080, height: int = 1920) -> str:
-    """Show a short hook then benefit card in the top safe area.
-
-    Copy is supplied by each genre profile; timing and layout stay shared.
-    """
+    """Show a short hook then benefit card in the top safe area."""
     _portrait(width, height)
     if not hook.strip() or not benefit.strip() or not fontfile.strip():
         raise ValueError("hook, benefit and fontfile are required")
@@ -88,6 +85,28 @@ def hook_hierarchy_filter(hook: str, benefit: str, fontfile: str, width: int = 1
         f"drawtext=fontfile='{fontfile}':text='{safe_hook}':fontcolor=white:fontsize=58:x=(w-text_w)/2:y=142:enable='between(t,0,2.8)',"
         "drawbox=x=105:y=105:w=870:h=145:color=black@0.72:t=fill:enable='between(t,2.8,5.8)',"
         f"drawtext=fontfile='{fontfile}':text='{safe_benefit}':fontcolor=white:fontsize=62:x=(w-text_w)/2:y=140:enable='between(t,2.8,5.8)'"
+    )
+
+
+def comparison_filter(before: str, after: str, fontfile: str, start: float = 8.0, end: float = 12.0, width: int = 1080, height: int = 1920) -> str:
+    """Add a genre-independent BEFORE/AFTER comparison beat.
+
+    Labels are caller supplied so the same timing/layout can be reused across
+    all genre profiles without implying a result the source material cannot support.
+    """
+    _portrait(width, height)
+    if not before.strip() or not after.strip() or not fontfile.strip() or start < 0 or end <= start:
+        raise ValueError("before, after, fontfile and a valid time range are required")
+    safe_before = before.replace("'", "’").replace(":", "\\:")
+    safe_after = after.replace("'", "’").replace(":", "\\:")
+    enabled = f"between(t,{start:.3f},{end:.3f})"
+    return (
+        f"drawbox=x=55:y=360:w=455:h=180:color=black@0.72:t=fill:enable='{enabled}',"
+        f"drawtext=fontfile='{fontfile}':text='BEFORE':fontcolor=white:fontsize=34:x=90:y=390:enable='{enabled}',"
+        f"drawtext=fontfile='{fontfile}':text='{safe_before}':fontcolor=white:fontsize=48:x=90:y=450:enable='{enabled}',"
+        f"drawbox=x=570:y=360:w=455:h=180:color=white@0.88:t=fill:enable='{enabled}',"
+        f"drawtext=fontfile='{fontfile}':text='AFTER':fontcolor=black:fontsize=34:x=605:y=390:enable='{enabled}',"
+        f"drawtext=fontfile='{fontfile}':text='{safe_after}':fontcolor=black:fontsize=48:x=605:y=450:enable='{enabled}'"
     )
 
 
