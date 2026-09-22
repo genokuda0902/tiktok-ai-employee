@@ -6,7 +6,7 @@ from dynamic_data_proof import dynamic_data_filter
 
 
 class DynamicDataProofTests(unittest.TestCase):
-    def test_animates_click_synchronized_spreadsheet_and_charts(self):
+    def test_animates_click_edit_synchronized_spreadsheet_and_charts(self):
         vf = dynamic_data_filter(0, 2.5)
         self.assertIn('LIVE DATA', vf)
         self.assertIn('ROWS 5 → 1', vf)
@@ -15,17 +15,19 @@ class DynamicDataProofTests(unittest.TestCase):
         self.assertIn("text='➤'", vf)
         self.assertIn("text='SELECT'", vf)
         self.assertIn("text='CLICK'", vf)
+        self.assertIn("text='RUN'", vf)
+        self.assertIn("mod(t-2.810,0.16)", vf)
         self.assertIn("text='PROCESS'", vf)
         self.assertIn("text='DONE'", vf)
         self.assertIn("text='=RESULT'", vf)
         self.assertIn("text='CHART UPDATED'", vf)
         self.assertIn("text='15'", vf)
         self.assertIn("text='1'", vf)
-        self.assertIn("between(t,2.600,2.880)", vf)
+        self.assertIn("between(t,2.600,2.960)", vf)
         self.assertIn("220*min(max((t-2.540)/0.18,0),1)", vf)
-        self.assertIn("315*0.92*min(max((t-2.880)/0.70,0),1)", vf)
-        self.assertIn("315*0.66*min(max((t-2.980)/0.70,0),1)", vf)
-        self.assertIn("315*0.38*min(max((t-3.080)/0.70,0),1)", vf)
+        self.assertIn("315*0.92*min(max((t-2.960)/0.70,0),1)", vf)
+        self.assertIn("315*0.66*min(max((t-3.060)/0.70,0),1)", vf)
+        self.assertIn("315*0.38*min(max((t-3.160)/0.70,0),1)", vf)
         self.assertIn('UPDATED', vf)
 
     def test_varies_across_scenes(self):
