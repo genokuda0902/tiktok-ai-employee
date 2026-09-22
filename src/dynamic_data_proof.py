@@ -6,7 +6,7 @@ can be reused across genres without personal data, paid assets, or result claims
 
 
 def dynamic_data_filter(scene_index: int, start_at: float) -> str:
-    """Animate cursor click, active-cell edit, row reduction, countdown and linked chart."""
+    """Animate one spatially linked cursor -> cell edit -> table/chart update flow."""
     rows_before = (5, 4, 6, 3, 5)[scene_index % 5]
     rows_after = (1, 1, 2, 1, 1)[scene_index % 5]
     before = (15, 12, 8, 3, 5)[scene_index % 5]
@@ -21,6 +21,8 @@ def dynamic_data_filter(scene_index: int, start_at: float) -> str:
     row_end = update_at + step * 4
     counter_end = update_at + 0.80
     done_at = max(row_end, counter_end)
+    cell_x, cell_y, cell_w, cell_h = 360, 1178, 125, 22
+    chart_x, chart_y = 545, 1275
     parts = [
         "drawbox=x=120:y=1030:w=840:h=370:color=black@0.84:t=fill:" + f"enable='gte(t,{s:.3f})'",
         "drawtext=text='LIVE DATA':fontcolor=white:fontsize=28:borderw=2:bordercolor=black:x=155:y=1050:" + f"enable='gte(t,{s:.3f})'",
@@ -29,15 +31,20 @@ def dynamic_data_filter(scene_index: int, start_at: float) -> str:
         f"drawtext=text='TASK':fontcolor=white:fontsize=18:x=170:y=1150:enable='gte(t,{s:.3f})'",
         f"drawtext=text='STATUS':fontcolor=white:fontsize=18:x=365:y=1150:enable='gte(t,{s:.3f})'",
         f"drawbox=x=350:y=1145:w=2:h=170:color=white@0.24:t=fill:enable='gte(t,{s:.3f})'",
-        f"drawtext=text='➤':fontcolor=white:fontsize=30:borderw=2:bordercolor=black:x='500-220*min(max((t-{cursor_at:.3f})/0.18,0),1)':y='1210-25*min(max((t-{cursor_at:.3f})/0.18,0),1)':enable='between(t,{cursor_at:.3f},{update_at:.3f})'",
+        # Cursor terminates on the same active cell that receives the edit.
+        f"drawtext=text='➤':fontcolor=white:fontsize=30:borderw=2:bordercolor=black:x='{cell_x + 20}+220*(1-min(max((t-{cursor_at:.3f})/0.18,0),1))':y='{cell_y + 2}+25*(1-min(max((t-{cursor_at:.3f})/0.18,0),1))':enable='between(t,{cursor_at:.3f},{update_at:.3f})'",
         f"drawbox=x=155:y=1178:w=360:h=22:color=white@0.95:t=2:enable='between(t,{select_at:.3f},{update_at:.3f})'",
-        f"drawbox=x=500:y=1183:w=10:h=10:color=white@0.95:t=fill:enable='between(t,{click_at:.3f},{update_at:.3f})'",
+        f"drawbox=x={cell_x}:y={cell_y}:w={cell_w}:h={cell_h}:color=white@0.95:t=2:enable='between(t,{select_at:.3f},{done_at:.3f})'",
+        f"drawbox=x={cell_x + cell_w - 8}:y={cell_y + 6}:w=10:h=10:color=white@0.95:t=fill:enable='between(t,{click_at:.3f},{update_at:.3f})'",
         f"drawtext=text='SELECT':fontcolor=white:fontsize=15:x=535:y=1180:enable='between(t,{select_at:.3f},{click_at:.3f})'",
         f"drawtext=text='CLICK':fontcolor=white:fontsize=15:x=535:y=1180:enable='between(t,{click_at:.3f},{edit_at:.3f})'",
-        # Active-cell edit makes the operation legible before the table/chart react.
-        f"drawbox=x=360:y=1178:w=125:h=22:color=white@0.12:t=fill:enable='between(t,{edit_at:.3f},{done_at:.3f})'",
-        f"drawtext=text='RUN':fontcolor=white:fontsize=16:x=380:y=1180:enable='between(t,{edit_at:.3f},{update_at:.3f})'",
-        f"drawbox=x=416:y=1181:w=2:h=16:color=white@0.95:t=fill:enable='between(t,{edit_at:.3f},{update_at:.3f})*lt(mod(t-{edit_at:.3f},0.16),0.08)'",
+        f"drawbox=x={cell_x}:y={cell_y}:w={cell_w}:h={cell_h}:color=white@0.12:t=fill:enable='between(t,{edit_at:.3f},{done_at:.3f})'",
+        f"drawtext=text='RUN':fontcolor=white:fontsize=16:x={cell_x + 20}:y={cell_y + 2}:enable='between(t,{edit_at:.3f},{update_at:.3f})'",
+        f"drawbox=x={cell_x + 56}:y={cell_y + 3}:w=2:h=16:color=white@0.95:t=fill:enable='between(t,{edit_at:.3f},{update_at:.3f})*lt(mod(t-{edit_at:.3f},0.16),0.08)'",
+        # A connector makes the selected cell and chart read as one operation.
+        f"drawbox=x={cell_x + cell_w}:y={cell_y + 10}:w=60:h=2:color=white@0.55:t=fill:enable='between(t,{update_at:.3f},{done_at:.3f})'",
+        f"drawbox=x={chart_x - 2}:y={cell_y + 10}:w=2:h={chart_y - cell_y - 10}:color=white@0.55:t=fill:enable='between(t,{update_at:.3f},{done_at:.3f})'",
+        f"drawtext=text='SYNC':fontcolor=white:fontsize=14:x={chart_x + 8}:y={chart_y - 24}:enable='between(t,{update_at:.3f},{done_at:.3f})'",
     ]
     for row in range(5):
         y = 1178 + row * 28
@@ -61,9 +68,9 @@ def dynamic_data_filter(scene_index: int, start_at: float) -> str:
         enable = f"between(t,{t0:.3f},{t1:.3f})" if n != after else f"gte(t,{t0:.3f})"
         parts.append(f"drawtext=text='{n}':fontcolor=white:fontsize=58:borderw=2:bordercolor=black:x=735:y=1090:enable='{enable}'")
     for i, target in enumerate((0.92, 0.66, 0.38)):
-        y = 1275 + i * 28
+        y = chart_y + i * 28
         delay = update_at + 0.10 * i
-        parts.append(f"drawbox=x=545:y={y}:w=315:h=16:color=white@0.16:t=fill:enable='gte(t,{s:.3f})'")
-        parts.append(f"drawbox=x=545:y={y}:w='315*{target:.2f}*min(max((t-{delay:.3f})/0.70,0),1)':h=16:color=white@0.92:t=fill:enable='gte(t,{delay:.3f})'")
+        parts.append(f"drawbox=x={chart_x}:y={y}:w=315:h=16:color=white@0.16:t=fill:enable='gte(t,{s:.3f})'")
+        parts.append(f"drawbox=x={chart_x}:y={y}:w='315*{target:.2f}*min(max((t-{delay:.3f})/0.70,0),1)':h=16:color=white@0.92:t=fill:enable='gte(t,{delay:.3f})'")
     parts.append(f"drawtext=text='UPDATED':fontcolor=white:fontsize=24:borderw=2:bordercolor=black:x=155:y=1360:enable='gte(t,{done_at:.3f})'")
     return ','.join(parts)
