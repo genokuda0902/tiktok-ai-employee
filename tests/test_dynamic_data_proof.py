@@ -6,16 +6,20 @@ from dynamic_data_proof import dynamic_data_filter
 
 
 class DynamicDataProofTests(unittest.TestCase):
-    def test_animates_rows_counter_and_multiple_bars(self):
+    def test_animates_spreadsheet_rows_counter_and_multiple_bars(self):
         vf = dynamic_data_filter(0, 2.5)
         self.assertIn('LIVE DATA', vf)
         self.assertIn('ROWS 5 → 1', vf)
+        self.assertIn("text='TASK'", vf)
+        self.assertIn("text='STATUS'", vf)
+        self.assertIn("text='PROCESS'", vf)
+        self.assertIn("text='DONE'", vf)
         self.assertIn("text='15'", vf)
         self.assertIn("text='1'", vf)
         self.assertIn("between(t,2.500,2.820)", vf)
-        self.assertIn("360*0.92*min(max((t-2.500)/0.70,0),1)", vf)
-        self.assertIn("360*0.66*min(max((t-2.600)/0.70,0),1)", vf)
-        self.assertIn("360*0.38*min(max((t-2.700)/0.70,0),1)", vf)
+        self.assertIn("315*0.92*min(max((t-2.500)/0.70,0),1)", vf)
+        self.assertIn("315*0.66*min(max((t-2.600)/0.70,0),1)", vf)
+        self.assertIn("315*0.38*min(max((t-2.700)/0.70,0),1)", vf)
         self.assertIn('UPDATED', vf)
 
     def test_varies_across_scenes(self):
