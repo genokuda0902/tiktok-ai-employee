@@ -6,7 +6,7 @@ can be reused across genres without personal data, paid assets, or result claims
 
 
 def dynamic_data_filter(scene_index: int, start_at: float) -> str:
-    """Animate one spatially linked cursor -> cell edit -> table/chart update flow."""
+    """Animate one spatially linked spreadsheet edit -> recalculation -> chart flow."""
     rows_before = (5, 4, 6, 3, 5)[scene_index % 5]
     rows_after = (1, 1, 2, 1, 1)[scene_index % 5]
     before = (15, 12, 8, 3, 5)[scene_index % 5]
@@ -27,11 +27,17 @@ def dynamic_data_filter(scene_index: int, start_at: float) -> str:
         "drawbox=x=120:y=1030:w=840:h=370:color=black@0.84:t=fill:" + f"enable='gte(t,{s:.3f})'",
         "drawtext=text='LIVE DATA':fontcolor=white:fontsize=28:borderw=2:bordercolor=black:x=155:y=1050:" + f"enable='gte(t,{s:.3f})'",
         f"drawtext=text='ROWS {rows_before} → {rows_after}':fontcolor=white:fontsize=32:borderw=2:bordercolor=black:x=155:y=1094:enable='gte(t,{s:.3f})'",
+        # Spreadsheet chrome: name box + formula bar + column labels make the action legible as a real sheet.
+        f"drawbox=x=155:y=1120:w=705:h=23:color=white@0.10:t=fill:enable='gte(t,{s:.3f})'",
+        f"drawtext=text='B2':fontcolor=white:fontsize=14:x=166:y=1123:enable='gte(t,{s:.3f})'",
+        f"drawtext=text='fx':fontcolor=white:fontsize=14:x=215:y=1123:enable='gte(t,{s:.3f})'",
+        f"drawtext=text='=FILTER(A2:B6,B2:B6=\"RUN\")':fontcolor=white:fontsize=13:x=248:y=1123:enable='gte(t,{edit_at:.3f})'",
+        f"drawtext=text='A':fontcolor=white:fontsize=13:x=250:y=1149:enable='gte(t,{s:.3f})'",
+        f"drawtext=text='B':fontcolor=white:fontsize=13:x=420:y=1149:enable='gte(t,{s:.3f})'",
         f"drawbox=x=155:y=1145:w=360:h=30:color=white@0.18:t=fill:enable='gte(t,{s:.3f})'",
         f"drawtext=text='TASK':fontcolor=white:fontsize=18:x=170:y=1150:enable='gte(t,{s:.3f})'",
         f"drawtext=text='STATUS':fontcolor=white:fontsize=18:x=365:y=1150:enable='gte(t,{s:.3f})'",
         f"drawbox=x=350:y=1145:w=2:h=170:color=white@0.24:t=fill:enable='gte(t,{s:.3f})'",
-        # Cursor terminates on the same active cell that receives the edit.
         f"drawtext=text='➤':fontcolor=white:fontsize=30:borderw=2:bordercolor=black:x='{cell_x + 20}+220*(1-min(max((t-{cursor_at:.3f})/0.18,0),1))':y='{cell_y + 2}+25*(1-min(max((t-{cursor_at:.3f})/0.18,0),1))':enable='between(t,{cursor_at:.3f},{update_at:.3f})'",
         f"drawbox=x=155:y=1178:w=360:h=22:color=white@0.95:t=2:enable='between(t,{select_at:.3f},{update_at:.3f})'",
         f"drawbox=x={cell_x}:y={cell_y}:w={cell_w}:h={cell_h}:color=white@0.95:t=2:enable='between(t,{select_at:.3f},{done_at:.3f})'",
@@ -41,15 +47,17 @@ def dynamic_data_filter(scene_index: int, start_at: float) -> str:
         f"drawbox=x={cell_x}:y={cell_y}:w={cell_w}:h={cell_h}:color=white@0.12:t=fill:enable='between(t,{edit_at:.3f},{done_at:.3f})'",
         f"drawtext=text='RUN':fontcolor=white:fontsize=16:x={cell_x + 20}:y={cell_y + 2}:enable='between(t,{edit_at:.3f},{update_at:.3f})'",
         f"drawbox=x={cell_x + 56}:y={cell_y + 3}:w=2:h=16:color=white@0.95:t=fill:enable='between(t,{edit_at:.3f},{update_at:.3f})*lt(mod(t-{edit_at:.3f},0.16),0.08)'",
-        # A connector makes the selected cell and chart read as one operation.
         f"drawbox=x={cell_x + cell_w}:y={cell_y + 10}:w=60:h=2:color=white@0.55:t=fill:enable='between(t,{update_at:.3f},{done_at:.3f})'",
         f"drawbox=x={chart_x - 2}:y={cell_y + 10}:w=2:h={chart_y - cell_y - 10}:color=white@0.55:t=fill:enable='between(t,{update_at:.3f},{done_at:.3f})'",
         f"drawtext=text='SYNC':fontcolor=white:fontsize=14:x={chart_x + 8}:y={chart_y - 24}:enable='between(t,{update_at:.3f},{done_at:.3f})'",
+        f"drawtext=text='RECALCULATING...':fontcolor=white:fontsize=13:x=690:y=1123:enable='between(t,{update_at:.3f},{done_at:.3f})'",
+        f"drawtext=text='READY':fontcolor=white:fontsize=13:x=790:y=1123:enable='gte(t,{done_at:.3f})'",
     ]
     for row in range(5):
         y = 1178 + row * 28
         hide_at = update_at + step * (row + 1)
         enable = f"gte(t,{s:.3f})" if row == 0 else f"between(t,{s:.3f},{hide_at:.3f})"
+        parts.append(f"drawtext=text='{row + 2}':fontcolor=white:fontsize=12:x=137:y={y + 3}:enable='{enable}'")
         parts.append(f"drawbox=x=155:y={y}:w=360:h=22:color=white@0.10:t=fill:enable='{enable}'")
         parts.append(f"drawbox=x=155:y={y + 21}:w=360:h=1:color=white@0.18:t=fill:enable='{enable}'")
     parts.extend([
