@@ -53,12 +53,7 @@ def interaction_filter(width: int = 1080, height: int = 1920) -> str:
 
 
 def event_manifest_filter(events=DEFAULT_EVENTS, width: int = 1080, height: int = 1920) -> str:
-    """Render processing/result reactions only at manifest-defined times.
-
-    The same event data can later be generated from narration/caption timing,
-    so ten genres can share one synchronization path instead of hard-coded
-    periodic effects.
-    """
+    """Render processing/result reactions only at manifest-defined times."""
     _portrait(width, height)
     _validate_events(events)
     layers = []
@@ -76,6 +71,24 @@ def event_manifest_filter(events=DEFAULT_EVENTS, width: int = 1080, height: int 
             f"drawbox=x=820:y=1420:w=54:h=54:color=white@0.92:t=fill:enable='{result}'",
         ))
     return ",".join(layers)
+
+
+def hook_hierarchy_filter(hook: str, benefit: str, fontfile: str, width: int = 1080, height: int = 1920) -> str:
+    """Show a short hook then benefit card in the top safe area.
+
+    Copy is supplied by each genre profile; timing and layout stay shared.
+    """
+    _portrait(width, height)
+    if not hook.strip() or not benefit.strip() or not fontfile.strip():
+        raise ValueError("hook, benefit and fontfile are required")
+    safe_hook = hook.replace("'", "’").replace(":", "\\:")
+    safe_benefit = benefit.replace("'", "’").replace(":", "\\:")
+    return (
+        "drawbox=x=60:y=105:w=960:h=145:color=black@0.72:t=fill:enable='between(t,0,2.8)',"
+        f"drawtext=fontfile='{fontfile}':text='{safe_hook}':fontcolor=white:fontsize=58:x=(w-text_w)/2:y=142:enable='between(t,0,2.8)',"
+        "drawbox=x=105:y=105:w=870:h=145:color=black@0.72:t=fill:enable='between(t,2.8,5.8)',"
+        f"drawtext=fontfile='{fontfile}':text='{safe_benefit}':fontcolor=white:fontsize=62:x=(w-text_w)/2:y=140:enable='between(t,2.8,5.8)'"
+    )
 
 
 def semantic_reaction_filter(width: int = 1080, height: int = 1920) -> str:
