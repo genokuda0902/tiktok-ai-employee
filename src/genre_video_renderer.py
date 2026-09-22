@@ -9,6 +9,7 @@ import tempfile
 from pathlib import Path
 
 from genre_profiles import plan_for_genre
+from dynamic_data_proof import dynamic_data_filter
 
 
 def _motion_filter(scene_index):
@@ -88,7 +89,7 @@ def _interaction_filter(scene_index, seconds):
         "drawbox=x=150:y=1060:w='780*min(max((t-" + f"{graph_at:.3f})/0.55,0),1)'" + ":h=18:color=white@0.92:t=fill:"
         f"enable='gte(t,{graph_at:.3f})',"
         "drawtext=text='変化を可視化':fontcolor=white:fontsize=28:borderw=2:bordercolor=black:x=150:y=1092:"
-        f"enable='gte(t,{graph_at:.3f})'"
+        f"enable='gte(t,{graph_at:.3f})'," + dynamic_data_filter(scene_index, graph_at + 0.10)
     )
 
 
