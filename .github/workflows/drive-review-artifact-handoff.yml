@@ -1,0 +1,79 @@
+name: Review-only Actions artifact to private Drive (no publishing)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/automation-engine-isolated]
+    paths:
+      - .github/workflows/drive-review-artifact-handoff.yml
+      - scripts/drive_review_artifact_handoff.py
+      - scripts/drive_review_gateway_client.py
+      - apps_script/drive_review_gateway/**
+permissions:
+  contents: read
+  actions: read
+jobs:
+  drive-review-handoff:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: drive-review-only
+    env:
+      SOURCE_RUN_ID: '35321564044'
+      SOURCE_ARTIFACT_NAME: pi5-v9-review-only
+      DESTINATION_FOLDER_ID: 14rtOvwFKmycVO5Irq1X8QJ4-vgO2xUMk
+      EXPECTED_SHA256: d8b3c0736dbf29cbf528ccca19acdd7172175b73ec00e7d23a9b3b4f5933838f
+      # Preferred: authorized_user JSON for a private My Drive folder.
+      # Backward compatible: service-account JSON works only with Workspace shared drives.
+      DRIVE_AUTH_JSON: ${{ secrets.DRIVE_REVIEW_AUTH_JSON || secrets.DRIVE_REVIEW_SERVICE_ACCOUNT_JSON }}
+      # OAuth-free alternative: owner-executed Apps Script gateway with HMAC.
+      DRIVE_REVIEW_WEBAPP_URL: ${{ secrets.DRIVE_REVIEW_WEBAPP_URL }}
+      DRIVE_REVIEW_WEBHOOK_SECRET: ${{ secrets.DRIVE_REVIEW_WEBHOOK_SECRET }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require one private Drive delivery method before downloading artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$DRIVE_REVIEW_WEBAPP_URL" && -n "$DRIVE_REVIEW_WEBHOOK_SECRET" ]]; then
+            echo 'DRIVE_DELIVERY_METHOD=apps_script_gateway'
+          elif [[ -n "$DRIVE_AUTH_JSON" ]]; then
+            echo 'DRIVE_DELIVERY_METHOD=drive_api_credentials'
+          else
+            echo 'BLOCKED: configure Apps Script gateway URL/secret or Drive API credentials in drive-review-only.' >&2
+            exit 20
+          fi
+      - name: Install Google Drive client
+        if: ${{ env.DRIVE_REVIEW_WEBAPP_URL == '' || env.DRIVE_REVIEW_WEBHOOK_SECRET == '' }}
+        run: python -m pip install 'google-api-python-client>=2,<3' 'google-auth>=2,<3'
+      - name: Download original GitHub Actions artifact ZIP (no regeneration)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/review_artifact"
+          artifact_id="$(
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN_ID/artifacts" \
+              --paginate \
+              --jq ".artifacts | map(select(.name == \"$SOURCE_ARTIFACT_NAME\" and (.expired | not))) | sort_by(.created_at) | last | .id"
+          )"
+          if [[ -z "$artifact_id" || "$artifact_id" == "null" ]]; then
+            echo 'BLOCKED: no non-expired source artifact found.' >&2
+            exit 21
+          fi
+          echo "SOURCE_ARTIFACT_ID=$artifact_id"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$artifact_id/zip" \
+            > "$RUNNER_TEMP/review_artifact.zip"
+          unzip -q "$RUNNER_TEMP/review_artifact.zip" -d "$RUNNER_TEMP/review_artifact"
+          test -s "$RUNNER_TEMP/review_artifact/pi5_review_20s.mp4"
+          echo "$EXPECTED_SHA256  $RUNNER_TEMP/review_artifact/pi5_review_20s.mp4" | sha256sum --check
+      - name: Upload through owner Apps Script gateway and verify Drive readback SHA-256
+        if: ${{ env.DRIVE_REVIEW_WEBAPP_URL != '' && env.DRIVE_REVIEW_WEBHOOK_SECRET != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/drive_review_gateway_client.py "$RUNNER_TEMP/review_artifact/pi5_review_20s.mp4"
+      - name: Upload with Drive API credentials and verify readback SHA-256
+        if: ${{ env.DRIVE_REVIEW_WEBAPP_URL == '' || env.DRIVE_REVIEW_WEBHOOK_SECRET == '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/drive_review_artifact_handoff.py "$RUNNER_TEMP/review_artifact/pi5_review_20s.mp4"
