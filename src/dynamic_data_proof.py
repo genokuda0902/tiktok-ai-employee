@@ -6,7 +6,7 @@ can be reused across genres without personal data, paid assets, or result claims
 
 
 def dynamic_data_filter(scene_index: int, start_at: float) -> str:
-    """Animate table-row removal, a countdown counter, and three result bars."""
+    """Animate spreadsheet rows, a countdown counter, and three result bars."""
     rows_before = (5, 4, 6, 3, 5)[scene_index % 5]
     rows_after = (1, 1, 2, 1, 1)[scene_index % 5]
     before = (15, 12, 8, 3, 5)[scene_index % 5]
@@ -15,22 +15,29 @@ def dynamic_data_filter(scene_index: int, start_at: float) -> str:
     step = 0.16
     row_end = s + step * 4
     counter_end = s + 0.80
+    done_at = max(row_end, counter_end)
     parts = [
-        "drawbox=x=120:y=1050:w=840:h=330:color=black@0.82:t=fill:" + f"enable='gte(t,{s:.3f})'",
-        "drawtext=text='LIVE DATA':fontcolor=white:fontsize=28:borderw=2:bordercolor=black:x=155:y=1072:" + f"enable='gte(t,{s:.3f})'",
-        f"drawtext=text='ROWS {rows_before} → {rows_after}':fontcolor=white:fontsize=32:borderw=2:bordercolor=black:x=155:y=1118:enable='gte(t,{s:.3f})'",
+        "drawbox=x=120:y=1030:w=840:h=370:color=black@0.84:t=fill:" + f"enable='gte(t,{s:.3f})'",
+        "drawtext=text='LIVE DATA':fontcolor=white:fontsize=28:borderw=2:bordercolor=black:x=155:y=1050:" + f"enable='gte(t,{s:.3f})'",
+        f"drawtext=text='ROWS {rows_before} → {rows_after}':fontcolor=white:fontsize=32:borderw=2:bordercolor=black:x=155:y=1094:enable='gte(t,{s:.3f})'",
+        # Spreadsheet-like header and column separators make the proof read as a real UI state change.
+        f"drawbox=x=155:y=1145:w=360:h=30:color=white@0.18:t=fill:enable='gte(t,{s:.3f})'",
+        f"drawtext=text='TASK':fontcolor=white:fontsize=18:x=170:y=1150:enable='gte(t,{s:.3f})'",
+        f"drawtext=text='STATUS':fontcolor=white:fontsize=18:x=365:y=1150:enable='gte(t,{s:.3f})'",
+        f"drawbox=x=350:y=1145:w=2:h=170:color=white@0.24:t=fill:enable='gte(t,{s:.3f})'",
     ]
-    # Five visible table rows disappear one-by-one; the final row remains.
+    # Five spreadsheet rows disappear one-by-one; the first row remains and flips to DONE.
     for row in range(5):
-        y = 1170 + row * 28
+        y = 1178 + row * 28
         hide_at = s + step * (row + 1)
-        if row == 0:
-            enable = f"gte(t,{s:.3f})"
-        else:
-            enable = f"between(t,{s:.3f},{hide_at:.3f})"
-        parts.append(
-            f"drawbox=x=155:y={y}:w=300:h=18:color=white@0.72:t=fill:enable='{enable}'"
-        )
+        enable = f"gte(t,{s:.3f})" if row == 0 else f"between(t,{s:.3f},{hide_at:.3f})"
+        parts.append(f"drawbox=x=155:y={y}:w=360:h=22:color=white@0.10:t=fill:enable='{enable}'")
+        parts.append(f"drawbox=x=155:y={y + 21}:w=360:h=1:color=white@0.18:t=fill:enable='{enable}'")
+    parts.extend([
+        f"drawtext=text='PROCESS':fontcolor=white:fontsize=17:x=170:y=1180:enable='between(t,{s:.3f},{done_at:.3f})'",
+        f"drawtext=text='DONE':fontcolor=white:fontsize=17:x=380:y=1180:enable='gte(t,{done_at:.3f})'",
+        f"drawbox=x=360:y=1178:w=125:h=22:color=white@0.18:t=fill:enable='gte(t,{done_at:.3f})'",
+    ])
     # A real countdown changes displayed value across timed intervals.
     span = max(before - after, 1)
     for n in range(before, after - 1, -1):
@@ -38,20 +45,12 @@ def dynamic_data_filter(scene_index: int, start_at: float) -> str:
         t0 = s + 0.80 * idx / span
         t1 = s + 0.80 * (idx + 1) / span
         enable = f"between(t,{t0:.3f},{t1:.3f})" if n != after else f"gte(t,{t0:.3f})"
-        parts.append(
-            f"drawtext=text='{n}':fontcolor=white:fontsize=58:borderw=2:bordercolor=black:x=735:y=1110:enable='{enable}'"
-        )
+        parts.append(f"drawtext=text='{n}':fontcolor=white:fontsize=58:borderw=2:bordercolor=black:x=735:y=1090:enable='{enable}'")
     # Three bars animate independently to avoid a single generic progress-bar look.
     for i, target in enumerate((0.92, 0.66, 0.38)):
-        y = 1265 + i * 28
+        y = 1275 + i * 28
         delay = s + 0.10 * i
-        parts.append(
-            f"drawbox=x=500:y={y}:w=360:h=16:color=white@0.16:t=fill:enable='gte(t,{s:.3f})'"
-        )
-        parts.append(
-            f"drawbox=x=500:y={y}:w='360*{target:.2f}*min(max((t-{delay:.3f})/0.70,0),1)':h=16:color=white@0.92:t=fill:enable='gte(t,{delay:.3f})'"
-        )
-    parts.append(
-        f"drawtext=text='UPDATED':fontcolor=white:fontsize=24:borderw=2:bordercolor=black:x=155:y=1340:enable='gte(t,{max(row_end,counter_end):.3f})'"
-    )
+        parts.append(f"drawbox=x=545:y={y}:w=315:h=16:color=white@0.16:t=fill:enable='gte(t,{s:.3f})'")
+        parts.append(f"drawbox=x=545:y={y}:w='315*{target:.2f}*min(max((t-{delay:.3f})/0.70,0),1)':h=16:color=white@0.92:t=fill:enable='gte(t,{delay:.3f})'")
+    parts.append(f"drawtext=text='UPDATED':fontcolor=white:fontsize=24:borderw=2:bordercolor=black:x=155:y=1360:enable='gte(t,{done_at:.3f})'")
     return ','.join(parts)
