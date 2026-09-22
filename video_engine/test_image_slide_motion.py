@@ -1,7 +1,9 @@
 import unittest
 
 from image_slide_motion import (
+    DEFAULT_EVENTS,
     MOTION_PROFILES,
+    event_manifest_filter,
     interaction_filter,
     interactive_motion_filter,
     motion_filter,
@@ -21,25 +23,38 @@ class ImageSlideMotionTests(unittest.TestCase):
         value = interaction_filter()
         self.assertIn("drawbox=", value)
         self.assertIn("enable=", value)
+
+    def test_event_manifest_uses_explicit_timeline_not_periodic_reaction(self):
+        value = event_manifest_filter(DEFAULT_EVENTS)
+        self.assertIn("between(t,0.000,0.560)", value)
+        self.assertIn("between(t,6.500,7.060)", value)
+        self.assertIn("between(t,13.000,13.560)", value)
+        self.assertNotIn("mod(t,2.5)", value)
+        self.assertEqual(value.count("drawbox="), 12)
+
+    def test_event_manifest_rejects_invalid_or_unsorted_events(self):
+        with self.assertRaises(ValueError):
+            event_manifest_filter(({"start": 2, "processing": .5, "result": 1.2}, {"start": 1, "processing": .5, "result": 1.2}))
+        with self.assertRaises(ValueError):
+            event_manifest_filter(({"start": 0, "processing": .8, "result": .4},))
+
+    def test_semantic_reaction_remains_backward_compatible(self):
+        value = semantic_reaction_filter()
         self.assertIn("mod(t,2.5)", value)
 
-    def test_semantic_reaction_has_processing_and_result_phases(self):
-        value = semantic_reaction_filter()
-        self.assertGreaterEqual(value.count("drawbox="), 4)
-        self.assertIn("0.16,0.72", value)
-        self.assertIn("0.72,1.30", value)
-        self.assertIn("min(720", value)
-
-    def test_combined_filter_keeps_all_motion_layers(self):
+    def test_combined_filter_uses_manifest_reactions(self):
         value = interactive_motion_filter(2)
         self.assertIn("crop=1080:1920", value)
-        self.assertGreaterEqual(value.count("drawbox="), 6)
+        self.assertIn("between(t,6.500,7.060)", value)
+        self.assertGreaterEqual(value.count("drawbox="), 14)
 
     def test_fail_closed_for_non_portrait_target(self):
         with self.assertRaises(ValueError):
             motion_filter(0, 720, 1280)
         with self.assertRaises(ValueError):
             interaction_filter(720, 1280)
+        with self.assertRaises(ValueError):
+            event_manifest_filter(DEFAULT_EVENTS, 720, 1280)
         with self.assertRaises(ValueError):
             semantic_reaction_filter(720, 1280)
         with self.assertRaises(ValueError):
