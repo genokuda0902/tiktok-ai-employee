@@ -4,6 +4,7 @@ from image_slide_motion import (
     DEFAULT_EVENTS,
     MOTION_PROFILES,
     event_manifest_filter,
+    hook_hierarchy_filter,
     interaction_filter,
     interactive_motion_filter,
     motion_filter,
@@ -38,6 +39,19 @@ class ImageSlideMotionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             event_manifest_filter(({"start": 0, "processing": .8, "result": .4},))
 
+    def test_hook_hierarchy_is_genre_copy_driven(self):
+        value = hook_hierarchy_filter("問題提起", "便益", "/tmp/font.ttc")
+        self.assertIn("問題提起", value)
+        self.assertIn("便益", value)
+        self.assertIn("between(t,0,2.8)", value)
+        self.assertIn("between(t,2.8,5.8)", value)
+
+    def test_hook_hierarchy_fails_closed(self):
+        with self.assertRaises(ValueError):
+            hook_hierarchy_filter("", "便益", "/tmp/font.ttc")
+        with self.assertRaises(ValueError):
+            hook_hierarchy_filter("問題", "", "/tmp/font.ttc")
+
     def test_semantic_reaction_remains_backward_compatible(self):
         value = semantic_reaction_filter()
         self.assertIn("mod(t,2.5)", value)
@@ -55,6 +69,8 @@ class ImageSlideMotionTests(unittest.TestCase):
             interaction_filter(720, 1280)
         with self.assertRaises(ValueError):
             event_manifest_filter(DEFAULT_EVENTS, 720, 1280)
+        with self.assertRaises(ValueError):
+            hook_hierarchy_filter("問題", "便益", "/tmp/font.ttc", 720, 1280)
         with self.assertRaises(ValueError):
             semantic_reaction_filter(720, 1280)
         with self.assertRaises(ValueError):
