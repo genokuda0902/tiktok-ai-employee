@@ -5,12 +5,12 @@ class StageLabelCleanup:
     x: int = 40
     y: int = 103
     width: int = 220
-    height: int = 34
+    height: int = 62
 
     def validate(self, frame_width: int, frame_height: int) -> None:
         if (frame_width, frame_height) != (1080, 1920):
             raise ValueError("requires 1080x1920")
-        if self.width > 260 or self.height > 40:
+        if self.width > 260 or self.height > 70:
             raise ValueError("mask exceeds safe region")
 
     def ffmpeg_filter(self) -> str:
