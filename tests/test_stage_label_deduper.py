@@ -4,7 +4,7 @@ from video_engine.stage_label_deduper import StageLabelCleanup, automatic_postin
 class StageLabelCleanupTests(unittest.TestCase):
     def test_filter_is_narrow_and_deterministic(self):
         value = StageLabelCleanup().ffmpeg_filter()
-        self.assertIn("w=220:h=34", value)
+        self.assertIn("w=220:h=62", value)
 
     def test_wrong_resolution_fails_closed(self):
         with self.assertRaises(ValueError):
