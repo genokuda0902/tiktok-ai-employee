@@ -1,11 +1,24 @@
 import unittest
-from image_slide_motion import DEFAULT_EVENTS,MOTION_PROFILES,comparison_filter,end_card_filter,event_manifest_filter,hook_hierarchy_filter,interaction_filter,interactive_motion_filter,motion_filter,semantic_reaction_filter
+from image_slide_motion import DEFAULT_EVENTS,MOTION_PROFILES,baked_card_manifest,comparison_filter,end_card_filter,event_manifest_filter,hook_hierarchy_filter,interaction_filter,interactive_motion_filter,motion_filter,semantic_reaction_filter
 
 class ImageSlideMotionTests(unittest.TestCase):
     def test_profiles_are_reusable(self):
         self.assertGreaterEqual(len(MOTION_PROFILES),4)
         for i in range(12):
             value=motion_filter(i); self.assertIn('crop=1080:1920',value); self.assertIn('scale=',value)
+    def test_baked_cards_hold_caption_and_comparison_as_image_content(self):
+        cards=baked_card_manifest((
+            {'role':'hook','headline':'Excel集計、まだ手作業？','caption':'最初の2秒で課題を提示','image':'01.png','duration':2.5},
+            {'role':'comparison','headline':'30分 → 3分','caption':'作業時間を90%短縮','image':'06.png','duration':2.5},
+            {'role':'cta','headline':'保存してあとで試す','caption':'AI時短の型をストック','image':'08.png','duration':2.5},
+        ))
+        self.assertEqual(len(cards),3)
+        self.assertTrue(all(c['text_baked'] for c in cards))
+        self.assertEqual(cards[1]['role'],'comparison')
+    def test_baked_cards_fail_closed(self):
+        with self.assertRaises(ValueError): baked_card_manifest(())
+        with self.assertRaises(ValueError): baked_card_manifest(({'role':'comparison','headline':'x','caption':'','image':'x.png','duration':2},))
+        with self.assertRaises(ValueError): baked_card_manifest(({'role':'hook','headline':'x','caption':'y','image':'x.png','duration':2},),720,1280)
     def test_interaction_filter_has_cursor_and_click_pulse(self):
         value=interaction_filter(); self.assertIn('drawbox=',value); self.assertIn('enable=',value)
     def test_event_manifest_uses_explicit_timeline_not_periodic_reaction(self):
