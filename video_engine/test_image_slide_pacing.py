@@ -1,5 +1,5 @@
 import unittest
-from image_slide_pacing import paced_cards, zoompan_filter
+from image_slide_pacing import paced_cards, zoompan_filter, micro_fade_filter
 
 
 class ImageSlidePacingTests(unittest.TestCase):
@@ -24,6 +24,15 @@ class ImageSlidePacingTests(unittest.TestCase):
     def test_zoompan_is_subtle_and_full_hd_vertical(self):
         self.assertIn("1.018", zoompan_filter("zoom_in"))
         self.assertIn("1080x1920", zoompan_filter("zoom_out"))
+
+    def test_micro_fade_is_short_and_preserves_card_duration(self):
+        filt = micro_fade_filter(2.0)
+        self.assertIn("d=0.06", filt)
+        self.assertIn("st=1.94", filt)
+
+    def test_micro_fade_fails_closed_when_too_long(self):
+        with self.assertRaises(ValueError):
+            micro_fade_filter(2.0, 0.5)
 
 
 if __name__ == "__main__":
