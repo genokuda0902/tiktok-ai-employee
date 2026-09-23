@@ -1,7 +1,9 @@
-"""Genre-independent motion helpers for image-slide TikTok videos.
+"""Genre-independent helpers for image-slide TikTok videos.
 
-Zero-cost FFmpeg path. This module does not publish videos and does not claim
-visual quality; human approval remains mandatory.
+Zero-cost path. Human approval remains mandatory. The preferred route is now
+image-complete cards: hook/caption/comparison/CTA copy is baked into each
+1080x1920 source image before video assembly, leaving video-time filters for
+subtle motion only.
 """
 
 MOTION_PROFILES = (
@@ -21,6 +23,31 @@ DEFAULT_EVENTS = (
 def _portrait(width: int, height: int) -> None:
     if width != 1080 or height != 1920:
         raise ValueError("image-slide motion currently requires 1080x1920 output")
+
+
+def baked_card_manifest(cards, width: int = 1080, height: int = 1920):
+    """Validate image-complete slide cards for the 10-genre common route.
+
+    Every card carries its own headline and readable caption. BEFORE/AFTER and
+    CTA are card roles, not video-time overlays. This keeps text deterministic
+    and reviewable before encoding the MP4.
+    """
+    _portrait(width, height)
+    if not cards:
+        raise ValueError("at least one baked card is required")
+    allowed = {"hook", "context", "step", "comparison", "result", "cta"}
+    result = []
+    for index, card in enumerate(cards):
+        role = str(card.get("role", "")).strip()
+        headline = str(card.get("headline", "")).strip()
+        caption = str(card.get("caption", "")).strip()
+        image = str(card.get("image", "")).strip()
+        duration = float(card.get("duration", 0))
+        if role not in allowed or not headline or not caption or not image or duration <= 0:
+            raise ValueError(f"invalid baked card at index {index}")
+        result.append({"role": role, "headline": headline, "caption": caption,
+                       "image": image, "duration": duration, "text_baked": True})
+    return tuple(result)
 
 
 def _validate_events(events) -> None:
@@ -71,7 +98,6 @@ def comparison_filter(before: str, after: str, fontfile: str, start: float = 8.0
 
 
 def end_card_filter(cta: str, fontfile: str, start: float = 16.2, end: float = 19.6, width: int = 1080, height: int = 1920) -> str:
-    """Add a reusable, copy-driven save/follow/share end-card beat."""
     _portrait(width, height)
     if not cta.strip() or not fontfile.strip() or start < 0 or end <= start:
         raise ValueError("cta, fontfile and a valid time range are required")
