@@ -23,7 +23,10 @@ def adaptive_ambient_contract(width: int = 1080, height: int = 1920) -> dict:
         raise ValueError("adaptive ambient route requires 1080x1920")
     return {
         "zero_cost": True,
+        "preserve_video": True,
+        "preserve_burned_captions": True,
         "human_approval_required": True,
+        "manual_post_only": True,
         "auto_post": False,
         "changes_caption_copy": False,
         "bed_mix_weight": BED_MIX_WEIGHT,
