@@ -31,6 +31,10 @@ def mastering_contract(width: int, height: int, sample_rate: int, channels: int)
         "sample_rate": sample_rate,
         "channels": channels,
         "audio_filter": audio_filter,
+        "zero_cost": True,
+        "preserve_video": True,
+        "preserve_burned_captions": True,
         "human_approval_required": True,
+        "manual_post_only": True,
         "auto_post": False,
     }
