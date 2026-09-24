@@ -20,7 +20,10 @@ class AdaptiveAmbientTests(unittest.TestCase):
     def test_release_policy_is_preserved(self):
         c = adaptive_ambient_contract()
         self.assertTrue(c["zero_cost"])
+        self.assertTrue(c["preserve_video"])
+        self.assertTrue(c["preserve_burned_captions"])
         self.assertTrue(c["human_approval_required"])
+        self.assertTrue(c["manual_post_only"])
         self.assertFalse(c["auto_post"])
         self.assertFalse(c["changes_caption_copy"])
         self.assertLessEqual(c["bed_mix_weight"], 0.10)
