@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from employee_management.core import Registry,Denied
 from employee_management.auth import AuthenticatedService
-from video_engine.production_v2.integration import Store,load_feedback,METRICS
+from video_engine.production_v2.integration import Store,load_feedback,METRICS,compare_variants
 from video_engine.production_v2.creative import candidates
 from video_engine.production_v2.test_fixture import create
 from video_engine.production_v2.pipeline import produce
@@ -33,6 +33,14 @@ class IntegrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):self.s.register('signed_fixture_admin',self.video,self.trace,'employee','internal-test',1,self.digest,'file','QUALITY_NOT_APPROVED','source-artifact-10912516118')
         self.assertEqual(self.s._video(self.video)['posting_state'],'HUMAN_REVIEW')
         self.assertEqual(self.s.db.execute('SELECT COUNT(*) FROM audit WHERE action=?',('approval.denied',)).fetchone()[0],1)
+    def test_abc_comparison_uses_retention_and_keeps_unknowns(self):
+        row={k:None for k in METRICS}
+        row.update(views=100,three_second_views=70,completion_rate=0.4,likes=4,saves=3,shares=2,comments=1)
+        comparison=compare_variants([{'variant':'A','metrics':row},{'variant':'B','metrics':{k:None for k in METRICS}}])
+        self.assertEqual(comparison['variants']['A']['three_second_rate'],0.7)
+        self.assertEqual(comparison['variants']['A']['engagement_rate'],0.1)
+        self.assertIsNone(comparison['variants']['B']['three_second_rate'])
+        self.assertIsNone(comparison['winner'])
     def test_revision_regeneration_analytics_feedback(self):
         plan_path=create(self.root/'fixture');plan=json.loads(plan_path.read_text());plan['trace_id']=self.trace
         req={'revision_id':'revision-test-001','video_id':self.video,'trace_id':self.trace,'requested_by':'employee','requested_at':'2026-09-27T00:00:00Z','scene_id':1,'change_type':'caption','instruction':'Make scene one caption shorter','proposed_value':'公開禁止・確認用','previous_version':1,'new_version':2,'status':'REQUESTED'}
@@ -43,7 +51,7 @@ class IntegrationTests(unittest.TestCase):
         plan_path.write_text(json.dumps(revised,ensure_ascii=False))
         produce(plan_path,self.root/'renders')
         dest=self.root/'renders'/f'{self.video}_v2';qa=json.loads((dest/'qa.json').read_text())
-        self.s.regenerated('signed_fixture_admin',self.video,req['revision_id'],qa['sha256'],'12U5_yR7uDbtnsYCrNPJY4I6ELnZL0n3z',qa)
+        self.s.regenerated('signed_fixture_admin',self.video,req['revision_id'],qa['sha256'],'TEST_FIXTURE_STORAGE_v2',qa)
         self.assertEqual(self.s._video(self.video)['version'],2)
         with self.assertRaises(Denied):self.s.attempt_post_approval('signed_fixture_admin',self.video)
         blank={k:None for k in METRICS};blank['views']=0
@@ -55,7 +63,7 @@ class IntegrationTests(unittest.TestCase):
         loaded=load_feedback(revised,feedback)
         self.assertEqual(len(candidates('AI時短','社会人',self.trace,self.video,feedback)),3)
         self.assertEqual(loaded['prior_feedback']['trace_id'],self.trace)
-        (self.root/'e2e_evidence.json').write_text(json.dumps({'video_id':self.video,'trace_id':self.trace,'v1_sha256':self.digest,'v1_drive_file_id':'17KYfFDppLmPaIbNdrseudG32Z_v8JVG4','revision_id':req['revision_id'],'v2_sha256':qa['sha256'],'v2_quality':qa['quality_status'],'v2_drive_file_id':'12U5_yR7uDbtnsYCrNPJY4I6ELnZL0n3z','employee_identity':'TEST_FAKE_ONLY','posting_state':self.s._video(self.video)['posting_state'],'analytics_source':'TEST_FIXTURE','feedback_loaded':True},indent=2))
+        (self.root/'e2e_evidence.json').write_text(json.dumps({'video_id':self.video,'trace_id':self.trace,'v1_sha256':self.digest,'v1_drive_file_id':'17KYfFDppLmPaIbNdrseudG32Z_v8JVG4','revision_id':req['revision_id'],'v2_sha256':qa['sha256'],'v2_quality':qa['quality_status'],'v2_storage_reference':'TEST_FIXTURE_STORAGE_v2','employee_identity':'TEST_FAKE_ONLY','posting_state':self.s._video(self.video)['posting_state'],'analytics_source':'TEST_FIXTURE','feedback_loaded':True},indent=2))
         print((self.root/'e2e_evidence.json').read_text())
 
 if __name__=='__main__':unittest.main()
