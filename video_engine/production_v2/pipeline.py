@@ -43,13 +43,13 @@ def produce(plan_path, output_root):
     plan_path = Path(plan_path).resolve(); plan = json.loads(plan_path.read_text(encoding='utf8'))
     if plan.get('publication_status') != 'UNAPPROVED_TEST': raise ValueError('Only unapproved integration test plans are accepted')
     scenes = plan['scenes']; assets = plan['assets']
-    if not 2 <= len(scenes) <= 12 or len({s['scene_id'] for s in scenes}) != len(scenes): raise ValueError('Invalid scenes')
+    if not 6 <= len(scenes) <= 10 or len({s['scene_id'] for s in scenes}) != len(scenes): raise ValueError('Invalid scenes')
     required_plan = ('plan_id','genre','title','target_audience','audience_problem','hook_first_3s','structure','narration','captions','required_assets','cta','risks','sources','expected_seconds','created_at','version')
     if any(k not in plan for k in required_plan): raise ValueError('Incomplete plan')
     required_scene = ('scene_id','duration','purpose','visual_prompt','asset_type','asset_id','narration','caption','motion','transition','rights_status')
     if any(any(k not in scene for k in required_scene) for scene in scenes): raise ValueError('Incomplete scene')
     total = sum(float(s['duration']) for s in scenes)
-    if not 20 <= total <= 30: raise ValueError('Expected 20–30 seconds')
+    if not 15 <= total <= 25: raise ValueError('Expected 15–25 seconds')
     dest = Path(output_root).resolve() / f"{plan['video_id']}_v{plan['version']}"
     if dest.exists(): raise FileExistsError('Version is immutable')
     dest.mkdir(parents=True)
@@ -66,7 +66,7 @@ def produce(plan_path, output_root):
     config = {'mode':'technical_test','output':'video.mp4','narration':str((plan_path.parent/plan['narration_file']).resolve()),'captions':'captions.json','assets':media,'scenes':[{'asset_id':s['asset_id'],'seconds':s['duration'],'motion':s['motion']} for s in scenes]}
     write(dest/'render_config.json', config)
     checks = {k:[] for k in CATEGORIES}
-    checks['structure'].append({'check':'scene_count', 'passed':8<=len(scenes)<=12})
+    checks['structure'].append({'check':'scene_count', 'passed':6<=len(scenes)<=10})
     checks['legibility'].append({'check':'caption_length', 'passed':all(0<len(s['caption'])<=28 for s in scenes)})
     checks['content'].append({'check':'sources_provided', 'passed':bool(plan['sources'])})
     checks['rights'].append({'check':'human_rights_clearance', 'passed':False, 'reason':'UNAPPROVED_TEST'})
@@ -77,7 +77,7 @@ def produce(plan_path, output_root):
         write(dest/'ffprobe.json',data)
         subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(video),'-f','null','-'],check=True)
         streams=data['streams']; v=next(s for s in streams if s['codec_type']=='video')
-        checks['structure'].append({'check':'resolution_duration_decode', 'passed':(v['width'],v['height'])==(1080,1920) and 19.8<=float(data['format']['duration'])<=30.2})
+        checks['structure'].append({'check':'resolution_duration_decode', 'passed':(v['width'],v['height'])==(1080,1920) and 14.8<=float(data['format']['duration'])<=25.2})
         checks['audio'].append({'check':'audio_track', 'passed':any(s['codec_type']=='audio' for s in streams)})
         checks['audio'].append({'check':'human_japanese_pronunciation', 'passed':False})
         digest=hashlib.sha256(video.read_bytes()).hexdigest()
