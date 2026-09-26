@@ -51,7 +51,7 @@ def main(config):
         manifest=td/'concat.txt';manifest.write_text(''.join("file '"+str(p)+"'\n" for p in segments))
         joined=td/'joined.mp4';run(['ffmpeg','-v','error','-y','-f','concat','-safe','0','-i',str(manifest),'-c','copy',str(joined)])
         ass=td/'captions.ass'
-        header='[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Noto Sans CJK JP,65,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,4,1,2,95,95,330,1\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n'
+        header='[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\n[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\nStyle: Default,Noto Sans CJK JP,65,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,4,1,2,95,95,410,1\n[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n'
         def stamp(x):return f'{int(x//3600)}:{int(x%3600//60):02}:{x%60:05.2f}'
         def wrap(t):return '\\N'.join(t[i:i+14] for i in range(0,len(t),14))
         ass.write_text(header+''.join(f'Dialogue: 0,{stamp(x["start"])},{stamp(x["end"])},Default,,0,0,0,,{wrap(x["text"])}\n' for x in caps),encoding='utf8')

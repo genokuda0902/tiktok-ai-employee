@@ -1,0 +1,67 @@
+name: Video production v2 Japanese narration review
+on:
+  push:
+    branches: [feature/video-production-v2-e2e]
+    paths: [.github/workflows/production-v2-japanese-voice.yml, video_engine/production_v2/aivis_narration.py]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow==11.3.0'
+      - name: Start the existing AivisSpeech model in the runner
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
+          curl -L --fail --retry 3 'https://api.aivis-project.com/v1/aivm-models/76a774e4-cc4d-4d8c-879e-8d2be3d30dad/download?model_type=AIVMX' -o "$HOME/.local/share/AivisSpeech-Engine/Models/flow.aivmx"
+          sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
+          docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          for i in $(seq 1 90); do if curl -fsS http://127.0.0.1:10101/speakers > /dev/null; then exit 0; fi; sleep 5; done
+          echo 'Aivis engine unavailable' >&2; exit 1
+      - name: Create test scenes, synthesize Japanese speech and measure its actual duration
+        env:
+          AIVIS_SPEAKER_NAME: Flow
+          AIVIS_STYLE_NAME: 04_FUN
+        run: |
+          set -euo pipefail
+          python video_engine/production_v2/test_fixture.py "$RUNNER_TEMP/jp_fixture"
+          python - <<'PYPLAN'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'jp_fixture/plan.json'
+          plan=json.loads(p.read_text());plan['video_id']='video_jp_review_0001';plan['trace_id']='trace_jp_review_'+os.environ['GITHUB_RUN_ID']
+          p.write_text(json.dumps(plan,ensure_ascii=False))
+          PYPLAN
+          python video_engine/production_v2/aivis_narration.py "$RUNNER_TEMP/jp_fixture/plan.json"
+          python - <<'PYSOUND'
+          import json,os,subprocess
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'jp_fixture';plan=json.loads((p/'plan.json').read_text());duration=plan['expected_seconds']
+          subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i',f'sine=frequency=120:duration={duration}','-c:a','pcm_s16le',str(p/'bgm_TEST_ONLY.wav')],check=True)
+          subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i','sine=frequency=900:duration=0.15','-c:a','pcm_s16le',str(p/'sfx_TEST_ONLY.wav')],check=True)
+          plan['soundtrack']={'bgm':'bgm_TEST_ONLY.wav','sfx':'sfx_TEST_ONLY.wav','rights':{role:{'source':'synthetic test oscillator','rights_status':'TEST_ONLY'} for role in ('VOICE','BGM','SFX')}}
+          (p/'plan.json').write_text(json.dumps(plan,ensure_ascii=False))
+          PYSOUND
+          python -m video_engine.production_v2.pipeline "$RUNNER_TEMP/jp_fixture/plan.json" "$RUNNER_TEMP/jp_output"
+          ffmpeg -v error -xerror -i "$RUNNER_TEMP/jp_output/video_jp_review_0001_v1/video.mp4" -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: japanese-voice-unapproved-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/jp_output/video_jp_review_0001_v1/
+            ${{ runner.temp }}/jp_fixture/narration_jp.wav
+          retention-days: 7
+          if-no-files-found: error
