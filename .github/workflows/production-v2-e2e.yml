@@ -1,0 +1,74 @@
+name: Video production v2 isolated artifact transfer
+on:
+  push:
+    branches: [feature/video-production-v2-e2e]
+    paths:
+      - 'video_engine/production_v2/**'
+      - '.github/workflows/production-v2-e2e.yml'
+      - 'video_engine/portrait_v2/build.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  producer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    outputs:
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+      digest: ${{ steps.digest.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow==11.3.0'
+      - name: Create NEW synthetic plan and technical audio fixture
+        run: |
+          python video_engine/production_v2/test_fixture.py "$RUNNER_TEMP/fixture"
+          python -m video_engine.production_v2.pipeline "$RUNNER_TEMP/fixture/plan.json" "$RUNNER_TEMP/output"
+          test -s "$RUNNER_TEMP/output/video_e2e_test_0001_v1/video.mp4"
+      - id: digest
+        run: echo "value=$(cut -d' ' -f1 "$RUNNER_TEMP/output/video_e2e_test_0001_v1/SHA256SUMS")" >> "$GITHUB_OUTPUT"
+      - id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-v2-unapproved-${{ github.run_id }}
+          path: ${{ runner.temp }}/output/video_e2e_test_0001_v1/
+          retention-days: 7
+          if-no-files-found: error
+  engine2-receive:
+    needs: producer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Download actual artifact by producer ID through API
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ needs.producer.outputs.artifact_id }}
+          EXPECTED: ${{ needs.producer.outputs.digest }}
+        run: |
+          set -euo pipefail
+          test -n "$ARTIFACT_ID"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > artifact.zip
+          mkdir payload
+          unzip -q artifact.zip -d payload
+          test -s payload/video.mp4
+          actual="$(sha256sum payload/video.mp4 | cut -d' ' -f1)"
+          test "$actual" = "$EXPECTED"
+          test "$(cut -d' ' -f1 payload/SHA256SUMS)" = "$actual"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          qa=json.loads(Path('payload/qa.json').read_text())
+          assert qa['quality_status']=='QUALITY_NOT_APPROVED'
+          assert qa['publication_status']=='NOT_APPROVED'
+          PY
+          echo "SOURCE_ARTIFACT_ID=$ARTIFACT_ID"
+          echo "ENGINE2_INDEPENDENT_SHA256=$actual"
+          echo 'RECEIVED_FOR_INTEGRATION_TEST'
