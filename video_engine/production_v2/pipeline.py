@@ -75,7 +75,8 @@ def produce(plan_path, output_root):
     checks['structure'].append({'check':'scene_count', 'passed':6<=len(scenes)<=10})
     checks['legibility'].append({'check':'caption_length', 'passed':all(0<len(s['caption'])<=28 for s in scenes)})
     checks['content'].append({'check':'sources_provided', 'passed':bool(plan['sources'])})
-    checks['legibility'].append({'check':'caption_safe_zone_style', 'passed':True, 'reason':'ASS bottom margin 410px; phone visual review pending'})
+    checks['legibility'].append({'check':'caption_safe_zone_visual', 'passed':None, 'reason':'ASS bottom margin 410px; phone frame review pending'})
+    checks['tiktok_quality'].append({'check':'first_1_5_seconds_visual_hook', 'passed':None, 'reason':'visual impact requires human review'})
     checks['audio'].append({'check':'separate_voice_bgm_sfx', 'passed':bool(plan.get('soundtrack')), 'reason':'Absent tracks require human review' if not plan.get('soundtrack') else 'mix metadata recorded'})
     checks['rights'].append({'check':'human_rights_clearance', 'passed':False, 'reason':'UNAPPROVED_TEST'})
     checks['tiktok_quality'].append({'check':'human_phone_review', 'passed':False})
@@ -90,7 +91,7 @@ def produce(plan_path, output_root):
         checks['audio'].append({'check':'human_japanese_pronunciation', 'passed':False})
         digest=hashlib.sha256(video.read_bytes()).hexdigest()
         (dest/'SHA256SUMS').write_text(f'{digest}  video.mp4\n')
-        result='REGENERATE' if any(not c['passed'] for cat in ('structure','legibility') for c in checks[cat]) else 'HUMAN_REVIEW'
+        result='REGENERATE' if any(c['passed'] is False for cat in ('structure','legibility') for c in checks[cat]) else 'HUMAN_REVIEW'
     except Exception as exc:
         checks['structure'].append({'check':'render', 'passed':False,'reason':str(exc)[-500:]})
         result='REGENERATE'; digest=None
