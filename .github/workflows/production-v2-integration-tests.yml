@@ -30,4 +30,4 @@ jobs:
           python -m pip install 'Pillow==11.3.0'
       - name: Exercise isolated synthetic identity and analysis fixture
         run: |
-          python -m unittest video_engine.production_v2.test_pipeline video_engine.production_v2.test_integration -v
+          python -m unittest video_engine.production_v2.test_pipeline video_engine.production_v2.test_integration video_engine.production_v2.test_sound -v
