@@ -38,14 +38,30 @@ jobs:
         run: |
           set -euo pipefail
           python video_engine/production_v2/test_fixture.py "$RUNNER_TEMP/jp_fixture"
+          python - <<'PYPLAN'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'jp_fixture/plan.json'
+          plan=json.loads(p.read_text());plan['video_id']='video_jp_review_0001';plan['trace_id']='trace_jp_review_'+os.environ['GITHUB_RUN_ID']
+          p.write_text(json.dumps(plan,ensure_ascii=False))
+          PYPLAN
           python video_engine/production_v2/aivis_narration.py "$RUNNER_TEMP/jp_fixture/plan.json"
+          python - <<'PYSOUND'
+          import json,os,subprocess
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'jp_fixture';plan=json.loads((p/'plan.json').read_text());duration=plan['expected_seconds']
+          subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i',f'sine=frequency=120:duration={duration}','-c:a','pcm_s16le',str(p/'bgm_TEST_ONLY.wav')],check=True)
+          subprocess.run(['ffmpeg','-v','error','-y','-f','lavfi','-i','sine=frequency=900:duration=0.15','-c:a','pcm_s16le',str(p/'sfx_TEST_ONLY.wav')],check=True)
+          plan['soundtrack']={'bgm':'bgm_TEST_ONLY.wav','sfx':'sfx_TEST_ONLY.wav','rights':{role:{'source':'synthetic test oscillator','rights_status':'TEST_ONLY'} for role in ('VOICE','BGM','SFX')}}
+          (p/'plan.json').write_text(json.dumps(plan,ensure_ascii=False))
+          PYSOUND
           python -m video_engine.production_v2.pipeline "$RUNNER_TEMP/jp_fixture/plan.json" "$RUNNER_TEMP/jp_output"
-          ffmpeg -v error -xerror -i "$RUNNER_TEMP/jp_output/video_e2e_test_0001_v1/video.mp4" -f null -
+          ffmpeg -v error -xerror -i "$RUNNER_TEMP/jp_output/video_jp_review_0001_v1/video.mp4" -f null -
       - uses: actions/upload-artifact@v4
         with:
           name: japanese-voice-unapproved-${{ github.run_id }}
           path: |
-            ${{ runner.temp }}/jp_output/video_e2e_test_0001_v1/
+            ${{ runner.temp }}/jp_output/video_jp_review_0001_v1/
             ${{ runner.temp }}/jp_fixture/narration_jp.wav
           retention-days: 7
           if-no-files-found: error
