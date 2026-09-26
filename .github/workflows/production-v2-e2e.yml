@@ -3,9 +3,7 @@ on:
   push:
     branches: [feature/video-production-v2-e2e]
     paths:
-      - 'video_engine/production_v2/**'
       - '.github/workflows/production-v2-e2e.yml'
-      - 'video_engine/portrait_v2/build.py'
   workflow_dispatch:
 permissions:
   contents: read
