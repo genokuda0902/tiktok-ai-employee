@@ -8,6 +8,7 @@ from video_engine.production_v2.integration import Store,load_feedback,METRICS,c
 from video_engine.production_v2.creative import candidates
 from video_engine.production_v2.test_fixture import create
 from video_engine.production_v2.pipeline import produce
+from src.manual_posting_flow import PostingRecord,Principal,transition,QA_WAIT,ADMIN_WAIT,InvalidTransition
 
 class FixtureVerifier:
     """Explicit test fake; never configure in production."""
@@ -33,6 +34,9 @@ class IntegrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):self.s.register('signed_fixture_admin',self.video,self.trace,'employee','internal-test',1,self.digest,'file','QUALITY_NOT_APPROVED','source-artifact-10912516118')
         self.assertEqual(self.s._video(self.video)['posting_state'],'HUMAN_REVIEW')
         self.assertEqual(self.s.db.execute('SELECT COUNT(*) FROM audit WHERE action=?',('approval.denied',)).fetchone()[0],1)
+        record=PostingRecord(video_id=self.video,account_id='internal-test',status=QA_WAIT,qa_passed=False,assets_approved=False)
+        principal=Principal(user_id='admin',role='admin',authenticated=True,approved=True,active=True)
+        with self.assertRaises(InvalidTransition):transition(record,principal,ADMIN_WAIT)
     def test_abc_comparison_uses_retention_and_keeps_unknowns(self):
         row={k:None for k in METRICS}
         row.update(views=100,three_second_views=70,completion_rate=0.4,likes=4,saves=3,shares=2,comments=1)
