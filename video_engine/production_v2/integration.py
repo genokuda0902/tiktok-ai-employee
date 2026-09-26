@@ -15,6 +15,25 @@ from video_engine.production_v2.pipeline import request_revision
 STATES = ('GENERATED','QUALITY_CHECK','HUMAN_REVIEW','REVISION_REQUESTED','REGENERATING','APPROVED_FOR_MANUAL_POST','MANUALLY_POSTED')
 METRICS = ('views','three_second_views','average_watch_time','completion_rate','likes','saves','shares','comments','followers_gained')
 
+def compare_variants(rows):
+    """Compare matched variants without treating missing data as zero or views as a winner."""
+    by_variant={v:[] for v in ('A','B','C')}
+    for item in rows:
+        if item['variant'] in by_variant:by_variant[item['variant']].append(item['metrics'])
+    summary={}
+    for variant,items in by_variant.items():
+        measured=[m for m in items if m['views'] is not None and m['three_second_views'] is not None and m['completion_rate'] is not None]
+        summary[variant]={'samples':len(items),'measured':len(measured),'three_second_rate':None,'completion_rate':None,'engagement_rate':None}
+        if measured:
+            views=sum(m['views'] for m in measured)
+            if views:
+                summary[variant]['three_second_rate']=sum(m['three_second_views'] for m in measured)/views
+                if all(m[k] is not None for m in measured for k in ('likes','saves','shares','comments')):
+                    summary[variant]['engagement_rate']=sum(sum(m[k] for k in ('likes','saves','shares','comments')) for m in measured)/views
+            summary[variant]['completion_rate']=sum(m['completion_rate'] for m in measured)/len(measured)
+    # Age-matched real posts and >=10 samples per variant must be verified separately.
+    return {'variants':summary,'winner':None,'status':'INSUFFICIENT_COMPARABLE_EVIDENCE'}
+
 def now(): return datetime.now(timezone.utc).isoformat()
 
 class Store:
@@ -88,7 +107,8 @@ class Store:
         if actor!=row['employee_id'] and self.identity.registry._actor(actor)!='admin': raise Denied('Not assigned')
         items=self.db.execute('SELECT variant,source,metrics_json FROM analytics WHERE video_id=?',(video_id,)).fetchall()
         source='TEST_FIXTURE' if items and all(x['source']=='TEST_FIXTURE' for x in items) else 'NONE'
-        return {'video_id':video_id,'trace_id':row['trace_id'],'data_type':source,'recommended_hook':None,'recommended_duration':None,'recommended_structure':None,'recommended_cta':None,'recommended_asset_type':None,'recommended_audio_style':None,'recommended_visual_style':None,'recommended_posting_time':None,'reason':'Insufficient real comparable metrics; test candidate hooks without declaring a winner.','source_metrics':[{**dict(x),'metrics':json.loads(x['metrics_json'])} for x in items]}
+        source_metrics=[{**dict(x),'metrics':json.loads(x['metrics_json'])} for x in items]
+        return {'video_id':video_id,'trace_id':row['trace_id'],'data_type':source,'recommended_hook':None,'recommended_duration':None,'recommended_structure':None,'recommended_cta':None,'recommended_asset_type':None,'recommended_audio_style':None,'recommended_visual_style':None,'recommended_posting_time':None,'reason':'Insufficient real comparable metrics; test candidate hooks without declaring a winner.','source_metrics':source_metrics,'comparison':compare_variants(source_metrics)}
 
 def load_feedback(plan,feedback):
     if plan['video_id']!=feedback['video_id'] or plan['trace_id']!=feedback['trace_id']: raise ValueError('Wrong trace')
