@@ -16,3 +16,21 @@ def register(path,asset_id,asset_type,source,rights_basis,rights_evidence,visual
         media_type='image'
     else:media_type='video' # PR #21 renderer independently checks video dimensions/length.
     return {'asset_id':asset_id,'path':str(file),'type':media_type,'source_type':asset_type,'source':source,'rights_basis':rights_basis,'rights_evidence':rights_evidence,'commercial_use':False,'derivatives_allowed':False,'privacy_review':privacy_review,'ai_generated':asset_type.startswith('ai_'),'ai_disclosure':asset_type.startswith('ai_'),'visual_prompt':visual_prompt,'generation_model':model,'generated_at':generated_at,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'publication_approved':False}
+
+
+def validate_for_render(asset):
+    """Fail closed before an asset enters the renderer."""
+    required=('path','sha256','rights_evidence','privacy_review','publication_approved')
+    if any(k not in asset for k in required):
+        raise ValueError('Incomplete asset approval metadata')
+    if asset['privacy_review'] != 'approved':
+        raise ValueError('Privacy review approval required')
+    if asset['publication_approved'] is not True:
+        raise ValueError('Publication approval required')
+    if not asset['rights_evidence']:
+        raise ValueError('Rights evidence required')
+    file=Path(asset['path']).resolve(strict=True)
+    actual=hashlib.sha256(file.read_bytes()).hexdigest()
+    if actual != asset['sha256']:
+        raise ValueError('Asset checksum changed after approval')
+    return asset
