@@ -9,6 +9,8 @@ on:
       - 'video_engine/production_v2/test_integration.py'
       - 'video_engine/production_v2/assets.py'
       - 'video_engine/production_v2/test_assets.py'
+      - 'video_engine/production_v2/hook_evidence_guard.py'
+      - 'video_engine/production_v2/test_hook_evidence_guard.py'
       - 'video_engine/production_v2/drive_persist.py'
       - 'video_engine/production_v2/test_drive_persist.py'
       - 'employee_management/**'
@@ -34,4 +36,4 @@ jobs:
           python -m pip install 'Pillow==11.3.0'
       - name: Exercise isolated synthetic identity and analysis fixture
         run: |
-          python -m unittest video_engine.production_v2.test_pipeline video_engine.production_v2.test_integration video_engine.production_v2.test_sound video_engine.production_v2.test_assets video_engine.production_v2.test_drive_persist -v
+          python -m unittest video_engine.production_v2.test_pipeline video_engine.production_v2.test_integration video_engine.production_v2.test_sound video_engine.production_v2.test_assets video_engine.production_v2.test_hook_evidence_guard video_engine.production_v2.test_drive_persist -v
