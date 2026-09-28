@@ -5,6 +5,8 @@ on:
     paths:
       - '.github/workflows/production-v2-integration-tests.yml'
       - 'video_engine/production_v2/integration.py'
+      - 'video_engine/production_v2/pipeline.py'
+      - 'video_engine/production_v2/test_pipeline.py'
       - 'video_engine/production_v2/creative.py'
       - 'video_engine/production_v2/test_integration.py'
       - 'video_engine/production_v2/assets.py'
