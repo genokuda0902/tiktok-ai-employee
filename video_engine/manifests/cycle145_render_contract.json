@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "render": {"width":1080,"height":1920,"fps":30},
+  "audio": {"language":"ja-JP","sample_rate":48000,"channels":2},
+  "timing": {"hook_hold_seconds":0.25,"cta_hold_seconds":0.55},
+  "visual": {"subtitle_safe_gradient":true,"attention_pulses":[2.6,6.7],"progress_position":"top"},
+  "publishing": {"mode":"employee_manual_only","quality_approved":false}
+}

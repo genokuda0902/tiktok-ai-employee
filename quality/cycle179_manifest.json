@@ -1,0 +1,19 @@
+{
+  "cycle": 179,
+  "template": "seven_beat_kinetic_caption",
+  "duration_sec": 12.0,
+  "resolution": "1080x1920",
+  "fps": 30,
+  "improvement_vs_178": "role-timed kinetic subtitle layer with beat-specific emphasis while preserving the motion-contrast video",
+  "beats": [
+    {"start":0.0,"end":1.5,"caption":"毎日の集計、まだ10分？","emphasis":"punch_in"},
+    {"start":1.5,"end":3.5,"caption":"表を渡して「集計して」","emphasis":"standard"},
+    {"start":3.5,"end":5.0,"caption":"AIが整理・集計中","emphasis":"highlight"},
+    {"start":5.0,"end":7.0,"caption":"表とグラフまで完成","emphasis":"standard"},
+    {"start":7.0,"end":9.0,"caption":"10分 → 1分","emphasis":"punch_in"},
+    {"start":9.0,"end":10.5,"caption":"面倒な集計はAIへ","emphasis":"standard"},
+    {"start":10.5,"end":12.0,"caption":"大事な仕事に時間を使う","emphasis":"standard"}
+  ],
+  "audio": {"source":"inherited_existing_verified_aac","sample_rate":48000,"channels":2,"new_tts_generated":false},
+  "release_policy":{"zero_cost":true,"human_approval_required":true,"manual_post_only":true,"auto_post":false}
+}
