@@ -7,6 +7,7 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from video_engine.portrait_v2.build import main as render, probe
+from video_engine.production_v2.assets import validate_for_render
 
 CATEGORIES = ('structure', 'legibility', 'audio', 'content', 'rights', 'tiktok_quality')
 ALLOWED = {'caption', 'visual_prompt', 'asset_id', 'motion', 'narration'}
@@ -67,8 +68,14 @@ def produce(plan_path, output_root):
         sound=plan['soundtrack']
         mix(narration_file,(plan_path.parent/sound['bgm']).resolve(),(plan_path.parent/sound['sfx']).resolve(),dest/'mix.wav',total,sound['rights'])
         narration_file=dest/'mix.wav'
-    # Resolve media relative to the source plan, not the generated output directory.
+    # Resolve media relative to the source plan, then fail closed at the renderer boundary.
     media = {k:{**asset,'path':str((plan_path.parent/asset['path']).resolve())} for k,asset in assets.items()}
+    referenced_asset_ids = {scene['asset_id'] for scene in scenes}
+    unknown_asset_ids = referenced_asset_ids.difference(media)
+    if unknown_asset_ids:
+        raise ValueError(f"Unknown scene assets: {sorted(unknown_asset_ids)}")
+    for asset_id in sorted(referenced_asset_ids):
+        validate_for_render(media[asset_id])
     config = {'mode':'technical_test','output':'video.mp4','narration':str(narration_file),'captions':'captions.json','assets':media,'scenes':[{'asset_id':s['asset_id'],'seconds':s['duration'],'motion':s['motion']} for s in scenes]}
     write(dest/'render_config.json', config)
     checks = {k:[] for k in CATEGORIES}
