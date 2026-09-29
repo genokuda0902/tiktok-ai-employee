@@ -1,6 +1,6 @@
 import unittest
 
-from video_engine.production_v2.creative import SCENE_DURATIONS, candidates
+from video_engine.production_v2.creative import SCENE_DURATIONS, SCENE_PURPOSES, candidates
 
 
 class CreativePacingTests(unittest.TestCase):
@@ -23,6 +23,11 @@ class CreativePacingTests(unittest.TestCase):
                 self.assertEqual(scene["rights_status"], "PENDING")
                 previous_end = scene["end_time"]
             self.assertAlmostEqual(previous_end, 20.0)
+
+    def test_scene_purposes_are_explicit_and_genre_independent(self):
+        self.assertEqual(SCENE_PURPOSES, ('hook','problem','instruction','processing','result','comparison','proof','cta'))
+        for item in self.items:
+            self.assertEqual(tuple(s['purpose'] for s in item['scene_prompts']), SCENE_PURPOSES)
 
 
 if __name__ == "__main__":
