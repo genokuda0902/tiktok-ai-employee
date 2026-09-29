@@ -4,6 +4,7 @@ from video_engine.production_v2.integration import load_feedback
 
 NEGATIVE = ('readable text','watermark','social platform UI','unauthorized logo','unauthorized likeness','extra fingers','malformed hands','distorted face','flicker','broken physics','random symbols','inconsistent objects')
 SCENE_DURATIONS = (1.5, 2.0, 2.0, 2.5, 2.5, 3.0, 3.0, 3.5)
+SCENE_PURPOSES = ('hook','problem','instruction','processing','result','comparison','proof','cta')
 
 STYLES = {
  'A':('リアル系AI違和感','office realism with one impossible change','result-first visual contradiction'),
@@ -19,7 +20,7 @@ def candidates(theme, target, trace_id, video_id, feedback=None):
         start = 0.0
         for i, duration in enumerate(SCENE_DURATIONS):
             prompt={'subject':theme,'environment':'office or daily life','camera_position':'eye level','lens':'35mm natural perspective','camera_motion':'subtle push in','lighting':'soft natural light','color':'high contrast legible','texture':'photographic','single_action':'one visible change','continuity':{'person':c['character_reference_id'],'outfit':'consistent','background':'consistent','props':'consistent','palette':'consistent'},'next_scene_connection':'match action cut','no_text_generated':True}
-            c['scene_prompts'].append({'scene_id':i+1,'start_time':start,'end_time':start+duration,'duration':duration,'purpose':'hook' if i==0 else 'one visual beat','visual':visual_style,'camera':'eye level','motion':'subtle push in','narration':'Draft pending TTS','caption':'Draft pending edit','sound_effect':'short only when action warrants','asset_type':'ai_image_or_video','asset_id':None,'visual_prompt':prompt,'negative_prompt':list(NEGATIVE),'rights_status':'PENDING','quality_risk':['face, hands, props, continuity'],'transition':'cut'})
+            c['scene_prompts'].append({'scene_id':i+1,'start_time':start,'end_time':start+duration,'duration':duration,'purpose':SCENE_PURPOSES[i],'visual':visual_style,'camera':'eye level','motion':'subtle push in','narration':'Draft pending TTS','caption':'Draft pending edit','sound_effect':'short only when action warrants','asset_type':'ai_image_or_video','asset_id':None,'visual_prompt':prompt,'negative_prompt':list(NEGATIVE),'rights_status':'PENDING','quality_risk':['face, hands, props, continuity'],'transition':'cut'})
             start += duration
         out.append(c)
     if feedback:
