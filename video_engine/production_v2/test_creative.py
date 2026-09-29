@@ -24,6 +24,15 @@ class CreativePacingTests(unittest.TestCase):
                 previous_end = scene["end_time"]
             self.assertAlmostEqual(previous_end, 20.0)
 
+    def test_hook_and_proof_are_structurally_linked(self):
+        """The opening promise must be paid off before CTA across all variants."""
+        for item in self.items:
+            purposes = tuple(s["purpose"] for s in item["scene_prompts"])
+            self.assertEqual(purposes[0], "hook")
+            self.assertEqual(purposes[-2:], ("proof", "cta"))
+            self.assertLess(purposes.index("result"), purposes.index("proof"))
+            self.assertLess(purposes.index("comparison"), purposes.index("proof"))
+
     def test_scene_purposes_are_explicit_and_genre_independent(self):
         self.assertEqual(SCENE_PURPOSES, ('hook','problem','instruction','processing','result','comparison','proof','cta'))
         for item in self.items:
