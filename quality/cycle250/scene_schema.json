@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "cycle": 250,
+  "format": {"width":1080,"height":1920,"fps":30,"target_seconds":15},
+  "reusable_for_10_genres": true,
+  "scene_roles": ["HOOK","PAIN","SOLUTION","DOC","DATA","MAIL","VALUE","CTA"],
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
