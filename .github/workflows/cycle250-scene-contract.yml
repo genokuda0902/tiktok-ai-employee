@@ -1,0 +1,22 @@
+name: Cycle250 Scene Contract
+
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle250/**'
+      - '.github/workflows/cycle250-scene-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scene-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run scene contract tests
+        run: python -m pytest -q quality/cycle250/test_scene_schema.py quality/cycle250/test_scene_contract.py
