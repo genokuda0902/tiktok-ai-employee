@@ -41,7 +41,9 @@ def validate_scene_plan(plan):
             errors.append(f"scene {i}: approved asset required")
 
     hook_seconds = scenes[0].get("seconds", 99)
-    if hook_seconds > 1.5:
+    # The hook is a cumulative timing gate, not just a per-scene duration check.
+    # This also fails closed when a malformed/negative duration slips in.
+    if not isinstance(hook_seconds, (int, float)) or hook_seconds <= 0 or hook_seconds > 1.5:
         errors.append("HOOK must finish within 1.5 seconds")
 
     if plan.get("publication_gate") != "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED":
