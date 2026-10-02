@@ -1,0 +1,13 @@
+{
+  "cycle": 265,
+  "visual_mode": "purpose_built_8panel_storyboard_to_8_fullscreen_scenes",
+  "scene_count": 8,
+  "unique_panel_count": 8,
+  "resolution": [
+    1080,
+    1920
+  ],
+  "audio_mode": "stream_copy_verified_ja_audio",
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "auto_post": false
+}
