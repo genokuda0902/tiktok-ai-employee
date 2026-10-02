@@ -21,4 +21,4 @@ jobs:
       - name: Install test dependency
         run: python -m pip install --disable-pip-version-check pytest
       - name: Run scene contract tests
-        run: python -m pytest -q quality/cycle250/test_scene_schema.py quality/cycle250/test_scene_contract.py
+        run: python -m pytest -q quality/cycle250/test_scene_schema.py quality/cycle250/test_scene_contract.py quality/cycle250/test_safe_area.py
