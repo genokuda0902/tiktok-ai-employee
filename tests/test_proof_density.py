@@ -49,6 +49,23 @@ class ProofDensityTests(unittest.TestCase):
         self.assertIn("auto_post_forbidden", errors)
         self.assertIn("publication_must_require_human_review", errors)
 
+    def test_result_dwell_below_two_seconds_fails(self):
+        ok, errors = validate_proof_sequence([
+            {"phase": "INPUT"},
+            {"phase": "TRANSFORM"},
+            {"phase": "RESULT", "comparison": True, "duration_s": 1.99},
+        ])
+        self.assertFalse(ok)
+        self.assertIn("result_dwell_too_short", errors)
+
+    def test_result_dwell_two_seconds_passes(self):
+        ok, errors = validate_proof_sequence([
+            {"phase": "INPUT"},
+            {"phase": "TRANSFORM"},
+            {"phase": "RESULT", "comparison": True, "duration_s": 2.00},
+        ])
+        self.assertTrue(ok)
+        self.assertEqual([], errors)
 
 if __name__ == "__main__":
     unittest.main()
