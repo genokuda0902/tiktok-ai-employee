@@ -1,0 +1,13 @@
+{
+  "cycle": 298,
+  "base_cycle": 297,
+  "resolution": [1080, 1920],
+  "improvement_axis": "nonverbal_temporal_progress_cue",
+  "progress": {"x":90,"y":1780,"width":900,"height":8,"duration_seconds":15},
+  "purpose": "give viewers temporal orientation without adding text density; reusable across 10 genres",
+  "audio": "cycle297 verified Japanese audio retained unchanged",
+  "new_tts_generated": false,
+  "third_party_stock_added": false,
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
