@@ -1,0 +1,14 @@
+{
+  "cycle": 286,
+  "base_cycle": 285,
+  "resolution": [1080, 1920],
+  "visual_mode": "six_independent_fullframe_with_ui_safe_motion_overlay",
+  "improvement_axis": "tiktok_ui_safezone_and_progress_motion",
+  "right_ui_exclusion_strategy": "new overlay elements placed on top/left; no new elements in right interaction rail",
+  "progress_rail": {"x":72,"y":132,"width":936,"height":6,"duration_seconds":15},
+  "audio": "cycle285 verified Japanese AAC stream copy",
+  "new_tts_generated": false,
+  "subtitle": "existing burned Japanese captions retained",
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
