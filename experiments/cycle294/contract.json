@@ -1,0 +1,12 @@
+{
+  "cycle": 294,
+  "base_cycle": 293,
+  "resolution": [
+    1080,
+    1920
+  ],
+  "improvement_axis": "sidechain_ducking_for_voice_first_mix",
+  "new_tts_generated": false,
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
