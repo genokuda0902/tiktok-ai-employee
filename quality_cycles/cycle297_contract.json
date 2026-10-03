@@ -1,0 +1,13 @@
+{
+  "cycle": 297,
+  "base_cycle": 296,
+  "resolution": [1080, 1920],
+  "improvement_axis": "semantic_caption_pacing_with_breathing_gaps",
+  "caption_count": 6,
+  "fade_ms": 100,
+  "scene_boundary_gap_ms_min": 120,
+  "new_tts_generated": false,
+  "third_party_stock_added": false,
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
