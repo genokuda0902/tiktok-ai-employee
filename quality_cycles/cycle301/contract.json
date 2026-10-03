@@ -1,0 +1,13 @@
+{
+  "cycle": 301,
+  "base_cycle": 300,
+  "resolution": [1080, 1920],
+  "improvement_axis": "audio_activity_driven_visual_emphasis",
+  "detector": {"silence_threshold_db": -36, "minimum_silence_seconds": 0.18},
+  "micro_zoom": 1.012,
+  "new_tts_attempt": {"engine":"gTTS","result":"FAILED_NO_NETWORK","success":false},
+  "audio": "cycle300 verified Japanese audio retained unchanged",
+  "third_party_stock_added": false,
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
