@@ -50,5 +50,32 @@ class ProofDensityTests(unittest.TestCase):
         self.assertIn("publication_must_require_human_review", errors)
 
 
+    def test_matching_object_identity_passes(self):
+        ok, errors = validate_proof_sequence([
+            {"phase": "INPUT", "object_id": "A"},
+            {"phase": "TRANSFORM"},
+            {"phase": "RESULT", "object_id": "A", "comparison": True},
+        ])
+        self.assertTrue(ok)
+        self.assertNotIn("input_result_identity_mismatch", errors)
+
+    def test_mismatched_object_identity_fails(self):
+        ok, errors = validate_proof_sequence([
+            {"phase": "INPUT", "object_id": "A"},
+            {"phase": "TRANSFORM"},
+            {"phase": "RESULT", "object_id": "B", "comparison": True},
+        ])
+        self.assertFalse(ok)
+        self.assertIn("input_result_identity_mismatch", errors)
+
+    def test_one_sided_object_identity_fails_closed(self):
+        ok, errors = validate_proof_sequence([
+            {"phase": "INPUT", "object_id": "A"},
+            {"phase": "TRANSFORM"},
+            {"phase": "RESULT", "comparison": True},
+        ])
+        self.assertFalse(ok)
+        self.assertIn("input_result_identity_mismatch", errors)
+
 if __name__ == "__main__":
     unittest.main()
