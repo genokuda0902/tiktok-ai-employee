@@ -1,0 +1,30 @@
+{
+  "cycle": 332,
+  "base_cycle": 331,
+  "resolution": [
+    1080,
+    1920
+  ],
+  "scene_count": 6,
+  "improvement_axis": "dual_ui_safezone_plus_progress_rail",
+  "safe_zones": {
+    "right_rail_excluded_after_x": 850,
+    "bottom_excluded_after_y": 1515,
+    "subtitle": {
+      "x": 55,
+      "y": 1375,
+      "w": 795,
+      "h": 140
+    }
+  },
+  "progress_rail": {
+    "x": 55,
+    "y": 105,
+    "w": 760,
+    "h": 12,
+    "steps": 6
+  },
+  "paid_service_used": false,
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
