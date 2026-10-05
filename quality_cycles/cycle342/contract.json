@@ -1,0 +1,13 @@
+{
+  "cycle": 342,
+  "base_cycle": 341,
+  "resolution": [1080, 1920],
+  "improvement_axis": "hook_value_preview_information_scent",
+  "hook_duration_seconds": 1.45,
+  "change": "Hook now previews all five concrete benefits before the first scene transition, rather than only stating the topic.",
+  "reusable_for_10_genres": true,
+  "audio": "Japanese narration retained from cycle341 for controlled hook-only comparison",
+  "paid_service_used": false,
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
