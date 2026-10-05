@@ -1,0 +1,17 @@
+{
+  "cycle": 350,
+  "base_cycle": 349,
+  "resolution": [1080, 1920],
+  "improvement_axis": "per_scene_ken_burns_motion",
+  "scene_boundaries": [0.0, 1.3, 3.5, 5.2, 8.0, 12.25, 12.5],
+  "scene_count": 6,
+  "motion": "independent subtle zoom/pan per scene; max zoom 1.055",
+  "render_route": "individual scene clip -> zoompan -> concat -> original Japanese audio reattach",
+  "assets": "cycle349 only; no third-party assets",
+  "audio": "Japanese narration inherited unchanged",
+  "subtitles": "burned-in Japanese subtitle/timeline layers inherited inside source frames",
+  "paid_service_used": false,
+  "auto_post": false,
+  "publication_gate": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "limitation": "motion implementation verified technically; retention uplift/reference parity not proven"
+}
