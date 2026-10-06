@@ -24,6 +24,23 @@ def _scene_lines(plan):
         raise RuntimeError('Plan has no scenes')
     return lines
 
+def _caption_timeline(chunks):
+    """Build deterministic caption timing from measured synthesized scene durations."""
+    timeline=[]; cursor=0.0
+    for scene,_,seconds,_,caption in chunks:
+        if seconds <= 0:
+            raise RuntimeError('Caption duration must be positive')
+        start=cursor
+        end=start+seconds
+        timeline.append({
+            'scene_id':scene.get('id'),
+            'start':round(start,3),
+            'end':round(end,3),
+            'text':caption,
+        })
+        cursor=end
+    return timeline
+
 def synthesize(plan_path, base='http://127.0.0.1:10101'):
     path=Path(plan_path).resolve()
     plan=json.loads(path.read_text(encoding='utf8'))
@@ -62,10 +79,13 @@ def synthesize(plan_path, base='http://127.0.0.1:10101'):
     for scene,_,seconds,text,caption in chunks:
         scene.update(duration=seconds,narration=text,caption=caption)
 
+    caption_timeline=_caption_timeline(chunks)
     plan.update(
         narration_file=out.name,
         narration=''.join(x[3] for x in chunks),
         captions=' / '.join(x[4] for x in chunks),
+        caption_timeline=caption_timeline,
+        caption_timing_source='measured_aivis_scene_duration',
         expected_seconds=total,
         voice_metadata={
             'engine':'AivisSpeech','speaker':speaker['name'],'style':voice['name'],
