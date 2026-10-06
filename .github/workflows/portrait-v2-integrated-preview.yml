@@ -1,0 +1,124 @@
+name: Portrait v2 integrated Raspberry Pi 5 review preview
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/portrait-media-pipeline-v2-20260918]
+    paths: [.github/workflows/portrait-v2-integrated-preview.yml]
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare FFmpeg Python and Japanese font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python3 -m pip install --break-system-packages Pillow
+      - name: Download CC0 photo directly into temporary render directory
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/pi5"
+          curl --fail --location --retry 3 --max-time 90 --user-agent 'TikTokVideoResearch/1.0 (licensed asset validation)' 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Raspberry-Pi%205.jpg' -o "$RUNNER_TEMP/pi5/original.jpg"
+          file --mime-type "$RUNNER_TEMP/pi5/original.jpg" | grep -q image/jpeg
+          echo 'Source: https://commons.wikimedia.org/wiki/File:Raspberry-Pi_5.jpg; author: LeGeekLinux; CC0 1.0; attribution not required; review-only preview' | tee "$RUNNER_TEMP/pi5/rights.txt"
+          date -u +'%Y-%m-%dT%H:%M:%SZ' >> "$RUNNER_TEMP/pi5/rights.txt"
+          sha256sum "$RUNNER_TEMP/pi5/original.jpg" >> "$RUNNER_TEMP/pi5/rights.txt"
+      - name: Start existing AivisSpeech engine and voice model
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.local/share/AivisSpeech-Engine/Models"
+          curl -L --fail --retry 3 'https://api.aivis-project.com/v1/aivm-models/76a774e4-cc4d-4d8c-879e-8d2be3d30dad/download?model_type=AIVMX' -o "$HOME/.local/share/AivisSpeech-Engine/Models/flow.aivmx"
+          sudo chown -R 1000:1000 "$HOME/.local/share/AivisSpeech-Engine"
+          docker pull ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          docker run -d --name aivis -p 10101:10101 -v "$HOME/.local/share/AivisSpeech-Engine:/home/user/.local/share/AivisSpeech-Engine-Dev" ghcr.io/aivis-project/aivisspeech-engine:cpu-latest
+          for i in $(seq 1 120); do if curl -fsS http://127.0.0.1:10101/speakers > "$RUNNER_TEMP/pi5/speakers.json"; then break; fi; sleep 5; done
+          test -s "$RUNNER_TEMP/pi5/speakers.json"
+      - name: Generate NEW narration using existing script with revised pronunciation
+        env:
+          AIVIS_SPEAKER_NAME: Flow
+          AIVIS_STYLE_NAME: 04_FUN
+          AIVIS_SPEED: '1.0'
+          AIVIS_INTONATION: '1.08'
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/gadget_voice.py')
+          s=p.read_text()
+          start=s.index('lines = [')
+          end=s.index('\ndef request(',start)
+          s=s[:start]+'''lines = [
+              ('これは、ラズベリーパイ・ファイブ。', 'これは、ラズベリーパイ、ファイブ。'),
+              ('手のひらサイズの、小さなコンピューターです。', '手のひらサイズの、小さなコンピューターです。'),
+              ('電源と画面、キーボードをつなぐと、パソコンのように使えます。', '電源と画面、キーボードをつなぐと、パソコンのように使えます。'),
+              ('プログラミングや電子工作にも。接続図は再現イメージです。', 'プログラミングや電子工作にも。接続図は再現イメージです。'),
+          ]
+          '''+s[end:]
+          p.write_text(s)
+          PY
+          python3 src/gadget_voice.py
+      - name: Prepare rights-labeled scenes and fit fresh speech to 20 seconds
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, os
+          from pathlib import Path
+          from PIL import Image,ImageDraw,ImageFont,ImageFilter
+          p=Path(os.environ['RUNNER_TEMP'])/'pi5'
+          im=Image.open(p/'original.jpg').convert('RGB')
+          font=ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',52)
+          for name,label in [('photo','実物写真 / CC0'),('connection','接続の説明 / 再現イメージ')]:
+              bg=im.resize((1080,1920)).filter(ImageFilter.GaussianBlur(55)); bg=Image.blend(bg,Image.new('RGB',(1080,1920),'#111827'),.5)
+              photo=im.copy();photo.thumbnail((1020,1150));bg.paste(photo,((1080-photo.width)//2,370))
+              d=ImageDraw.Draw(bg)
+              d.rectangle((0,0,1080,250),fill='#101827');d.text((45,90),'Raspberry Pi 5',font=font,fill='white')
+              d.rectangle((0,1530,1080,1920),fill='#101827');d.text((45,1570),label,font=font,fill='white')
+              if name=='connection':
+                  d.text((45,1690),'電源・画面・キーボードを接続',font=font,fill='white')
+              bg.save(p/(name+'.png'))
+          a=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_format','-of','json','output/raspberry_pi5_narration.wav']))
+          original=float(a['format']['duration'])
+          if not 12<original<40:raise RuntimeError(f'Unexpected new narration duration: {original}')
+          factor=original/20.0
+          if not .5<=factor<=2:raise RuntimeError('Unsafe speech tempo adjustment')
+          subprocess.run(['ffmpeg','-v','error','-y','-i','output/raspberry_pi5_narration.wav','-af',f'atempo={factor:.8f}','-t','20','-ar','48000',str(p/'narration.wav')],check=True)
+          timing=json.loads(Path('output/raspberry_pi5_timing.json').read_text())
+          for x in timing:x['start']=round(x['start']/factor,3);x['end']=min(20,round(x['end']/factor,3))
+          (p/'captions.json').write_text(json.dumps(timing,ensure_ascii=False))
+          asset=lambda f:{'path':f,'type':'image','source_type':'cc0-photo-and-labeled-composite','rights_basis':'CC0 1.0','rights_evidence':'https://commons.wikimedia.org/wiki/File:Raspberry-Pi_5.jpg','commercial_use':True,'derivatives_allowed':True,'privacy_review':'approved'}
+          cfg={'mode':'technical_test','output':'preview.mp4','narration':'narration.wav','captions':'captions.json','assets':{'photo':asset('photo.png'),'connection':asset('connection.png')},'scenes':[{'asset_id':'photo','seconds':5,'motion':'zoom_in'},{'asset_id':'connection','seconds':5,'motion':'pan_right'},{'asset_id':'photo','seconds':5,'motion':'zoom_out'},{'asset_id':'connection','seconds':5,'motion':'pan_left'}]}
+          (p/'config.json').write_text(json.dumps(cfg,ensure_ascii=False))
+          print('NEW VOICE ORIGINAL DURATION',original,'TEMPO',factor)
+          print('VOICE MODEL COMMERCIAL RIGHTS: NOT VERIFIED; NO PUBLICATION APPROVAL')
+          PY
+      - name: Render with PR 21 engine and validate full decode
+        run: |
+          set -euo pipefail
+          python3 -m py_compile video_engine/portrait_v2/build.py
+          python3 video_engine/portrait_v2/build.py --config "$RUNNER_TEMP/pi5/config.json"
+          ffmpeg -v error -xerror -i "$RUNNER_TEMP/pi5/preview.mp4" -f null -
+          ffprobe -v error -show_streams -show_format -of json "$RUNNER_TEMP/pi5/preview.mp4" > "$RUNNER_TEMP/pi5/probe.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'pi5'; data=json.loads((p/'probe.json').read_text())
+          v=next(x for x in data['streams'] if x['codec_type']=='video')
+          assert (v['width'],v['height'])==(1080,1920)
+          assert any(x['codec_type']=='audio' for x in data['streams'])
+          assert 19.8<=float(data['format']['duration'])<=20.2
+          print('PASS: 1080x1920, ~20 seconds, audio stream, full decode. Human pronunciation, license and caption sync review REQUIRED.')
+          PY
+      - name: Upload review-only video and logs for one day
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi5-review-only-20s-not-for-publication
+          path: |
+            ${{ runner.temp }}/pi5/preview.mp4
+            ${{ runner.temp }}/pi5/rights.txt
+            ${{ runner.temp }}/pi5/probe.json
+            ${{ runner.temp }}/pi5/captions.json
+            ${{ runner.temp }}/pi5/preview_render.json
+          retention-days: 1
+          if-no-files-found: error
