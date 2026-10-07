@@ -55,10 +55,35 @@ def produce(plan_path, output_root):
     if dest.exists(): raise FileExistsError('Version is immutable')
     dest.mkdir(parents=True)
     write(dest/'plan.json', plan)
-    captions = []; cursor = 0
-    for scene in scenes:
-        captions.append({'text':scene['caption'], 'start':cursor, 'end':cursor+float(scene['duration'])})
-        cursor += float(scene['duration'])
+    # Preserve measured AivisSpeech caption timing through the renderer.
+    measured = plan.get('caption_timeline')
+    timing_source = plan.get('caption_timing_source')
+    if measured is not None:
+        if timing_source != 'measured_aivis_scene_duration':
+            raise ValueError('Untrusted measured caption timing source')
+        if len(measured) != len(scenes):
+            raise ValueError('Measured caption timeline scene count mismatch')
+        captions = []; previous_end = 0.0
+        for scene, item in zip(scenes, measured):
+            scene_id = scene.get('scene_id', scene.get('id'))
+            start = float(item['start']); end = float(item['end'])
+            if item.get('scene_id') != scene_id:
+                raise ValueError('Measured caption timeline scene ID mismatch')
+            if item.get('text') != scene['caption']:
+                raise ValueError('Measured caption text mismatch')
+            if abs(start - previous_end) > 0.02:
+                raise ValueError('Measured caption timeline gap/overlap')
+            if end <= start or abs((end-start) - float(scene['duration'])) > 0.02:
+                raise ValueError('Measured caption duration mismatch')
+            captions.append({'text':item['text'], 'start':start, 'end':end})
+            previous_end = end
+        if abs(previous_end - total) > 0.02:
+            raise ValueError('Measured caption total duration mismatch')
+    else:
+        captions = []; cursor = 0.0
+        for scene in scenes:
+            captions.append({'text':scene['caption'], 'start':cursor, 'end':cursor+float(scene['duration'])})
+            cursor += float(scene['duration'])
     write(dest/'captions.json', captions)
     write(dest/'rights.json', {k:{field:value for field,value in asset.items() if field != 'path'} for k,asset in assets.items()})
     write(dest/'revision_history.json', plan.get('revision_history', []))
