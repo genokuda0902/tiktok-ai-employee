@@ -1,42 +1,29 @@
-"""Genre-independent caption timing helpers.
+"""Pure caption timeline helper for measured narration durations.
 
-Pure-Python and deterministic: timing is derived only from measured narration
-durations. This module does not synthesize speech, publish media, or approve
-content.
+Reimplementation: original v33 source remains unavailable.
+No publishing or external upload is performed here.
 """
 from __future__ import annotations
+from typing import Iterable, List, Dict, Any
 
-
-def build_caption_timeline(scenes, durations):
-    """Return caption start/end times from measured per-scene durations.
-
-    Fails closed on missing captions, count mismatch, non-positive durations,
-    or segments outside the 0.45-5.0 second narration quality window.
-    """
-    if not scenes:
-        raise ValueError("scenes required")
-    if len(scenes) != len(durations):
+def build_caption_timeline(scenes: Iterable[Dict[str, Any]], durations: Iterable[float], *, min_scene_seconds: float = 0.45, max_scene_seconds: float = 5.0, max_total_seconds: float = 25.0) -> List[Dict[str, Any]]:
+    """Build a fail-closed caption timeline from measured audio durations."""
+    scene_list = list(scenes)
+    duration_list = [float(x) for x in durations]
+    if not scene_list or len(scene_list) != len(duration_list):
         raise ValueError("scene/duration count mismatch")
-
-    timeline = []
+    if any(d < min_scene_seconds or d > max_scene_seconds for d in duration_list):
+        raise ValueError("measured narration duration outside quality bounds")
+    if sum(duration_list) > max_total_seconds:
+        raise ValueError("total narration duration exceeds quality bound")
     cursor = 0.0
-    for scene, seconds in zip(scenes, durations):
-        caption = str(scene.get("caption") or scene.get("message") or "").strip()
+    timeline: List[Dict[str, Any]] = []
+    for index, (scene, duration) in enumerate(zip(scene_list, duration_list)):
+        caption = str(scene.get("caption") or scene.get("narration") or "").strip()
         if not caption:
-            raise ValueError(f"scene {scene.get('id')} missing caption")
-        seconds = float(seconds)
-        if not 0.45 <= seconds <= 5.0:
-            raise ValueError(f"scene {scene.get('id')} duration outside 0.45-5.0s")
-        start = cursor
-        end = start + seconds
-        timeline.append({
-            "scene_id": scene.get("id"),
-            "start": round(start, 3),
-            "end": round(end, 3),
-            "text": caption,
-        })
-        cursor = end
-
-    if not 15.0 <= cursor <= 25.0:
-        raise ValueError(f"total measured narration outside 15-25s: {cursor:.3f}s")
+            raise ValueError(f"scene {index} has no caption/narration")
+        start = round(cursor, 3)
+        end = round(cursor + duration, 3)
+        timeline.append({"scene_index": index, "start": start, "end": end, "text": caption})
+        cursor += duration
     return timeline
