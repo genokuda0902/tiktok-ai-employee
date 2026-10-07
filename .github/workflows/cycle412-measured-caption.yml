@@ -1,0 +1,21 @@
+name: cycle412 measured caption contract
+on:
+  push:
+    branches:
+      - quality/cycle412-caption-contract
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  caption-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test dependency
+        run: python -m pip install pytest
+      - name: Measured-caption regression tests
+        run: python -m pytest -q video_engine/production_v2/test_measured_caption_renderer.py
