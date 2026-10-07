@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from video_engine.portrait_v2.build import main as render, probe
 from video_engine.production_v2.assets import validate_for_render
+from video_engine.production_v2.measured_caption_validator import validate_measured_caption_timeline
 
 CATEGORIES = ('structure', 'legibility', 'audio', 'content', 'rights', 'tiktok_quality')
 ALLOWED = {'caption', 'visual_prompt', 'asset_id', 'motion', 'narration'}
@@ -55,30 +56,11 @@ def produce(plan_path, output_root):
     if dest.exists(): raise FileExistsError('Version is immutable')
     dest.mkdir(parents=True)
     write(dest/'plan.json', plan)
-    # Preserve measured AivisSpeech caption timing through the renderer.
     measured = plan.get('caption_timeline')
     timing_source = plan.get('caption_timing_source')
-    if measured is not None:
-        if timing_source != 'measured_aivis_scene_duration':
-            raise ValueError('Untrusted measured caption timing source')
-        if len(measured) != len(scenes):
-            raise ValueError('Measured caption timeline scene count mismatch')
-        captions = []; previous_end = 0.0
-        for scene, item in zip(scenes, measured):
-            scene_id = scene.get('scene_id', scene.get('id'))
-            start = float(item['start']); end = float(item['end'])
-            if item.get('scene_id') != scene_id:
-                raise ValueError('Measured caption timeline scene ID mismatch')
-            if item.get('text') != scene['caption']:
-                raise ValueError('Measured caption text mismatch')
-            if abs(start - previous_end) > 0.02:
-                raise ValueError('Measured caption timeline gap/overlap')
-            if end <= start or abs((end-start) - float(scene['duration'])) > 0.02:
-                raise ValueError('Measured caption duration mismatch')
-            captions.append({'text':item['text'], 'start':start, 'end':end})
-            previous_end = end
-        if abs(previous_end - total) > 0.02:
-            raise ValueError('Measured caption total duration mismatch')
+    # Reject incomplete measured metadata; never silently fall back to planned captions.
+    if measured is not None or timing_source is not None:
+        captions = validate_measured_caption_timeline(scenes, measured, timing_source)
     else:
         captions = []; cursor = 0.0
         for scene in scenes:
