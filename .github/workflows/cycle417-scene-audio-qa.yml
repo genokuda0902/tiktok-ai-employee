@@ -1,0 +1,10 @@
+name: scene audio QA
+on:
+  push:
+    branches: [quality/cycle417-scene-audio-evidence]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest discover -s tools/quality -p 'test_voice_scene_gate.py' -v
