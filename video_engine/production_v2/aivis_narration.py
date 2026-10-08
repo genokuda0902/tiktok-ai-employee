@@ -12,13 +12,28 @@ def get(url, data=None):
     with urllib.request.urlopen(req,timeout=40) as r:
         return r.read()
 
+def _scene_id(scene):
+    """Canonical identity for AivisSpeech and production renderer."""
+    primary = scene.get('scene_id')
+    legacy = scene.get('id')
+    if primary and legacy and primary != legacy:
+        raise RuntimeError('Conflicting scene_id and legacy id')
+    sid = primary or legacy
+    if not isinstance(sid, str) or not sid.strip():
+        raise RuntimeError('Missing scene identity')
+    return sid
+
 def _scene_lines(plan):
     lines=[]
+    seen=set()
     for scene in plan.get('scenes',[]):
+        sid=_scene_id(scene)
+        if sid in seen: raise RuntimeError('Duplicate scene identity')
+        seen.add(sid)
         narration=(scene.get('narration') or scene.get('message') or '').strip()
         caption=(scene.get('caption') or scene.get('message') or narration).strip()
         if not narration or not caption:
-            raise RuntimeError(f"Scene {scene.get('id')} missing narration/caption source")
+            raise RuntimeError(f"Scene {sid} missing narration/caption source")
         lines.append((scene,narration,caption))
     if not lines:
         raise RuntimeError('Plan has no scenes')
@@ -33,7 +48,7 @@ def _caption_timeline(chunks):
         start=cursor
         end=start+seconds
         timeline.append({
-            'scene_id':scene.get('id'),
+            'scene_id':_scene_id(scene),
             'start':round(start,3),
             'end':round(end,3),
             'text':caption,
