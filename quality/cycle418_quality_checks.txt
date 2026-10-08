@@ -1,0 +1,3 @@
+Scene IDs must be unique.
+Japanese narration must not be inferred from sound effects.
+Caption timing must be checked against actual speech.
