@@ -1,0 +1,77 @@
+{
+  "cycle": 437,
+  "genre": "AI・仕事効率化",
+  "genres_configured": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "scenes": [
+    {
+      "seconds": 0.6,
+      "heading": "AIで、仕事が遅くなる？",
+      "subtitle": "AIの答えがズレる原因",
+      "voice": "",
+      "kind": "hook"
+    },
+    {
+      "seconds": 0.9,
+      "heading": "原因は「指示の抜け」",
+      "subtitle": "最初の30秒で変わる",
+      "voice": "",
+      "kind": "question"
+    },
+    {
+      "seconds": 2.5,
+      "heading": "最初に決める、3つ。",
+      "subtitle": "目的・条件・出力形式",
+      "voice": "まず、三つだけ決めます。",
+      "kind": "overview"
+    },
+    {
+      "seconds": 3,
+      "heading": "01  目的",
+      "subtitle": "何を決めたいのか？",
+      "voice": "一つ目、目的。何を決めたいのか。",
+      "kind": "purpose"
+    },
+    {
+      "seconds": 3,
+      "heading": "02  条件",
+      "subtitle": "誰向け？ 期限は？",
+      "voice": "二つ目、条件。誰向けで、いつまでか。",
+      "kind": "constraints"
+    },
+    {
+      "seconds": 3,
+      "heading": "03  形式",
+      "subtitle": "表・箇条書き・3行など",
+      "voice": "三つ目、形式。表か、短い文章か。",
+      "kind": "format"
+    },
+    {
+      "seconds": 3,
+      "heading": "指示を、設計図にする。",
+      "subtitle": "3つを入れるだけで、具体的に",
+      "voice": "三つを入れると、指示が具体的になります。",
+      "kind": "typing"
+    },
+    {
+      "seconds": 4,
+      "heading": "AIへの指示は、設計図。",
+      "subtitle": "保存して、次の仕事で使おう",
+      "voice": "次にAIを使うとき、三つを思い出して。",
+      "kind": "outro"
+    }
+  ],
+  "rights": "original procedural visuals; no PII",
+  "approval": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "publish_allowed": false
+}
