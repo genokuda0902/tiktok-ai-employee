@@ -1,0 +1,1 @@
+Cycle 438: local 1080x1920 video created; Japanese narration not available offline. Human approval required. No posting or merging. Next: restore code and CI save, then test Japanese TTS and subtitle timing.
