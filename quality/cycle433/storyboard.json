@@ -1,0 +1,44 @@
+{
+  "cycle": 433,
+  "genre": "商品比較・暮らし",
+  "title": "レビューのここを信用しない",
+  "rights": "original procedural art; fictional examples",
+  "approval": "HUMAN_REVIEW",
+  "scenes": [
+    {
+      "voice": "星五つだけで、買っていませんか？",
+      "caption": "高評価でも、中身を確認。",
+      "seconds": 2.2
+    },
+    {
+      "voice": "レビューは、点数より中身を見ましょう。",
+      "caption": "レビューの中身をチェック。",
+      "seconds": 2.6
+    },
+    {
+      "voice": "一つ目。使った期間が書かれているか。",
+      "caption": "使用期間が書かれているか。",
+      "seconds": 3
+    },
+    {
+      "voice": "二つ目。良い点だけでなく、欠点があるか。",
+      "caption": "欠点や注意点もあるか。",
+      "seconds": 3
+    },
+    {
+      "voice": "三つ目。自分と用途が近いか。",
+      "caption": "用途が合うレビューか。",
+      "seconds": 3
+    },
+    {
+      "voice": "この三つがないと、判断材料が足りません。",
+      "caption": "点数だけでは比較できない。",
+      "seconds": 3
+    },
+    {
+      "voice": "買う前に、三つを確認。保存して使ってね。",
+      "caption": "保存して、買い物前に見返そう。",
+      "seconds": 3.2
+    }
+  ]
+}
