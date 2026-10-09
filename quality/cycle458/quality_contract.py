@@ -27,6 +27,8 @@ def check_story(scenes, *, duration=20, manifest=None):
     for s in scenes:
         if s.kind == 'PROOF' and not s.evidence:
             raise ValueError('proof without source IDs')
+        if s.kind == 'PROOF' and any(str(item) not in s.caption for item in s.evidence):
+            raise ValueError('proof caption does not name source IDs')
     m = manifest or {}
     if m.get('rights') != 'SYNTHETIC_ORIGINAL' or m.get('privacy') != 'NO_REAL_PERSONAL_DATA':
         raise ValueError('asset provenance not verified')
