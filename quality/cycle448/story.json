@@ -1,0 +1,48 @@
+{
+  "topic": "架空の対応状況8件から未対応2件を検出",
+  "hook": "8件のうち、見落としは？",
+  "asset_rights": "SELF_DRAWN_SYNTHETIC",
+  "publication_status": "NOT_APPROVED",
+  "open_count": 2,
+  "rows": [
+    {
+      "id": "D-201",
+      "status": "対応済"
+    },
+    {
+      "id": "D-202",
+      "status": "対応済"
+    },
+    {
+      "id": "D-203",
+      "status": "未対応"
+    },
+    {
+      "id": "D-204",
+      "status": "対応済"
+    },
+    {
+      "id": "D-205",
+      "status": "対応済"
+    },
+    {
+      "id": "D-206",
+      "status": "未対応"
+    },
+    {
+      "id": "D-207",
+      "status": "対応済"
+    },
+    {
+      "id": "D-208",
+      "status": "対応済"
+    }
+  ],
+  "steps": [
+    "担当者を確認",
+    "対応履歴を確認",
+    "折返しと記録"
+  ],
+  "narration_status": "MISSING_JAPANESE_TTS",
+  "caption_mode": "SCENE_TEXT_ONLY_NOT_VOICE_SYNCED"
+}
