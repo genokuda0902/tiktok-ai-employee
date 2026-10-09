@@ -1,0 +1,21 @@
+name: Cycle442 zero-cost quality checks
+on:
+  push:
+    branches:
+      - quality/cycle442-kinetic-ci
+  pull_request:
+    paths:
+      - 'quality/cycle442/**'
+      - '.github/workflows/cycle442-quality.yml'
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install pillow
+      - run: cd quality/cycle442 && python -m unittest -v test_cycle442
