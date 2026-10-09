@@ -44,7 +44,7 @@ def probe(path):
 def main():
  images=[slide(i) for i in range(8)]
  playlist=OUT/"slides.txt"
- playlist.write_text("".join(f"file '{p.resolve()}'\\nduration {sec}\\n" for p,sec in zip(images,SLOTS))+f"file '{images[-1].resolve()}'\\n")
+ playlist.write_text("".join(f"file '{p.resolve()}'\nduration {sec}\n" for p,sec in zip(images,SLOTS))+f"file '{images[-1].resolve()}'\n")
  video=OUT/"silent.mp4"
  run(["ffmpeg","-y","-v","error","-f","concat","-safe","0","-i",str(playlist),"-r","30","-t","20","-c:v","libx264","-pix_fmt","yuv420p",str(video)])
  wavs=[]
@@ -61,7 +61,7 @@ def main():
    run(["ffmpeg","-y","-v","error","-i",str(mp3),"-af",f"atempo={speed:.4f},apad,atrim=duration={seconds}","-ar","48000","-ac","1",str(wav)])
   wavs.append(wav)
  ap=OUT/"audio.txt"
- ap.write_text("".join(f"file '{p.resolve()}'\\n" for p in wavs))
+ ap.write_text("".join(f"file '{p.resolve()}'\n" for p in wavs))
  narration=OUT/"narration.wav"
  run(["ffmpeg","-y","-v","error","-f","concat","-safe","0","-i",str(ap),"-c:a","pcm_s16le",str(narration)])
  if abs(float(probe(narration)["format"]["duration"])-20)>.15:raise RuntimeError("narration duration invalid")
