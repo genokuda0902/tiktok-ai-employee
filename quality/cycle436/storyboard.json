@@ -1,0 +1,69 @@
+{
+  "cycle": 436,
+  "previous_cycle": 435,
+  "genre": "美容・身だしなみ",
+  "scenes": [
+    {
+      "seconds": 0.6,
+      "heading": "出社前、あと3分。",
+      "subtitle": "第一印象、ここで整える。",
+      "voice": "",
+      "kind": "hook"
+    },
+    {
+      "seconds": 0.9,
+      "heading": "その3分、どこに使う？",
+      "subtitle": "朝の身だしなみチェック",
+      "voice": "",
+      "kind": "question"
+    },
+    {
+      "seconds": 2.5,
+      "heading": "3つだけ、確認。",
+      "subtitle": "髪・服・靴の順番で。",
+      "voice": "出社前に、三つだけ確認。",
+      "kind": "overview"
+    },
+    {
+      "seconds": 3,
+      "heading": "01  髪",
+      "subtitle": "寝ぐせと前髪を整える。",
+      "voice": "一つ目。髪の乱れを整える。",
+      "kind": "hair"
+    },
+    {
+      "seconds": 3,
+      "heading": "02  服",
+      "subtitle": "襟元・しわ・ほこりを確認。",
+      "voice": "二つ目。襟元としわを確認。",
+      "kind": "shirt"
+    },
+    {
+      "seconds": 3,
+      "heading": "03  靴",
+      "subtitle": "汚れをさっと拭く。",
+      "voice": "三つ目。靴の汚れを確認。",
+      "kind": "shoes"
+    },
+    {
+      "seconds": 3,
+      "heading": "BEFORE → AFTER",
+      "subtitle": "小さな手入れを積み重ねる。",
+      "voice": "小さな手入れで、整った印象へ。",
+      "kind": "compare"
+    },
+    {
+      "seconds": 4,
+      "heading": "明日の朝、試してみて。",
+      "subtitle": "保存して、出発前に見返そう。",
+      "voice": "明日の朝、三つだけ試してみて。",
+      "kind": "outro"
+    }
+  ],
+  "approval": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "audio_status": "LOCAL_OFFLINE_TTS_UNAVAILABLE",
+  "video_sha256": "1270eaacb65f8fabb3057d3789e8b0e6a12c1191d24660ddeb455ebe2c33b532",
+  "video_status": "LOCAL_SILENT_PREVIEW_ONLY",
+  "improvement": "before-after animated scan and clean typographic hierarchy",
+  "note": "Code, tests and MP4 stored as conversation attachments; not in GitHub."
+}
