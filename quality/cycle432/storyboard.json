@@ -1,0 +1,59 @@
+{
+  "cycle": 432,
+  "genre": "健康・生活改善",
+  "status": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "budget_jpy": 0,
+  "genres": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "improvement": "0.5-second three-stage kinetic hook with three independently rendered images; distinct original desk-break illustrations",
+  "duration_seconds": 20,
+  "video_size": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "scenes": [
+    [
+      "午後、集中できない？",
+      "休憩の取り方を、3つに分ける。"
+    ],
+    [
+      "休憩は「3ステップ」",
+      "立つ・遠くを見る・次の1つを決める。"
+    ],
+    [
+      "01  いったん席を立つ",
+      "水を取りに行くなど、短い移動でも。"
+    ],
+    [
+      "02  画面から目を離す",
+      "窓の外や、部屋の奥を見てみる。"
+    ],
+    [
+      "03  次の「1つ」を決める",
+      "戻ったら、まず何から始める？"
+    ],
+    [
+      "休憩前  →  休憩後",
+      "やることを1つ決めてから戻る。"
+    ],
+    [
+      "午後の集中、立て直す",
+      "立つ → 遠くを見る → 次の1つ。"
+    ]
+  ],
+  "narration_required": true,
+  "audio_verified": false,
+  "auto_post": false
+}
