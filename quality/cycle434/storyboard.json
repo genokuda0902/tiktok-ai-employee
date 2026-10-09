@@ -1,0 +1,62 @@
+{
+  "cycle": 434,
+  "genre": "学習・スキル",
+  "rights": "original procedural illustration, fictional math example",
+  "approval": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "scenes": [
+    {
+      "seconds": 0.6,
+      "caption": "学び方、ちょっと変えてみよう。",
+      "voice": "AIに答えを聞く前に。",
+      "kind": "hook0"
+    },
+    {
+      "seconds": 0.6,
+      "caption": "その質問、変えてみよう。",
+      "voice": "質問を変えよう。",
+      "kind": "hook1"
+    },
+    {
+      "seconds": 1.8,
+      "caption": "AIを思考の相棒にする。",
+      "voice": "答えではなく、ヒントを頼んでみよう。",
+      "kind": "hero"
+    },
+    {
+      "seconds": 2.5,
+      "caption": "自分の頭で考えたい問題。",
+      "voice": "たとえば、十二かける八。",
+      "kind": "problem"
+    },
+    {
+      "seconds": 3,
+      "caption": "答えを見るだけで終わりやすい。",
+      "voice": "答えだけ教えて、だと、考える前に終わってしまう。",
+      "kind": "bad"
+    },
+    {
+      "seconds": 3,
+      "caption": "まずは自分で解いてみる。",
+      "voice": "解き方のヒントを一つ、と聞いてみよう。",
+      "kind": "good"
+    },
+    {
+      "seconds": 3,
+      "caption": "分けて考えると…？",
+      "voice": "十二かける、十ひく二、と分けてみる。",
+      "kind": "math"
+    },
+    {
+      "seconds": 2.5,
+      "caption": "最後の一歩は自分で。",
+      "voice": "百二十から二十四を引いて、九十六。",
+      "kind": "answer"
+    },
+    {
+      "seconds": 3,
+      "caption": "保存して、次の勉強で試そう。",
+      "voice": "AIは考える相棒。最後の答え合わせは自分で。",
+      "kind": "final"
+    }
+  ]
+}
