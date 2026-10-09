@@ -1,0 +1,33 @@
+{
+  "cycle": 434,
+  "video": {
+    "codec": "h264",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "frames": 600,
+    "duration_seconds": 20
+  },
+  "audio": {
+    "required_for_publication": true,
+    "local_status": "FAILED_TO_GENERATE",
+    "synchronization": "NOT_TESTED"
+  },
+  "visual": {
+    "original_slides": 9,
+    "caption_safezone_y": [
+      1470,
+      1612
+    ]
+  },
+  "approval": "NOT_APPROVED",
+  "local_tests": {
+    "passed": 26,
+    "failed": 0
+  },
+  "github_ci": {
+    "status": "NOT_RUN"
+  },
+  "previous_cycle": 433,
+  "improvement": "AI learning prompt before/after, worked math example"
+}
