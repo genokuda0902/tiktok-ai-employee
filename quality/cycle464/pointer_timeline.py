@@ -1,7 +1,7 @@
-"""Synthetic cursor focus. Never draw in the subtitle band."""
+"""Synthetic cursor focus; 10-genre review-only helper."""
 from PIL import ImageDraw
 PATHS={
- 'before':[(380,542),(380,716),(380,890)],
+ 'before':[(500,416),(500,590),(500,765)],
  'data':[(550,554),(550,669),(550,787)],
  'formula':[(118,440),(440,441),(610,441)],
  'proof':[(320,541),(320,655),(320,771)],
