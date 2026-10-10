@@ -1,0 +1,90 @@
+{
+  "cycle": 467,
+  "previous_cycle": 466,
+  "genre": "AI・仕事効率化",
+  "duration": 20,
+  "title": "AIの回答をそのまま使わない3つの確認",
+  "asset_rights": "ORIGINAL_SYNTHETIC",
+  "privacy": "NO_REAL_PERSONAL_DATA",
+  "quality_status": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "human_approval": false,
+  "auto_post": false,
+  "reference_equivalence": false,
+  "narration_status": "REQUIRED_NOT_YET_VERIFIED",
+  "claims": "illustrative examples only; no claims of measured productivity improvement",
+  "scenes": [
+    {
+      "start": 0,
+      "end": 1.5,
+      "stage": "HOOK",
+      "title": "AIの答え、そのまま使う？",
+      "caption": "まず確認したい3つのこと",
+      "narration": "AIの答え、そのまま使っていませんか？",
+      "visual": "hook"
+    },
+    {
+      "start": 1.5,
+      "end": 4,
+      "stage": "CHECK",
+      "title": "落とし穴は3つ",
+      "caption": "最新情報・数字・専門判断",
+      "narration": "最新情報、数字、専門判断。この3つは確認が必要です。",
+      "visual": "three"
+    },
+    {
+      "start": 4,
+      "end": 6.5,
+      "stage": "CASE 01",
+      "title": "① 最新情報",
+      "caption": "いつの情報か、確認する",
+      "narration": "最新情報は、日付と出典を確認。",
+      "visual": "freshness"
+    },
+    {
+      "start": 6.5,
+      "end": 9,
+      "stage": "CASE 02",
+      "title": "② 数字・計算",
+      "caption": "12 ＋ 9 ＋ 14 ＝ 35",
+      "narration": "数字は、計算式と元データを確認。",
+      "visual": "math"
+    },
+    {
+      "start": 9,
+      "end": 11.5,
+      "stage": "CASE 03",
+      "title": "③ 専門的な判断",
+      "caption": "重要な判断は専門家へ",
+      "narration": "重要な判断は、専門家にも確認。",
+      "visual": "expert"
+    },
+    {
+      "start": 11.5,
+      "end": 14,
+      "stage": "PROMPT",
+      "title": "質問を1行変える",
+      "caption": "根拠・計算式・確認先も教えて",
+      "narration": "質問に、根拠と確認先も教えて、と加えます。",
+      "visual": "prompt"
+    },
+    {
+      "start": 14,
+      "end": 17,
+      "stage": "COMPARE",
+      "title": "回答を受け取ったら",
+      "caption": "そのまま使用 → 確認して使用",
+      "narration": "答えを受け取ったら、確認してから使う。",
+      "visual": "compare"
+    },
+    {
+      "start": 17,
+      "end": 20,
+      "stage": "SAVE",
+      "title": "確認の3点セット",
+      "caption": "保存して次のAI活用で使おう",
+      "narration": "日付、数字、専門判断。保存して見返してね。",
+      "visual": "cta"
+    }
+  ]
+}
