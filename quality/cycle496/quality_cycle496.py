@@ -15,3 +15,5 @@ def validate_manifest(m):
     if sum(m['progressive_evidence_frames']['chart'])!=75: raise ValueError('chart')
     if len(m['evidence_data'])!=4: raise ValueError('data')
     if sum(m['evidence_data'])!=m['evidence_total']: raise ValueError('math')
+    if m['asset_rights']!='ORIGINAL_PROCEDURAL': raise ValueError('rights')
+    return True
