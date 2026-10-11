@@ -1,0 +1,18 @@
+{
+  "genre": "ai_work",
+  "rights": "original_procedural",
+  "privacy_reviewed": true,
+  "source_video_rights": "user_owned_synthetic_review_only",
+  "publication": "NOT_APPROVED",
+  "human_review": "HUMAN_REVIEW",
+  "auto_post": false,
+  "narration_status": "NOT_AVAILABLE",
+  "spreadsheet_kind": "SIMULATED_NOT_EXCEL_CAPTURE",
+  "synthetic_values": [
+    120,
+    150,
+    200,
+    250
+  ],
+  "expected_total": 720
+}
