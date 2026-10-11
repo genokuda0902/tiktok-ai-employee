@@ -1,0 +1,27 @@
+name: Cycle487 Review-Only Motion Gates
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle487/**'
+      - 'tests/test_cycle487_*.py'
+      - '.github/workflows/cycle487-review.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free rendering prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk ffmpeg
+          python -m pip install pillow
+      - name: Run motion gates and import renderer
+        run: |
+          python -m unittest discover -s tests -p 'test_cycle487_motion.py' -v
+          python -m py_compile quality/cycle487/render_cycle487.py
