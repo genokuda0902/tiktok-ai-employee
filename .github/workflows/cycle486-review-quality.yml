@@ -3,7 +3,7 @@ on:
   pull_request:
     paths:
       - 'quality/cycle486/**'
-      - 'tests/test_cycle486_storyboard.py'
+      - 'tests/test_cycle486_*.py'
   workflow_dispatch:
 jobs:
   review-quality:
@@ -15,5 +15,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Run fail-closed genre-neutral quality tests
-        run: python -m unittest discover -s tests -p 'test_cycle486_storyboard.py' -v
+      - name: Install free renderer dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk ffmpeg
+          python -m pip install pillow
+      - name: Run genre-neutral gates and renderer regression tests
+        run: |
+          python -m unittest discover -s tests -p 'test_cycle486_storyboard.py' -v
+          python -m unittest discover -s tests -p 'test_cycle486_renderer.py' -v
