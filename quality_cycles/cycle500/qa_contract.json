@@ -1,0 +1,24 @@
+{
+  "cycle": 500,
+  "previous_cycle": 499,
+  "topic": "会議の出口を決める3行テンプレート",
+  "resolution": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "duration_seconds": 20.666667,
+  "frames": 620,
+  "scenes": 6,
+  "slide_states": 12,
+  "caption_beats": 12,
+  "local_tests": "16/16 PASS",
+  "full_decode": "PASS",
+  "native_japanese_voice": "NOT_GENERATED",
+  "voice_caption_sync": "NOT_VERIFIED",
+  "human_review": "PENDING",
+  "publication": "NOT_APPROVED",
+  "rights": "ORIGINAL_PROCEDURAL_ONLY",
+  "voice_asset_format": "12 sequential mono PCM16 WAV clips, 24kHz or 48kHz; human language verification required",
+  "change_from_previous": "Before/After meeting cards and 3-row progressive recap; phase-difference QA; native voice intake contract"
+}
