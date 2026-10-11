@@ -16,4 +16,6 @@ def validate_manifest(m):
     if len(m['evidence_data'])!=4: raise ValueError('data')
     if sum(m['evidence_data'])!=m['evidence_total']: raise ValueError('math')
     if m['asset_rights']!='ORIGINAL_PROCEDURAL': raise ValueError('rights')
+    if m['automatic_posting'] is not False: raise ValueError('posting')
+    if m['publication']!='NOT_APPROVED': raise ValueError('publication')
     return True
