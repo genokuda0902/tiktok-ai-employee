@@ -18,4 +18,7 @@ def validate_manifest(m):
     if m['asset_rights']!='ORIGINAL_PROCEDURAL': raise ValueError('rights')
     if m['automatic_posting'] is not False: raise ValueError('posting')
     if m['publication']!='NOT_APPROVED': raise ValueError('publication')
+    if m['human_review']!='PENDING': raise ValueError('human review')
+    if m['voice_status']!='SFX_ONLY_NO_JAPANESE_NARRATION': raise ValueError('voice')
+    if m['captions']!='SCENE_DESCRIPTIONS_NOT_TRANSCRIPTS': raise ValueError('captions')
     return True
