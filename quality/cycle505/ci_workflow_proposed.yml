@@ -1,0 +1,20 @@
+name: cycle505 Japanese caption review tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle505/**'
+      - '.github/workflows/cycle505-caption-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  caption-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate all ten genres and review gates
+        run: cd quality/cycle505 && python -m unittest -v test_caption_timeline.py
