@@ -1,0 +1,1 @@
+Cycle 496: review-only preview. Progressive formula and chart evidence. No narration; no publication.
