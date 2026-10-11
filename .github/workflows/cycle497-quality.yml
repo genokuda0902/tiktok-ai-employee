@@ -1,0 +1,26 @@
+name: cycle497-quality-gate
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle497/**'
+      - '.github/workflows/cycle497-quality.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check synthetic evidence contract
+        run: python quality/cycle497/quality_gate.py
+      - name: Ensure no automatic publication
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'quality/cycle497')
+          from quality_gate import verify
+          result=verify()
+          assert result['publish_approved'] is False
+          assert result['native_voice_verified'] is False
+          print('HUMAN_REVIEW / PUBLICATION_NOT_APPROVED')
+          PY
