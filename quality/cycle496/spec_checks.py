@@ -4,3 +4,6 @@ assert manifest_for(SCENES, DATA)['evidence_total'] == 720
 
 def check_genres():
     return len(manifest_for(SCENES, DATA)['supported_genres']) == 10
+
+def test_scene_frames():
+    assert sum(manifest_for(SCENES, DATA)['scene_frames']) == 600
