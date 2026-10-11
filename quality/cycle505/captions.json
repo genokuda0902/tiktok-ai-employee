@@ -1,0 +1,58 @@
+{
+  "genre": "ai_work",
+  "rights": "original_procedural",
+  "human_review": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "auto_post": false,
+  "narration_status": "NOT_AVAILABLE",
+  "captions": [
+    {
+      "start": 0,
+      "end": 2.5,
+      "text": "4つの数字、手作業で集計？",
+      "tag": "HOOK"
+    },
+    {
+      "start": 2.5,
+      "end": 5,
+      "text": "入力するのは4件だけ",
+      "tag": "INPUT"
+    },
+    {
+      "start": 5,
+      "end": 7.5,
+      "text": "まず入力値を確認",
+      "tag": "INPUT"
+    },
+    {
+      "start": 7.5,
+      "end": 10,
+      "text": "数字を1件ずつ照合",
+      "tag": "PROOF"
+    },
+    {
+      "start": 10,
+      "end": 12.5,
+      "text": "SUM関数で合計を計算",
+      "tag": "ACTION"
+    },
+    {
+      "start": 12.5,
+      "end": 15,
+      "text": "グラフで変化を可視化",
+      "tag": "RESULT"
+    },
+    {
+      "start": 15,
+      "end": 17.5,
+      "text": "手入力から確認中心へ",
+      "tag": "RESULT"
+    },
+    {
+      "start": 17.5,
+      "end": 20,
+      "text": "保存して、あとで試そう",
+      "tag": "CTA"
+    }
+  ]
+}
