@@ -1,0 +1,7 @@
+Cycle498 regression expectations:
+- Three states in 75 frames.
+- Four source rows B2 through B5.
+- Sum of 120,150,200,250 equals 720.
+- Result cell B6 is separate from inputs.
+- Review-only; no publishing or posting.
+- Japanese narration absent and unverified.
