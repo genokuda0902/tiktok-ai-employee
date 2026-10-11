@@ -7,3 +7,12 @@ def check_genres():
 
 def test_scene_frames():
     assert sum(manifest_for(SCENES, DATA)['scene_frames']) == 600
+
+def test_genre_count():
+    assert len(manifest_for(SCENES, DATA)['supported_genres']) == 10
+
+def test_progressive_formula_frames():
+    assert sum(manifest_for(SCENES, DATA)['progressive_evidence_frames']['formula']) == 75
+
+def test_progressive_chart_frames():
+    assert sum(manifest_for(SCENES, DATA)['progressive_evidence_frames']['chart']) == 75
