@@ -1,0 +1,62 @@
+{
+  "cycle": 488,
+  "genre": "ai_workflow",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "seconds": 18,
+    "scenes": 6,
+    "states_per_scene": 2
+  },
+  "genres": [
+    "ai_workflow",
+    "beauty",
+    "romance",
+    "money",
+    "sales",
+    "career",
+    "health",
+    "science",
+    "travel",
+    "comparison"
+  ],
+  "scenes": [
+    {
+      "title": "返信メール、毎回ゼロから？",
+      "visual": "inbox_simulation",
+      "narration": "メール返信、毎回ゼロから考えていませんか。"
+    },
+    {
+      "title": "最初に、要点を3つだけ。",
+      "visual": "three_facts",
+      "narration": "相手の要望、伝える事実、返信期限を整理します。"
+    },
+    {
+      "title": "AIには下書きを頼む。",
+      "visual": "prompt",
+      "narration": "この要点から、丁寧な返信案を作って、と依頼します。"
+    },
+    {
+      "title": "原文と下書きを見比べる。",
+      "visual": "side_by_side",
+      "narration": "AIの文章が、元の内容と合っているか確認します。"
+    },
+    {
+      "title": "送信前に2つ確認。",
+      "visual": "verification",
+      "narration": "名前や日付、約束した内容は必ず自分で確認。"
+    },
+    {
+      "title": "AIは下書き。送信は自分。",
+      "visual": "human_review",
+      "narration": "下書きを時短に使って、最終判断は自分で。"
+    }
+  ],
+  "review": {
+    "quality": "HUMAN_REVIEW",
+    "publication": "NOT_APPROVED",
+    "auto_post": false,
+    "rights": "ORIGINAL_ASSETS_ONLY"
+  }
+}
