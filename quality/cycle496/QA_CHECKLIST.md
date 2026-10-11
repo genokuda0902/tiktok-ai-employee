@@ -1,0 +1,1 @@
+Regression scope: ten genres, 600 frames, staged formula and chart, no automatic publication.
