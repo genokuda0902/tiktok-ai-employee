@@ -1,0 +1,57 @@
+{
+  "cycle": 498,
+  "topic": "集中できない日の4ステップ・フォーカスリセット",
+  "genres": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "seconds": 19.2,
+    "beats": 12,
+    "scenes": 6
+  },
+  "beats": [
+    [
+      "気づくと、通知を見ている。",
+      "そんな日は、環境から変えよう。"
+    ],
+    [
+      "まず通知を一時停止。",
+      "大事な連絡だけ例外に。"
+    ],
+    [
+      "次は、作業をひとつ選ぶ。",
+      "25分だけ集中してみる。"
+    ],
+    [
+      "終わったら短く休憩。",
+      "無理に続けず、区切りを作る。"
+    ],
+    [
+      "終わった作業をひとつ記録。",
+      "次の一手を決めておく。"
+    ],
+    [
+      "通知を減らす、ひとつに絞る。",
+      "小さく始めて、続けよう。"
+    ]
+  ],
+  "improvement": "Light editorial mock UI, state-driven visual changes, 25-minute timer progress; replaces cycle497 comparison-matrix format",
+  "audio": "original UI SFX only",
+  "native_japanese_voice": "NOT_GENERATED",
+  "voice_caption_sync": "NOT_VERIFIED",
+  "publication": "NOT_APPROVED",
+  "rights": "original procedural graphics and sound",
+  "human_review": "PENDING"
+}
