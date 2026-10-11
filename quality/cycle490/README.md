@@ -1,0 +1,3 @@
+# Cycle490 — sales conversation slides
+
+Local proof: original 1080x1920 / 19.2s / 6 scenes / 18 states. New versus cycle489: three-phase sales-dialog reveals instead of two-phase Kanban. Japanese narration unavailable in local runtime: preview is SFX-only and NOT APPROVED. Full readable Python renderer and 9 pytest checks are provided in the user-downloadable cycle490 ZIP. Ten genre configurations; synthetic text and visuals only. No auto posting, paid service or merge. Japanese TTS is mandatory for release.
