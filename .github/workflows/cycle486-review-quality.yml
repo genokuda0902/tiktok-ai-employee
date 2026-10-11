@@ -1,0 +1,19 @@
+name: Cycle486 Review-Only Quality Gates
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle486/**'
+      - 'tests/test_cycle486_storyboard.py'
+  workflow_dispatch:
+jobs:
+  review-quality:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run fail-closed genre-neutral quality tests
+        run: python -m unittest discover -s tests -p 'test_cycle486_storyboard.py' -v
