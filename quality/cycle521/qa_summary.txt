@@ -1,0 +1,6 @@
+Cycle521 review-only checkpoint (2026-10-12)
+Baseline cycle520: 20s, 1080x1920.
+Changed 5.0-10.0s to show typed Japanese instruction and verified 4-month total 720.
+Local MP4 SHA256: d8b93a3acb3365c75b852980ed097d6a76adbb03fca378772f17a41d18640fe2
+Local unittest 12 PASS; full decode PASS; AAC unchanged.
+No Japanese narration. No CI. No posting. Generator and tests remain in local ZIP; GitHub source writes blocked.
