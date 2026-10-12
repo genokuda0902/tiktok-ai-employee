@@ -1,0 +1,43 @@
+{
+  "genre": "ai_work",
+  "rights": "synthetic_local_review_only",
+  "privacy_checked": true,
+  "human_review": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "auto_post": false,
+  "labels": [
+    "1月",
+    "2月",
+    "3月",
+    "4月"
+  ],
+  "values": [
+    120,
+    150,
+    200,
+    250
+  ],
+  "claimed_total": 720,
+  "proof_events": [
+    {
+      "at": 10,
+      "state": "input"
+    },
+    {
+      "at": 11,
+      "state": "calculating"
+    },
+    {
+      "at": 12.5,
+      "state": "verified"
+    },
+    {
+      "at": 15,
+      "state": "verified"
+    },
+    {
+      "at": 17.5,
+      "state": "verified"
+    }
+  ]
+}
