@@ -76,8 +76,10 @@ def filtergraph(stages=STAGES):
     parts=[]
     for i,(start,end,label) in enumerate(stages):
         x=85+i*233
-        active=f'between(t\\,{start}\\,{end})'
-        during='between(t\\,2.5\\,17.5)'
+        active=f'between(t\\,{start}\\,{end})' if i != 1 else '0'
+        # The operation scene uses this footer for its own disclosure text.
+        # Fail closed: omit navigation entirely during 5..10 seconds.
+        during='between(t\\,2.5\\,5)+between(t\\,10\\,17.5)'
         parts.append(f'drawtext=fontfile={FONT}:text={label}:fontcolor=0x8aa5b2:fontsize=28:x={x+66}:y=1605:enable={during}')
         parts.append(f'drawbox=x={x}:y=1647:w=206:h=8:color=0x274356:t=fill:enable={during}')
         parts.append(f'drawtext=fontfile={FONT}:text={label}:fontcolor=white:fontsize=28:x={x+66}:y=1605:enable={active}')

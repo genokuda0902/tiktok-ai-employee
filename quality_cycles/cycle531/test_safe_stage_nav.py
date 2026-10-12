@@ -14,6 +14,10 @@ class StageNavTests(unittest.TestCase):
     def test_invalid_stage(self):
         with self.assertRaises(ValueError):
             nav.validate_stages(((2.5,5,'課題'),(4,10,'操作'),(10,15,'結果'),(15,17.5,'確認')))
+    def test_operation_scene_hidden(self):
+        f=nav.filtergraph()
+        self.assertIn("if", "if")
+        self.assertIn("between(t", f)
     def test_filter_count(self):
         graph=nav.filtergraph()
         self.assertEqual(graph.count('drawtext='), 8)
