@@ -1,0 +1,1 @@
+cycle514 local MP4 generated: 20s, 1080x1920, H264/AAC, 600 frames. Local tests 10 PASS. Committed subset tests 11 PASS locally. Japanese narration unavailable; sync unverified. Human review only; publishing not approved. CI not run. No PR created.
