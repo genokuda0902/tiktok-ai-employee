@@ -1,0 +1,22 @@
+{
+  "genre": "AI・仕事効率化",
+  "rights": "SYNTHETIC_OR_OWNER_APPROVED",
+  "contains_private_data": false,
+  "review_status": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "claims_real_results": false,
+  "hook": "Excel集計、まだ手入力？",
+  "labels": [
+    "1月",
+    "2月",
+    "3月",
+    "4月"
+  ],
+  "values": [
+    120,
+    150,
+    200,
+    250
+  ],
+  "verification_title": "4か月の合計、合ってる？"
+}
