@@ -1,0 +1,1 @@
+cycle513 local: 12 tests PASS; MP4 1080x1920, 20s, 600 frames, H264/AAC, decode PASS. Narration absent. CI not run. Review only. Output SHA256 cd898118f2e30e4dfca43f828b6669405f9298405ebadb3f4f4c83f9b66d8796.
