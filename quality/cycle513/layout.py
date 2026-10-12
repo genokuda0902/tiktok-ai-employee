@@ -1,0 +1,5 @@
+CAPTION_TOP = 1450
+ENDCARD_BOTTOM = 1449
+
+def safe_endcard():
+    return ENDCARD_BOTTOM < CAPTION_TOP
