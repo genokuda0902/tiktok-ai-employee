@@ -1,0 +1,20 @@
+name: Cycle531 footer-safe navigation tests
+on:
+  pull_request:
+    paths:
+      - 'quality_cycles/cycle531/**'
+      - '.github/workflows/quality-cycle531.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run offline geometry tests
+        working-directory: quality_cycles/cycle531
+        run: python -m unittest -v test_safe_stage_nav.py
