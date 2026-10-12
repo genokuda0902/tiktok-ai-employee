@@ -1,5 +1,11 @@
 name: cycle533 proof hook regression
 on:
+  push:
+    branches:
+      - 'quality/cycle533-animated-evidence-hook-20261013'
+    paths:
+      - 'quality_cycles/cycle533/**'
+      - '.github/workflows/quality-cycle533.yml'
   pull_request:
     paths:
       - 'quality_cycles/cycle533/**'
