@@ -1,0 +1,1 @@
+Cycle519 local run: 20 pytest tests passed. Generated MP4: 20 seconds, 1080x1920, H.264/AAC, review only. First frame shows all four bars and 720. Japanese narration remains unavailable. CI is not verified. No automatic posting.
