@@ -1,1 +1,1 @@
-Cycle550 review-only CTA loop improvement. Japanese narration remains unverified. No publication approval.
+Cycle550 review-only CTA and non-overlapping loop transition, 18.5–20s. 11 local tests passed. Local MP4: 1080x1920 H264/AAC, 20s, full decode passed. SHA256 f59e3b83e661cec7c5ae35487d6021df46b18585c4c1b5a55c9f5bec27f671c2. Japanese narration and subtitle synchronization unverified. Full renderer and tests remain in separate review ZIP, not in GitHub. CI not run. No publication or merge approval.
