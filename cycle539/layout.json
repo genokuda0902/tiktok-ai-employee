@@ -1,0 +1,39 @@
+{
+  "width": 1080,
+  "height": 1920,
+  "stage_start": 9,
+  "stage_end": 15.5,
+  "safe_rects": {
+    "title": [
+      76,
+      210,
+      1000,
+      300
+    ],
+    "navigation": [
+      95,
+      322,
+      990,
+      390
+    ],
+    "spreadsheet": [
+      68,
+      391,
+      1011,
+      1540
+    ],
+    "disclaimer": [
+      78,
+      1620,
+      995,
+      1670
+    ],
+    "caption": [
+      86,
+      1690,
+      991,
+      1790
+    ]
+  },
+  "publication": "NOT_APPROVED"
+}
