@@ -1,0 +1,1 @@
+cycle557: scene 7 metallic lighting, local tests 7/7, technical checks 16/16, publication not approved.
