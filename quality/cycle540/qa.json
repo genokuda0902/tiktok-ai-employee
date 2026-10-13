@@ -1,0 +1,32 @@
+{
+  "cycle": 540,
+  "source_cycle": 539,
+  "review_status": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "preview_mp4_sha256": "1dcd8c9f97df82a565319b9487f208fbd7e253a447fcc108f449a2f166f74331",
+  "source_mp4_sha256": "9914890ac933cfd20b349ca0e0d51609a8c012b75b552f150540c52e25c5d42c",
+  "technical": {
+    "duration_s": 20,
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "decoded_frames": 600,
+    "video": "h264",
+    "audio": "aac",
+    "sample_rate_hz": 44100,
+    "audio_packets_unchanged": true,
+    "local_tests_passed": 12,
+    "ci": "NOT_RUN",
+    "japanese_voice": "NOT_VERIFIED",
+    "caption_voice_sync": "NOT_VERIFIED"
+  },
+  "visual_changes": {
+    "intro": "0.0-2.5s original static illustrated robot + synthetic chart and camera push",
+    "loop": "19.7-20.0s return to first-frame hero",
+    "mean_pixel_diff_at_1_2s": 41.096,
+    "mean_pixel_diff_at_10_5s": 0.608,
+    "first_last_mean_diff": 2.863
+  },
+  "source_status": "RENDERER_NOT_COMMITTED_GITHUB_WRITE_BLOCKED",
+  "reference": "v33 owner-provided original inspected; 31.553333s"
+}
