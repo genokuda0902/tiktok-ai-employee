@@ -1,0 +1,1 @@
+Cycle 541: clean duplicate legacy visual overlays from scenes 2 through 7. Preserve scenes 0-1, original Japanese voice, captions, and music. Local 1080x1920 H264/AAC MP4 verified; 27 local QA checks pass. Full reproducible source and test ZIP is provided separately. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No automatic posting or merge.
