@@ -1,0 +1,21 @@
+{
+  "cycle": 542,
+  "genre": "AI・仕事効率化",
+  "scene_seconds": [
+    4.5,
+    6
+  ],
+  "issue": "overlapping Japanese captions in transition",
+  "solution": "opaque original scene with safe text and synthetic spreadsheet values",
+  "source_sha256": "c409716a04697c7544c13b6a52e2f2cbac62549651f0db7294584bfeabffcc28",
+  "values": [
+    120,
+    150,
+    200,
+    250
+  ],
+  "review_status": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "narration_verified": false,
+  "auto_post": false
+}
