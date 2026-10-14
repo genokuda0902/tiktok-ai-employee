@@ -1,0 +1,23 @@
+{
+  "cycle": 568,
+  "previous": 567,
+  "date": "2026-10-14",
+  "topic": "result-first numeric proof hook",
+  "synthetic_values": [
+    120,
+    150,
+    200,
+    250
+  ],
+  "verified_total": 720,
+  "output_sha256": "a791205610df6bbd0bbab97148bc4a034cdb9e399f995b63a4f062971f772573",
+  "video_duration_seconds": 20,
+  "video_resolution": "1080x1920",
+  "local_tests_passed": 9,
+  "ci_run_count": 0,
+  "github_composer_saved": false,
+  "github_visual_saved": true,
+  "github_tests_saved": true,
+  "japanese_voice_generated": false,
+  "reference_video_raw_access": false
+}
