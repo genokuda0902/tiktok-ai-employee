@@ -1,0 +1,19 @@
+name: Cycle579 Stable Proof Loop
+on:
+  push:
+    branches:
+      - quality/cycle579-stable-proof-loop-20261015
+  pull_request:
+    paths:
+      - 'quality/cycle579/**'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run loop QA unit tests
+        run: python -m unittest discover -s quality/cycle579 -p 'test_*.py' -v
