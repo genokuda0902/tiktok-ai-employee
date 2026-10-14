@@ -15,7 +15,7 @@ def test_caption_timeline():
     assert m.CAPTIONS[0][0]==0 and m.CAPTIONS[-1][1]==m.DURATION
     assert all(b>a and len(s)<=30 for a,b,s in m.CAPTIONS)
     assert all(a[1]==b[0] for a,b in zip(m.CAPTIONS,m.CAPTIONS[1:]))
-    
+
 def test_score_non_silent_and_fade(tmp_path):
     f=tmp_path/'original.wav';m.score(f)
     with wave.open(str(f)) as w:
