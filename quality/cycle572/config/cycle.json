@@ -1,0 +1,35 @@
+{
+  "cycle": 572,
+  "previous": 571,
+  "source": "assets/cycle571.mp4",
+  "output": "output/cycle572_LED_STUDIO_JA_HUMAN_REVIEW.mp4",
+  "scene": {
+    "start_frame": 250,
+    "frame_count": 28,
+    "fps": 30,
+    "overlay": {
+      "x": 50,
+      "y": 270,
+      "width": 980,
+      "height": 1060
+    }
+  },
+  "render": {
+    "supersampling": 2,
+    "kind": "original_studio_led",
+    "led_colors": [
+      "#fc5b64",
+      "#ffc854",
+      "#52ead8"
+    ],
+    "order": [
+      "red",
+      "amber",
+      "cyan"
+    ]
+  },
+  "quality": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "paid_services": false,
+  "autopost": false
+}
