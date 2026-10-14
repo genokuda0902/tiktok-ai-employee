@@ -1,0 +1,28 @@
+name: Cycle582 Quality Gate
+on:
+  push:
+    branches:
+      - quality/cycle582-result-first-qa-20261015
+  pull_request:
+    paths:
+      - "quality/cycle582/**"
+      - ".github/workflows/quality-cycle582.yml"
+  workflow_dispatch:
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install "Pillow>=10,<13"
+      - name: Run ten-genre hook and fail-closed QA tests
+        working-directory: quality/cycle582
+        run: python -m unittest -v test_cycle582.py
