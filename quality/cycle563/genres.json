@@ -1,0 +1,75 @@
+{
+  "engine": "zero_cost_image_slides_ja_voice_captions",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "target_duration_range_seconds": [
+    15,
+    25
+  ],
+  "default_quality_gate": "HUMAN_REVIEW",
+  "default_publication_gate": "NOT_APPROVED",
+  "genres": {
+    "ai_productivity": {
+      "label": "AI・仕事効率化",
+      "accent": "#2DD4BF",
+      "format": "操作実演・Before/After",
+      "cta": "保存・フォロー"
+    },
+    "beauty_grooming": {
+      "label": "美容・身だしなみ",
+      "accent": "#FFB1BD",
+      "format": "左右比較・短い手順",
+      "cta": "保存・共有"
+    },
+    "relationships_psychology": {
+      "label": "恋愛・心理",
+      "accent": "#FF92C0",
+      "format": "二択・会話再現",
+      "cta": "コメント・フォロー"
+    },
+    "money_saving": {
+      "label": "お金・節約",
+      "accent": "#F9C66D",
+      "format": "具体例・チェックリスト",
+      "cta": "保存・共有"
+    },
+    "sales_business": {
+      "label": "営業・ビジネス",
+      "accent": "#FF9370",
+      "format": "悪い例→改善例",
+      "cta": "保存・フォロー"
+    },
+    "career": {
+      "label": "転職・キャリア",
+      "accent": "#81A8FF",
+      "format": "判断基準・言い換え",
+      "cta": "保存・コメント"
+    },
+    "health_lifestyle": {
+      "label": "健康・生活改善",
+      "accent": "#8BDC98",
+      "format": "無理のない実践・注意",
+      "cta": "保存・共有"
+    },
+    "science_trivia": {
+      "label": "雑学・科学",
+      "accent": "#E8BA69",
+      "format": "意外な結論→理由",
+      "cta": "共有・フォロー"
+    },
+    "travel_gourmet": {
+      "label": "旅行・グルメ",
+      "accent": "#79D1EF",
+      "format": "予算・失敗回避・比較",
+      "cta": "保存・共有"
+    },
+    "product_comparison_lifestyle": {
+      "label": "商品比較・暮らし",
+      "accent": "#C6A2FF",
+      "format": "実測・比較・結論",
+      "cta": "保存・コメント"
+    }
+  },
+  "planning_reference": "TikTok_10ジャンル_初期100企画.xlsx"
+}
