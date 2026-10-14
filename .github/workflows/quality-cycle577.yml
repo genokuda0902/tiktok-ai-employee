@@ -1,0 +1,23 @@
+name: Cycle577 Proof Consistency Tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle577/**'
+      - '.github/workflows/quality-cycle577.yml'
+  workflow_dispatch:
+jobs:
+  proof-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free test dependency
+        run: python -m pip install Pillow
+      - name: Compile renderer
+        run: python -m py_compile quality/cycle577/proof_consistency.py
+      - name: Run proof consistency tests
+        run: python -m unittest discover -s quality/cycle577 -p 'test_*.py' -v
