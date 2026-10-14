@@ -1,0 +1,1 @@
+Cycle568 is a zero-cost offline terminal demo. It uses the local input video and two original PNG states. See build.py and test_config.py. The full renderer and MP4 are supplied in the user ZIP. Review is required before any manual publication.
