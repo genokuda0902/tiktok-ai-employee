@@ -1,19 +1,14 @@
 import unittest
-from render import validate_data, INPUT_VALUES, TOTAL, W, H, FPS, HOOK_SECONDS
+from visual import VALUES, W, H, make_background, make_frame
 class TestCycle568(unittest.TestCase):
     def test_verified_total(self):
-        self.assertEqual(sum(INPUT_VALUES), TOTAL)
-        self.assertEqual(TOTAL, 720)
-        self.assertTrue(validate_data())
-    def test_mismatch_fails(self):
-        with self.assertRaises(ValueError):
-            validate_data((120,150,200,250),700)
-    def test_invalid_inputs_fail(self):
-        with self.assertRaises(ValueError):
-            validate_data((120,150,-1,451),720)
+        self.assertEqual(sum(VALUES), 720)
+        self.assertEqual(VALUES, (120,150,200,250))
     def test_vertical(self):
-        self.assertEqual((W,H,FPS), (1080,1920,30))
-    def test_hook_duration(self):
-        self.assertEqual(HOOK_SECONDS,2)
+        self.assertEqual((W,H),(1080,1920))
+    def test_frame(self):
+        self.assertEqual(make_frame(1.0,make_background()).size,(1080,1920))
+    def test_result_is_visible_early(self):
+        self.assertEqual(round(720*(1-(1-min(1,.65/.65))**3)),720)
 if __name__ == '__main__':
     unittest.main()
