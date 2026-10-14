@@ -1,0 +1,26 @@
+{
+  "cycle": 561,
+  "transition": "full_frame_diagonal_wipe",
+  "start_frame": 363,
+  "end_frame": 374,
+  "fps": 30,
+  "resolution": [
+    1080,
+    1920
+  ],
+  "preserve_audio": true,
+  "genres": [
+    "ai_productivity",
+    "gadgets",
+    "money_basics",
+    "career",
+    "sales",
+    "management",
+    "psychology",
+    "health_basics",
+    "daily_tips",
+    "science"
+  ],
+  "publication": "NOT_APPROVED",
+  "review": "HUMAN_REVIEW"
+}
