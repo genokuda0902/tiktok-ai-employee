@@ -1,0 +1,1 @@
+Cycle563 local preview: 20s 1080x1920 H264 AAC. Original animated synthetic evidence scene at 2-6s. Human review required. Japanese narration and semantic caption sync unverified. Not approved for posting. No merge. GitHub CI not run. Local MP4 and QA are shared separately.
