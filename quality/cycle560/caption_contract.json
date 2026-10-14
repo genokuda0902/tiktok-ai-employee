@@ -1,0 +1,33 @@
+{
+  "version": "cycle560",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "frames": 375,
+  "genres": [
+    "ai_productivity",
+    "gadgets",
+    "money_basics",
+    "career",
+    "sales",
+    "management",
+    "psychology",
+    "health_basics",
+    "daily_tips",
+    "science"
+  ],
+  "caption_start_frames": [
+    0,
+    27,
+    54,
+    106,
+    165,
+    197,
+    230,
+    285,
+    336,
+    368,
+    375
+  ],
+  "publication": "NOT_APPROVED"
+}
