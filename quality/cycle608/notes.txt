@@ -1,0 +1,1 @@
+Before and after video scene with 4 input values and a checked sum.
