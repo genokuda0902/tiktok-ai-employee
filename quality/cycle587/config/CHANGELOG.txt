@@ -1,0 +1,1 @@
+cycle586: 1.5 second hook. cycle587: replace stacked lower-third overlays with one caption and a compact contextual line. Technical checks: 1080x1920, 468 frames, 30fps, AAC unchanged. Voice alignment and rights unverified.
