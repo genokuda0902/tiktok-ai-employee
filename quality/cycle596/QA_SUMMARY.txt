@@ -1,0 +1,5 @@
+cycle596: local MP4 created and decoded, 1080x1920 H264 30fps 468 frames, AAC 48kHz, duration 15.6s.
+Improvement vs cycle595: original synthesized ambient background music with speech-triggered ducking.
+Before/after end-card RMS: 0.006021 / 0.018801. Loudness -17.32 LUFS, true peak -2.80 dBTP.
+Local 14/14 QA PASS, 7/7 pytest PASS, reproducible MP4 SHA256 386d7144697b40eb91c86633a303e63ec3cc2033bc926b7e87fd60d7bd327159.
+Publication NOT_APPROVED. Human review required. GitHub CI not verified. No auto-post.
