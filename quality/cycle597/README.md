@@ -1,0 +1,5 @@
+# cycle597 — frequency-selective BGM ducking
+
+Local zero-cost MP4 generated and technically checked. Compared with cycle596's full-band volume ducking, this iteration further reduces original synthesized BGM in 220–1500 Hz during narration, retaining the bass foundation. The local tests show 250–1300 Hz BGM energy -8.54 dB and 70–170 Hz -0.24 dB for a simulated fully active voice envelope. The video stream is unchanged. These are technical measurements, not proof of improved listening quality.
+
+Reproduction and tests are in the cycle597 ZIP delivered in the conversation. GitHub source and CI pending due to write safety checks. Ten genre configurations are bundled. Status: HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Inherited artwork/voice rights, speech-caption sync, Japanese naturalness, and smartphone playback require review. No auto-posting, payment or merge.
