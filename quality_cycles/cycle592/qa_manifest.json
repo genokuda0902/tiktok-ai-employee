@@ -1,0 +1,32 @@
+{
+  "cycle": 592,
+  "date": "2026-10-15",
+  "baseline_cycle": 591,
+  "baseline_sha256": "7146b7fe78c17c4f4dba03e16e2db406adde57e76b76bfe230a37565f6035cea",
+  "output_sha256": "785760726a6b3c4adf2c9adc2e15e53a281a70f4d319204fb251d287c0d95527",
+  "change": "Replace seconds 4.0-6.0 with single-caption, genre-neutral synthetic spreadsheet evidence, removing duplicate caption overlay.",
+  "duration_s": 20,
+  "dimensions": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "frames": 600,
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "audio_equal_to_baseline": true,
+  "changed_frame_mad_at_5_1": 33.612,
+  "unchanged_frame_mad_at_10_5": 0.031,
+  "local_tests": "11 PASS",
+  "decode": "PASS",
+  "narration_generated": false,
+  "voice_caption_semantic_sync_verified": false,
+  "inherited_rights_approved": false,
+  "reference_v33": "Original MP4 inspected locally: 31.553333s, 512x910, real spreadsheet GUI and photographed ending; NOT equivalent",
+  "github_source_blob_sha": "5adeb00ca0aff51b7ebb58862ebdc8acef5287f5",
+  "github_test_blob_sha": "d1d879e7ae346653179b8f9a292ef63c7543ec6f",
+  "ci": "NOT_RUN: workflow write rejected by connector safety checks",
+  "pr": "NOT_CREATED: connector safety checks blocked draft PR",
+  "publication": "PUBLICATION_NOT_APPROVED",
+  "quality": "HUMAN_REVIEW"
+}
