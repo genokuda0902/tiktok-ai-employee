@@ -1,0 +1,75 @@
+{
+  "cycle": 600,
+  "status": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "dimensions": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "duration": 15.6,
+  "previous": 599,
+  "change": "Consolidate Japanese subtitle, keyword and takeaway into compact safe-area card for scenes 1-7",
+  "safe_zone_working_rect": [
+    120,
+    240,
+    780,
+    1260
+  ],
+  "new_card_rect": [
+    126,
+    980,
+    760,
+    1248
+  ],
+  "safe_zone_scope": "New cards only; TikTok In-Feed ad design guide, not organic guarantee",
+  "scenes": [
+    [
+      0,
+      2.3,
+      "小さなPC"
+    ],
+    [
+      2.3,
+      4.5,
+      "カードサイズ"
+    ],
+    [
+      4.5,
+      7.3,
+      "モニター接続"
+    ],
+    [
+      7.3,
+      8.5,
+      "プログラミング"
+    ],
+    [
+      8.5,
+      9.5,
+      "電子工作"
+    ],
+    [
+      9.5,
+      11.7,
+      "入力 → 判断 → 動作"
+    ],
+    [
+      11.7,
+      13.9,
+      "作品づくり"
+    ]
+  ],
+  "genres": {
+    "AI・仕事効率化": "#39e6cc",
+    "美容・身だしなみ": "#e9b6cb",
+    "恋愛・心理": "#f0a2a2",
+    "お金・節約": "#d6dd80",
+    "営業・ビジネス": "#5bcce0",
+    "転職・キャリア": "#c0b1ff",
+    "健康・生活改善": "#8bd1a8",
+    "雑学・科学": "#55ebc8",
+    "旅行・グルメ": "#f2c88d",
+    "商品比較・暮らし": "#94c6f7"
+  }
+}
