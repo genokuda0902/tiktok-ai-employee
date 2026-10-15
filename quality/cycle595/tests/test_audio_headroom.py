@@ -1,5 +1,5 @@
-def test_true_peak_target():
-    assert -2.0 < -1.48
+import pytest
 
-def test_target_integrated_lufs():
-    assert -17 <= -16 <= -15
+@pytest.mark.skip(reason='Real FFmpeg tests are available in the delivered ZIP; GitHub upload is pending')
+def test_audio_headroom():
+    pass
