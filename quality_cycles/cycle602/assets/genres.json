@@ -1,0 +1,38 @@
+{
+  "cycle": 602,
+  "quality": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "default_genre": "雑学・科学",
+  "genres": {
+    "AI・仕事効率化": {
+      "theme": "#39e6cc"
+    },
+    "美容・身だしなみ": {
+      "theme": "#e9b6cb"
+    },
+    "恋愛・心理": {
+      "theme": "#f0a2a2"
+    },
+    "お金・節約": {
+      "theme": "#d6dd80"
+    },
+    "営業・ビジネス": {
+      "theme": "#5bcce0"
+    },
+    "転職・キャリア": {
+      "theme": "#c0b1ff"
+    },
+    "健康・生活改善": {
+      "theme": "#8bd1a8"
+    },
+    "雑学・科学": {
+      "theme": "#55ebc8"
+    },
+    "旅行・グルメ": {
+      "theme": "#f2c88d"
+    },
+    "商品比較・暮らし": {
+      "theme": "#94c6f7"
+    }
+  }
+}
