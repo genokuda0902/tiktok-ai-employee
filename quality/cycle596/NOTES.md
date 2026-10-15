@@ -1,0 +1,1 @@
+Cycle596: locally synthesized original music with voice ducking. 10 genres configured. MP4 and reproducible source ZIP supplied separately for human review. CI has not run. No posting or merging.
