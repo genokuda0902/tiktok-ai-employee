@@ -1,0 +1,1 @@
+cycle595 local QA: 14/14 checks passed. Before true peak -1.48 dBTP; after -2.01 dBTP. Video H264 stream SHA-256 identical. Output SHA-256 aecc306673ce55fbcb852250a12a8cd6dd08645312b522bea6b931a027e8b4eb. HUMAN_REVIEW, NOT_APPROVED. Local source ZIP supplied in chat.
