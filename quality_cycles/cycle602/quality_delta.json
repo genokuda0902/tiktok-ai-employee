@@ -1,0 +1,32 @@
+{
+  "cycle": 602,
+  "previous": 601,
+  "change": "Replace blank lower-third with original decorative 10-genre circuit art; keep captions, CTA, AAC audio",
+  "local_mp4": {
+    "size_bytes": 3510728,
+    "sha256": "d9f20ea3e530b8d828403f7d3080249b6ad839550741db2936cb4b4b51432e62",
+    "format": "1080x1920 30fps 15.6s H264/AAC",
+    "full_decode": true,
+    "frames": 468
+  },
+  "checks": {
+    "local_technical": "14/14 PASS",
+    "local_unittest": "8/8 PASS",
+    "rebuild_sha256_match": true,
+    "upper_mae": 0.983,
+    "lower_mae": 19.724,
+    "aac_packet_hash_unchanged": true
+  },
+  "github": {
+    "workflow_creation": "BLOCKED by safety checks",
+    "draft_pr_creation": "BLOCKED by safety checks",
+    "ci": "NOT RUN"
+  },
+  "approval": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "limitations": [
+    "Inherited audio/art rights unverified",
+    "Japanese speech naturalness and subtitle synchronization unverified",
+    "Mobile UI and reference parity unverified"
+  ]
+}
