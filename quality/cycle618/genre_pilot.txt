@@ -1,0 +1,10 @@
+ai_work
+beauty
+romance_psychology
+money_savings
+sales_business
+career
+health_lifestyle
+trivia_science
+travel_food
+product_comparison
