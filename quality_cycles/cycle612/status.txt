@@ -1,0 +1,1 @@
+cycle612 local render: 1080x1920; 20.17s; synthetic 120,150,200,250 sum720; review only; narration absent; publication not approved.
