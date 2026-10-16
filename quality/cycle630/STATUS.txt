@@ -1,0 +1,1 @@
+Cycle630 REVIEW_ONLY. 9 local tests passed. Video: 1080x1920, 20.17s, H264/AAC. New Japanese narration: absent. Publication: NOT_APPROVED. Reference v33 MP4 inaccessible. Local MP4 SHA256: 4e46a62e341a4ae15e38c2f1048a3dfb8b2766000ea1c6253d269d125309565d. CI: not run; workflow creation blocked. Baseline cycle627 rights not verified.
