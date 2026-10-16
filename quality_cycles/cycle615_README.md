@@ -1,0 +1,1 @@
+Cycle615: review-only synthetic before/after bridge. Replaces 2.2–6.2s of cycle614 with verified formula =SUM(B2:B5) and result 720. Source renderer and MP4 are in the conversation review bundle, not this repo. Audio is BGM/SFX only; Japanese narration, rights and human approval are not verified. No release. Tests are separate and CI not confirmed.
