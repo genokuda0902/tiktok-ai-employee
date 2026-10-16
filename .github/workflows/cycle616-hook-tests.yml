@@ -1,0 +1,21 @@
+name: Cycle616 quality hook tests
+on:
+  push:
+    branches:
+      - quality/cycle616-ci-20261016
+  pull_request:
+    paths:
+      - 'quality/cycle616/**'
+      - '.github/workflows/cycle616-hook-tests.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit test hook contract
+        run: python -m unittest quality.cycle616.test_hook_contract -v
