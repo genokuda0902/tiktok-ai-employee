@@ -1,0 +1,27 @@
+{
+  "cycle": 633,
+  "previous_cycle": 632,
+  "change": "Voice-energy-aware cuts, no audio changes",
+  "baseline_cut_frames": [
+    70,
+    128,
+    178,
+    220,
+    287,
+    352,
+    415
+  ],
+  "new_cut_frames": [
+    63,
+    130,
+    183,
+    230,
+    278,
+    362,
+    415
+  ],
+  "cut_energy_reduction_pct": 69.45,
+  "review": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED",
+  "cost_jpy": 0
+}
