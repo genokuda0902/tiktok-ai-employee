@@ -1,0 +1,19 @@
+name: cycle616 safe-zone QA
+on:
+  pull_request:
+    paths:
+      - "quality/cycle616/**"
+      - ".github/workflows/cycle616-safezone.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install Pillow
+      - run: python -m unittest discover -s quality/cycle616/tests -p 'test_cycle616_unit.py' -v
