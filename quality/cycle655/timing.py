@@ -1,0 +1,7 @@
+FPS = 30
+HOOK_FRAMES = 21
+TOTAL_FRAMES = 468
+SCENE_COUNT = 8
+
+def validate():
+    return HOOK_FRAMES < TOTAL_FRAMES and SCENE_COUNT == 8
