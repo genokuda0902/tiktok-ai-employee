@@ -1,0 +1,21 @@
+{
+  "cycle": 651,
+  "local_video": {
+    "sha256": "34ed1a5d432597a79371e67f0dc2842050d75d70897bb0353a7e5db8dff7a2da",
+    "size_bytes": 815451,
+    "resolution": "1080x1920",
+    "fps": 30,
+    "duration_sec": 15.6,
+    "decoded_frames": 468,
+    "lufs": -16.3,
+    "peak_dbfs": -2.6
+  },
+  "tests": "7/7 local",
+  "new_tts": false,
+  "caption_spoken_word_match": "UNVERIFIED",
+  "code_upload": "BLOCKED",
+  "ci": "NOT_RUN",
+  "cost_jpy": 0,
+  "status": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED"
+}
