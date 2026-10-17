@@ -1,0 +1,1 @@
+from quality.cycle658_caption_contract import split_caption
