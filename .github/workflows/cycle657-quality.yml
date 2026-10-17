@@ -1,0 +1,27 @@
+name: Cycle657 quality tests
+on:
+  pull_request:
+    paths:
+      - 'video_engine/quality/readability_contract.py'
+      - 'video_engine/quality/test_readability_contract.py'
+      - 'video_engine/quality/before_after_card.py'
+      - 'video_engine/quality/test_before_after_card.py'
+      - '.github/workflows/cycle657-quality.yml'
+  workflow_dispatch:
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source test requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install pytest pillow
+      - name: Test ten-genre caption readability and before/after visuals
+        run: python -m pytest -q video_engine/quality/test_readability_contract.py video_engine/quality/test_before_after_card.py
