@@ -1,0 +1,29 @@
+{
+  "cycle": 643,
+  "previous": 642,
+  "genres": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "output": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "frames": 468
+  },
+  "image_sources": "two new ChatGPT-generated 4x2 collages, scene crops; not independent native high-resolution images",
+  "narration": "inherited science narration mismatches Excel captions",
+  "publication": "NOT_APPROVED",
+  "rights": "HUMAN_REVIEW",
+  "auto_post": false,
+  "merge": false,
+  "extra_cost_jpy": 0
+}
