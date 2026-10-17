@@ -1,1 +1,1 @@
-from quality.cycle658_caption_contract import split_caption
+from quality.cycle658_caption_contract import GENRES, split_caption, validate_script_contract
