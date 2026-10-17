@@ -1,5 +1,10 @@
 name: Quality cycle637 offline tests
 on:
+  push:
+    branches: [quality/cycle637-safezone-clutter-20261017]
+    paths:
+      - 'quality/cycle637/**'
+      - '.github/workflows/quality-cycle637.yml'
   pull_request:
     paths:
       - 'quality/cycle637/**'
