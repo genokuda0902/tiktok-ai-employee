@@ -1,0 +1,3 @@
+# Cycle648 — Real Calc Capture (review only)
+
+Baseline: cycle646 spreadsheet recreation; cycle647 audio-aware cuts exists separately. This cycle uses new, synthetic-data LibreOffice Calc screenshots (actual GUI), with formula B6 =SUM(B2:B5) yielding 650, and a Calc-created chart. 8 scenes, 20 seconds, 1080x1920, H.264/AAC. Local 10 unit tests passed; full MP4 decoded. Japanese narration is absent; scene captions are not voice synchronized. Asset rights and human review remain unapproved. No merge or posting. Full renderer and screenshots are in the conversation ZIP, not this repository; GitHub Python source writes were blocked. Cost 0 JPY.
