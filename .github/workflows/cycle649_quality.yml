@@ -1,0 +1,19 @@
+name: cycle649 cross-genre QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle649/**'
+      - '.github/workflows/cycle649_quality.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run zero-cost stdlib QA tests
+        run: python -m unittest discover -s quality/cycle649 -p 'test_qa.py' -v
