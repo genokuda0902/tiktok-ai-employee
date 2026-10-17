@@ -1,0 +1,27 @@
+{
+  "frame": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "caption_rectangle": {
+    "left": 70,
+    "top": 1225,
+    "right": 900,
+    "bottom": 1420
+  },
+  "frame_boundaries": [
+    0,
+    63,
+    130,
+    183,
+    230,
+    278,
+    362,
+    415,
+    468
+  ],
+  "genres_supported": 10,
+  "review": "HUMAN_REVIEW",
+  "publication": "NOT_APPROVED"
+}
