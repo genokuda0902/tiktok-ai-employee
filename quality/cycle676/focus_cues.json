@@ -1,0 +1,27 @@
+{
+  "cycle": 676,
+  "genre": "AI仕事効率化",
+  "cues": [
+    {
+      "start": 10,
+      "end": 11.9,
+      "x": 492,
+      "y": 506,
+      "w": 268,
+      "h": 118,
+      "color": "yellow"
+    },
+    {
+      "start": 12,
+      "end": 13.9,
+      "x": 316,
+      "y": 991,
+      "w": 370,
+      "h": 103,
+      "color": "green"
+    }
+  ],
+  "publication_approved": false,
+  "inherited_asset_rights_verified": false,
+  "japanese_narration_verified": false
+}
