@@ -1,0 +1,16 @@
+{
+  "cycle": 664,
+  "baseline_cycle": 663,
+  "main": "18e084c38db0dc55db7dfc0532b9451b1167f2aa",
+  "focus": "proof-to-action transition + fail-closed narration QA",
+  "mp4_sha256": "fcd863412f8e482a289d53b9b898c8ac7d1b9ccc2a8c634a7f71940b91a31e27",
+  "technical": "H264 1080x1920 20s 30fps AAC decoded",
+  "tests": "10 passed locally",
+  "japanese_narration": "ABSENT",
+  "speech_caption_sync": "NOT_TESTABLE",
+  "rights": "UNVERIFIED_REVIEW_ONLY",
+  "publication": "NOT_APPROVED",
+  "code": "LOCAL_ZIP_ONLY",
+  "ci": "NOT_RUN",
+  "merge": "NONE"
+}
