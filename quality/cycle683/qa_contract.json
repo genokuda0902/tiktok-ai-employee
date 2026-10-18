@@ -1,0 +1,13 @@
+{
+  "cycle": 683,
+  "status": "HUMAN_REVIEW",
+  "publication_approved": false,
+  "baseline": 682,
+  "improvement": "Mascot and verified 650 hook",
+  "ten_genre_contract": true,
+  "japanese_voice": false,
+  "spoken_subtitle_sync": false,
+  "ci": "not run",
+  "source": "Local reproducible ZIP includes full render.py; GitHub contains hook contract only",
+  "reference": "16-panel storyboard inspected; v33 original unavailable"
+}
