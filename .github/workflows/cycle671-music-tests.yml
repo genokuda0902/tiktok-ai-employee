@@ -2,7 +2,7 @@ name: Cycle671 original music tests
 on:
   push:
     branches:
-      - quality/cycle671-original-music-ducking-20261018
+      - 'quality/cycle671-*'
     paths:
       - 'quality/cycle671/**'
       - 'tests/test_cycle671_music.py'
