@@ -1,0 +1,17 @@
+{
+  "cycle": 673,
+  "date": "2026-10-18",
+  "baseline_cycle": 672,
+  "change": "Clean 0.8s end-to-start loop transition; no double-exposure",
+  "mp4_seconds": 20.0,
+  "resolution": "1080x1920",
+  "frame_mae_19_6_old": 13.273,
+  "frame_mae_19_6_new": 1.473,
+  "audio_waveform_correlation": 0.999934,
+  "local_tests_passed": 7,
+  "japanese_narration": "ABSENT",
+  "ci": "NOT_RUN",
+  "pr": "NOT_CREATED",
+  "publication": "NOT_APPROVED",
+  "mp4_sha256": "3e9bfe2058c7b188e7904cdfb831c14756921d501d24aa322602adcf209af2fb"
+}
