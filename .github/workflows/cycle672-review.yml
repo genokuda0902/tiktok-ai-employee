@@ -1,0 +1,14 @@
+name: Cycle672 Caption Review
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle672/**'
+      - '.github/workflows/cycle672-review.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest discover -s quality/cycle672 -p 'test_*.py' -v
