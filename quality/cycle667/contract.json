@@ -1,0 +1,63 @@
+{
+  "cycle": 667,
+  "publication": "NOT_APPROVED",
+  "posting": "MANUAL_ONLY",
+  "asset_rights": "UNVERIFIED_REVIEW_ONLY",
+  "narration_status": "ABSENT",
+  "voice_caption_sync_verified": false,
+  "safe_area": {
+    "top": 195,
+    "bottom": 1535
+  },
+  "bounds": {
+    "brand": [
+      225,
+      288
+    ],
+    "hook1": [
+      366,
+      454
+    ],
+    "hook2": [
+      474,
+      566
+    ],
+    "data": [
+      684,
+      982
+    ],
+    "result": [
+      1032,
+      1322
+    ],
+    "note": [
+      1400,
+      1480
+    ]
+  },
+  "genres": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "numbers": [
+    120,
+    150,
+    200,
+    180
+  ],
+  "expected_sum": 650,
+  "duration_seconds": 20,
+  "hook_seconds": 1.8,
+  "loop_seconds": 0.8,
+  "source_code_status": "LOCAL_ZIP_ONLY",
+  "source_media_status": "NOT_COMMITTED",
+  "quality": "HUMAN_REVIEW"
+}
