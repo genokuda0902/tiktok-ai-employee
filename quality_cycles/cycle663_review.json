@@ -1,0 +1,19 @@
+{
+  "cycle": 663,
+  "date": "2026-10-18",
+  "change": "animated synthetic data chart evidence card",
+  "genre": "AI・仕事効率化",
+  "values": [
+    120,
+    150,
+    200,
+    180
+  ],
+  "total": 650,
+  "video_sha256": "a06f5e04a42149fb47ada741f14bfcc6d206277c0b6ee21f69d4c6e7c1d2c12a",
+  "publication": "NOT_APPROVED",
+  "narration": "ABSENT",
+  "tests": "8 local tests passed",
+  "ci": "NOT_RUN",
+  "rights": "REVIEW_ONLY_UNVERIFIED"
+}
