@@ -10,10 +10,11 @@
     180
   ],
   "total": 650,
-  "video_sha256": "a06f5e04a42149fb47ada741f14bfcc6d206277c0b6ee21f69d4c6e7c1d2c12a",
+  "video_sha256": "d28801c2d9b4c823d33ecd00c682dc146b3b2f2b48d1cb0c17da2562a068c6f3",
   "publication": "NOT_APPROVED",
   "narration": "ABSENT",
   "tests": "8 local tests passed",
   "ci": "NOT_RUN",
-  "rights": "REVIEW_ONLY_UNVERIFIED"
+  "rights": "REVIEW_ONLY_UNVERIFIED",
+  "safe_zone_adjustment": "numeric result moved above lower 20% TikTok UI overlay"
 }
