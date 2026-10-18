@@ -1,0 +1,17 @@
+{
+  "cycle": 666,
+  "date": "2026-10-18",
+  "status": "REVIEW_ONLY_NOT_APPROVED",
+  "baseline_cycle": 665,
+  "change": "19.2-20.0s crossfade to first frame; loop improves cut continuity; no claims about retention",
+  "baseline_sha256": "53b382302a28257cf277711fce6cf3591fec27a6eebc5268f564b31fc6f3cca4",
+  "output_sha256": "83372ff9ee144d9a9360190d5839e18b59d38b17ed34f03b6fcf2975e4b62728",
+  "tests_local": "9 passed",
+  "media": "local conversation artifact only; not committed",
+  "voice": "ABSENT; Open JTalk unavailable; gTTS blocked",
+  "rights": "UNVERIFIED_REVIEW_ONLY",
+  "posting": "MANUAL_ONLY",
+  "source": "local ZIP only; GitHub source save blocked",
+  "ci": "NOT_RUN",
+  "merge": false
+}
