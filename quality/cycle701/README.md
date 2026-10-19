@@ -1,0 +1,1 @@
+Cycle701 review-only experiment: synthetic SUMIF demo. Local 20s MP4 and tests are supplied separately. Narration, sync, phone playback and employee approval remain unverified. Do not merge or publish.
