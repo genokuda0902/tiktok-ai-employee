@@ -1,4 +1,4 @@
-name: Cycle685 caption QA (review only)
+name: Cycle685 caption and original BGM QA (review only)
 on:
   pull_request:
     paths:
@@ -15,5 +15,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: python -m pip install Pillow==11.3.0
+      - run: python -m pip install Pillow==11.3.0 numpy==2.3.3
       - run: cd quality/cycle685 && python -m unittest discover -p 'test_*.py' -v
