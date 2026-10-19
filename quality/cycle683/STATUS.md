@@ -1,0 +1,1 @@
+Cycle 683: Local MP4 generated. Scene 6 illustration changed. Japanese AAC audio inherited, not newly generated. Manual review required.
