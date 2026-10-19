@@ -1,0 +1,48 @@
+{
+  "cycle": 692,
+  "source_cycle": 691,
+  "publication_status": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "frames": 468,
+    "duration_seconds": 15.6,
+    "scene_frames": [
+      60,
+      60,
+      60,
+      60,
+      60,
+      60,
+      54,
+      54
+    ]
+  },
+  "genres": [
+    "ai_work",
+    "beauty",
+    "love_psychology",
+    "saving",
+    "sales_business",
+    "career",
+    "health",
+    "science",
+    "travel_food",
+    "product_comparison"
+  ],
+  "scenes": [
+    "computer_board",
+    "palm_sized_pc",
+    "monitor",
+    "three_connections",
+    "gpio_led",
+    "input_process_output",
+    "first_line",
+    "save_cta"
+  ],
+  "change": "Eight original, independently drawn visual slides with large focal illustrations and short Japanese captions.",
+  "audio": "Inherited AAC from cycle691; new Japanese TTS and acoustic subtitle alignment not yet verified.",
+  "rights": "Original slides; inherited audio rights unverified; human approval required.",
+  "posting": "manual only after employee approval"
+}
