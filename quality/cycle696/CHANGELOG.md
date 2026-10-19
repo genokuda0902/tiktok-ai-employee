@@ -1,0 +1,1 @@
+cycle696: The first 2 seconds use a new original 1080x1920 layered PCB concept illustration with subtle motion. Prior cycle695 animated the terminal in scene 3. The full local MP4 passed 14 technical checks. New TTS is still pending.
