@@ -1,0 +1,15 @@
+name: Cycle693 review-only QA
+on:
+  push:
+    branches:
+      - quality/cycle693-native-ja-qa-20261019
+  pull_request:
+    paths:
+      - quality/cycle693/**
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run native Japanese QA unit tests
+        run: python3 -m unittest discover -s quality/cycle693 -p 'test_*.py' -v
