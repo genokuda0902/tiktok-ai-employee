@@ -1,0 +1,26 @@
+name: TikTok cycle721 safe-caption checks
+on:
+  push:
+    branches:
+      - quality/cycle721-safe-zone-captions-20261020
+    paths:
+      - 'quality/cycle721/**'
+      - 'tests/test_cycle721_safe_zone.py'
+      - '.github/workflows/cycle721-caption-qa.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle721/**'
+      - 'tests/test_cycle721_safe_zone.py'
+      - '.github/workflows/cycle721-caption-qa.yml'
+jobs:
+  safe-caption-unit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run safe-zone unit tests
+        run: python -m unittest tests/test_cycle721_safe_zone.py -v
