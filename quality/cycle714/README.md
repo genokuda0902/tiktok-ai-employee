@@ -1,0 +1,6 @@
+# Cycle714 (2026-10-20, review only)
+Previous cycle713: 24s 1080x1920 30fps, typed prompt and graph motion, BGM/SFX, no Japanese narration.
+This cycle: **0-3s kinetic BEFORE/AFTER split-screen** and **21-24s checklist -> first-frame visual loop**. Uses synthetic sales data; no claimed time savings. Loop start/end frame MAE=1.68 on local encoded video. Mean absolute pixel difference vs cycle713 at 1.5s=30.735 and at 22.5s=22.206; unchanged middle 7.5s=0.796 (reencode only).
+Local full 24s renderer, prior baseline MP4, output, QA logs and tests are in the user-facing cycle714 ZIP. This repository's cross-genre hook timing contract and offline tests are self-contained; **full renderer is not yet independently reproducible from this branch alone** because its local baseline and original art are not committed.
+CI runs cross-genre tests and optionally probes free Linux Open JTalk Japanese voice with a 6s technical sample. Do not confuse technical voice proof with the 24s video's audio. No reference video, confidential assets, or proprietary voices are committed.
+Rights, Japanese speech-caption alignment, real-device playback and employee approval are NOT VERIFIED. Publication blocked. No automatic posting, merging or paid services.
