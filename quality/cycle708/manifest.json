@@ -1,0 +1,31 @@
+{
+  "cycle": 708,
+  "source_cycle": 707,
+  "source_video": "cycle707_HOOK_CPU_REVEAL_HUMAN_REVIEW.mp4",
+  "output_video": "cycle708_CODE_TYPING_HUMAN_REVIEW.mp4",
+  "scene": 7,
+  "overlay": {
+    "start_seconds": 11.7,
+    "x": 60,
+    "y": 550,
+    "width": 960,
+    "height": 750,
+    "fps": 30,
+    "frames": 59
+  },
+  "text": "print(2 + 3)",
+  "result": "5",
+  "genres": [
+    "ai_work",
+    "beauty",
+    "love_psychology",
+    "saving",
+    "sales_business",
+    "career",
+    "health",
+    "science",
+    "travel_food",
+    "product_comparison"
+  ],
+  "publication_approved": false
+}
