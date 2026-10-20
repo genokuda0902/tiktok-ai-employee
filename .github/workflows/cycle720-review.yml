@@ -1,0 +1,66 @@
+name: Cycle720 narrated image-first review MP4
+on:
+  push:
+    branches:
+      - quality/cycle720-narrated-imagefirst-20261020
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local rendering and Japanese speech
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install "kokoro>=0.9.4" "misaki[ja]" soundfile numpy unidic pillow
+          python -m unidic download
+      - name: Test ten-genre schema and fictional-data proof
+        run: python -m unittest discover -s tests -p test_cycle720.py -v
+      - name: Render new Japanese narrated MP4
+        run: python src/cycle720_render.py
+      - name: Verify H264/AAC, dimensions, captions and full decoding
+        run: |
+          set -euo pipefail
+          VIDEO=output/cycle720/cycle720_NARRATED_REVIEW_ONLY.mp4
+          test -s "$VIDEO"
+          test -s output/cycle720/captions.srt
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path("output/cycle720/cycle720_NARRATED_REVIEW_ONLY.mp4")
+          j=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_streams","-show_format","-of","json",str(p)]))
+          v=next(s for s in j["streams"] if s["codec_type"]=="video")
+          a=next(s for s in j["streams"] if s["codec_type"]=="audio")
+          assert (v["codec_name"],v["width"],v["height"])==("h264",1080,1920),v
+          assert a["codec_name"]=="aac",a
+          assert 20<float(j["format"]["duration"])<40,j["format"]
+          report=json.loads(Path("output/cycle720/report.json").read_text())
+          assert len(report["segments"])==8
+          assert all(x["duration_s"]<x["scene_duration_s"] for x in report["segments"])
+          assert Path("output/cycle720/captions.srt").read_text().count("-->")==8
+          print("QA PASS",v["codec_name"],a["codec_name"],j["format"]["duration"],"8 Japanese caption scenes")
+          PY
+          ffmpeg -v error -i "$VIDEO" -f null -
+          ffmpeg -hide_banner -i "$VIDEO" -vn -af volumedetect -f null - 2>&1 | tee output/cycle720/volume.log
+          grep -q mean_volume output/cycle720/volume.log
+          sha256sum "$VIDEO" | tee output/cycle720/sha256.txt
+      - name: Upload review-only real MP4 and QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle720-narrated-review-mp4
+          path: |
+            output/cycle720/cycle720_NARRATED_REVIEW_ONLY.mp4
+            output/cycle720/report.json
+            output/cycle720/captions.srt
+            output/cycle720/volume.log
+            output/cycle720/sha256.txt
+          if-no-files-found: warn
+          retention-days: 7
