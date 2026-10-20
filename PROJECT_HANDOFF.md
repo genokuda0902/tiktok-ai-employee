@@ -29,3 +29,9 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+## Cycle720 verified checkpoint — 2026-10-20 JST (review-only)
+- Tested commit a889202b28fedb3119c798bb63f734b120fbf763, Actions success run 39427835998.
+- Verified real 27.343-second 1080x1920 H.264/AAC Japanese-narrated MP4 in artifact 12267440079; SHA256 59e00be1355f802b5668563253f7cd9f299a1e86210dbee309fbe072492d7c87.
+- Added independent image-first renderer, 10-genre schema tests, scene-level Japanese SRT. See quality/cycle720_qa.md.
+- NOT v33 equivalence, NOT approved for publication. Pronunciation, word sync, mobile UI, and rights need human review. No merge or auto-post.
