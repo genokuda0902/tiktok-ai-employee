@@ -1,0 +1,22 @@
+name: Cycle716 Japanese TTS guard tests
+on:
+  push:
+    branches:
+      - quality/cycle716-scale-comparison-20261020
+    paths:
+      - 'src/cycle716_tts_guard.py'
+      - 'tests/test_cycle716_tts_guard.py'
+      - '.github/workflows/cycle716-quality.yml'
+  workflow_dispatch:
+jobs:
+  guard-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test fail-closed Japanese audio gate
+        run: python -m unittest discover -s tests -p 'test_cycle716_tts_guard.py' -v
