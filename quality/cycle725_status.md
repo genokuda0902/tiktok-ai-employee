@@ -1,0 +1,3 @@
+# Cycle725 status
+
+A local review-only MP4 was rendered from cycle724 with an original 0-2.5s synthetic result-first hook. Exact local renderer and QA tests are in the ChatGPT cycle725 ZIP, not this branch. The separate TTS-first experimental code and tests are committed here but have not been run in GitHub CI. GitHub workflow and draft PR creation were blocked. Local QA: H.264 1080x1920, 30fps, 819 frames, AAC Japanese narration inherited from cycle724, 8 scene captions, full decode pass, 9 local tests pass. No merge, posting, or employee approval. Original v33 MP4 unavailable for direct comparison. Next: restore CI, reconcile source parity, check narration and safe zones on device.
