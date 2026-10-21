@@ -1,0 +1,48 @@
+{
+  "version": "cycle752",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "roi": {
+    "x": 40,
+    "y": 410,
+    "width": 1000,
+    "height": 850,
+    "feather_px": 90
+  },
+  "shots": [
+    {
+      "scene": 3,
+      "start_frame": 120,
+      "end_frame": 180,
+      "focus_x": 420,
+      "focus_y": 670,
+      "radius_px": 290,
+      "max_glow": 34,
+      "drift_x_px": 20
+    },
+    {
+      "scene": 5,
+      "start_frame": 240,
+      "end_frame": 282,
+      "focus_x": 570,
+      "focus_y": 730,
+      "radius_px": 290,
+      "max_glow": 34,
+      "drift_x_px": 20
+    },
+    {
+      "scene": 6,
+      "start_frame": 282,
+      "end_frame": 330,
+      "focus_x": 550,
+      "focus_y": 780,
+      "radius_px": 290,
+      "max_glow": 34,
+      "drift_x_px": 20
+    }
+  ],
+  "genre_policy": "Animate a restrained cyan focus light over central diagram. Never distort text, diagrams, subtitles or top hooks."
+}
