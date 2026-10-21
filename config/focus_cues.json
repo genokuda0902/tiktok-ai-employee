@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "genre": "雑学・科学",
+  "canvas": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "color_rgb": [
+    80,
+    227,
+    210
+  ],
+  "safe_region": [
+    44,
+    190,
+    895,
+    1430
+  ],
+  "focus_events": [
+    {
+      "scene": 1,
+      "start_frame": 10,
+      "end_frame": 50,
+      "rect": [
+        365,
+        710,
+        695,
+        1010
+      ]
+    },
+    {
+      "scene": 3,
+      "start_frame": 126,
+      "end_frame": 169,
+      "rect": [
+        170,
+        565,
+        820,
+        1050
+      ]
+    },
+    {
+      "scene": 5,
+      "start_frame": 249,
+      "end_frame": 275,
+      "rect": [
+        505,
+        655,
+        665,
+        835
+      ]
+    },
+    {
+      "scene": 7,
+      "start_frame": 349,
+      "end_frame": 371,
+      "rect": [
+        615,
+        815,
+        827,
+        1010
+      ]
+    }
+  ]
+}
