@@ -1,0 +1,69 @@
+{
+  "cycle": 741,
+  "status": "HUMAN_REVIEW",
+  "source": "cycle739 rail-free MP4",
+  "chapters": [
+    "課題",
+    "入力",
+    "確認",
+    "保存"
+  ],
+  "breaks_seconds": [
+    0,
+    6.5,
+    12.8,
+    24.3,
+    27.343
+  ],
+  "badge_px": {
+    "x": 710,
+    "y": 142,
+    "width": 186,
+    "height": 78
+  },
+  "safe_region_px": [
+    48,
+    120,
+    908,
+    1500
+  ],
+  "protected_regions_px": [
+    [
+      50,
+      250,
+      670,
+      345
+    ],
+    [
+      55,
+      370,
+      870,
+      1080
+    ],
+    [
+      45,
+      1060,
+      890,
+      1370
+    ],
+    [
+      50,
+      1390,
+      890,
+      1500
+    ]
+  ],
+  "genres": [
+    "ai_work",
+    "sales",
+    "business",
+    "finance",
+    "career",
+    "study",
+    "health",
+    "travel",
+    "food",
+    "lifestyle"
+  ],
+  "notes": "Move chapter UI away from workbook and captions. No merge or publication without human review."
+}
