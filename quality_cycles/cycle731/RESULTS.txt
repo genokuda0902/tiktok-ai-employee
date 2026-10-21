@@ -1,0 +1,3 @@
+cycle731 vs 730: clean-room chart 9.8-12.8s; no overlay ghosts.
+27.343s 1080x1920 H264/AAC 819 frames, full decode PASS, 12 local tests PASS.
+Audio PCM SHA256 matches cycle730. CI/PR blocked. HUMAN_REVIEW only.
