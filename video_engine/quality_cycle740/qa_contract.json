@@ -1,0 +1,34 @@
+{
+  "cycle": 740,
+  "status": "HUMAN_REVIEW",
+  "publication_approved": false,
+  "genres": [
+    "ai_work",
+    "sales",
+    "business",
+    "finance",
+    "career",
+    "study",
+    "health",
+    "travel",
+    "food",
+    "lifestyle"
+  ],
+  "checks": {
+    "width": 1080,
+    "height": 1920,
+    "frames": 819,
+    "codec_video": "h264",
+    "codec_audio": "aac",
+    "captions": 8,
+    "full_decode": true,
+    "previous_audio_pcm_sha_equal": true,
+    "rail_x": 930,
+    "rail_y": 360,
+    "rail_w": 130,
+    "rail_h": 350
+  },
+  "github_ci": "NOT_RUN",
+  "local_unit_tests": "6 PASS",
+  "note": "Synthetic graphics only. User-supplied and previous MP4 remain local; no publication."
+}
