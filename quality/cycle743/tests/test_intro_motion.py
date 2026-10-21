@@ -1,6 +1,6 @@
 from pathlib import Path
 import sys
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from intro_motion import GENRES, VALUES, FPS, FRAMES, progress, render_panel
 
 def test_genres_and_arithmetic():
