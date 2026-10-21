@@ -22,5 +22,5 @@ jobs:
           python-version: '3.11'
       - name: Install free test dependencies
         run: python -m pip install pillow pytest
-      - name: Run shared genre tests
-        run: python -m pytest quality_cycles/cycle740/test_art_config.py -q
+      - name: Run genre and original-art tests
+        run: python -m pytest quality_cycles/cycle740/test_*.py -q
