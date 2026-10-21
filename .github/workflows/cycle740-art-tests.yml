@@ -1,0 +1,26 @@
+name: Cycle740 original-art QA
+on:
+  push:
+    branches:
+      - quality/cycle740-original-hero-art-20261021
+  pull_request:
+    paths:
+      - quality_cycles/cycle740/**
+      - .github/workflows/cycle740-art-tests.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  art-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free test dependencies
+        run: python -m pip install pillow pytest
+      - name: Run shared genre tests
+        run: python -m pytest quality_cycles/cycle740/test_art_config.py -q
