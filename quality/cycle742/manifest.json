@@ -1,0 +1,10 @@
+{
+  "cycle": 742,
+  "base_cycle": 741,
+  "change": "Replace the first 3.2 seconds with an original cinematic 2.5D-style hook scene; retain all subsequent content and original Japanese narration.",
+  "reference": "User-provided ChatGPT×Excel 16-panel storyboard; original v33 MP4 not accessible in this run",
+  "genres": ["ai_work","sales","business","finance","career","study","health","travel","food","lifestyle"],
+  "input_dependency": "Approved review-only cycle741 MP4; not included in GitHub",
+  "safety": {"review_only": true, "manual_post_only": true, "no_merge": true, "synthetic_data": true},
+  "qa": {"local_tests": 13, "video": "1080x1920 H264 30fps 819frames", "audio": "AAC 24kHz Japanese narration unchanged", "subtitle_intervals": 8, "full_decode": true, "phone_playback": false}
+}
