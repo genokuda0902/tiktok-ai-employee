@@ -1,0 +1,19 @@
+name: Cycle733 CTA unit tests
+on:
+  pull_request:
+    paths:
+      - 'video_engine/cycle733/**'
+      - '.github/workflows/cycle733-qa.yml'
+  workflow_dispatch:
+jobs:
+  cta-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check CTA policy
+        run: python -m unittest discover -s video_engine/cycle733 -p 'test_policy.py' -v
