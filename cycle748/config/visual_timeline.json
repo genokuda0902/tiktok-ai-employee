@@ -1,0 +1,37 @@
+{
+  "cycle": 748,
+  "genre_count": 10,
+  "genre_names": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "scene": 7,
+  "frame_rate": 30,
+  "stages": [
+    {
+      "start_frame": 330,
+      "end_frame": 347,
+      "state": "code_input"
+    },
+    {
+      "start_frame": 348,
+      "end_frame": 359,
+      "state": "execute"
+    },
+    {
+      "start_frame": 360,
+      "end_frame": 377,
+      "state": "output_5"
+    }
+  ],
+  "publication": "HUMAN_REVIEW_NOT_APPROVED",
+  "cost_yen": 0
+}
