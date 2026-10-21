@@ -47,6 +47,12 @@ def make_pcb(seed: int = 740, width: int = 1280, height: int = 820) -> Image.Ima
         draw.rounded_rectangle((1080,y+27,1195,y+87),radius=5,fill=(4,16,23))
     for x in range(250,940,24):
         draw.rectangle((x,63,x+10,92),fill=(210,167,89))
+    # Subtle, seeded solder-mask flecks add material texture.
+    for _ in range(500):
+        x = rng.randint(50, width-50)
+        y = rng.randint(50, height-50)
+        draw.point((x, y), fill=(rng.randint(12, 52),
+                                 rng.randint(65, 140), rng.randint(55, 130)))
     return image
 
 
