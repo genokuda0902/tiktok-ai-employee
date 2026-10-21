@@ -1,0 +1,1 @@
+Cycle755 review-only data-bound chart experiment. Synthetic values 12,15,20,18 (sum 65). Never publish without rights review and employee approval. No auto-posting or merge.
