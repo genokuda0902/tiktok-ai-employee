@@ -1,0 +1,24 @@
+{
+  "cycle": 749,
+  "previous": 748,
+  "video": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "frames": 429
+  },
+  "ranges": [
+    {
+      "from": 60,
+      "to": 96,
+      "caption": "手のひらサイズ、"
+    },
+    {
+      "from": 97,
+      "to": 119,
+      "caption": "でも本格派。"
+    }
+  ],
+  "status": "HUMAN_REVIEW",
+  "no_posting": true
+}
