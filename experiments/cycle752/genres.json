@@ -1,0 +1,47 @@
+{
+  "version": "cycle752",
+  "genres": [
+    {
+      "name": "AI・仕事効率化",
+      "format": "操作実演・Before/After"
+    },
+    {
+      "name": "美容・身だしなみ",
+      "format": "左右比較・短い手順"
+    },
+    {
+      "name": "恋愛・心理",
+      "format": "二択・会話再現"
+    },
+    {
+      "name": "お金・節約",
+      "format": "具体例・チェックリスト"
+    },
+    {
+      "name": "営業・ビジネス",
+      "format": "悪い例→改善例"
+    },
+    {
+      "name": "転職・キャリア",
+      "format": "判断基準・言い換え"
+    },
+    {
+      "name": "健康・生活改善",
+      "format": "実践と注意"
+    },
+    {
+      "name": "雑学・科学",
+      "format": "意外な結論→理由"
+    },
+    {
+      "name": "旅行・グルメ",
+      "format": "予算・失敗回避・比較"
+    },
+    {
+      "name": "商品比較・暮らし",
+      "format": "実測・比較・結論"
+    }
+  ],
+  "rendered_genre": "雑学・科学",
+  "other_genres_rendered": false
+}
