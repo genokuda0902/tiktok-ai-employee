@@ -1,5 +1,10 @@
 name: Cycle733 CTA quality tests
 on:
+  push:
+    branches: [quality/cycle733-japanese-cta-20261021]
+    paths:
+      - 'video_engine/cycle733/**'
+      - '.github/workflows/cycle733-qa.yml'
   pull_request:
     paths:
       - 'video_engine/cycle733/**'
