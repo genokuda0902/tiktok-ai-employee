@@ -1,0 +1,29 @@
+{
+  "cycle": 744,
+  "previous": 743,
+  "scene": [
+    3.2,
+    6.5
+  ],
+  "render": {
+    "duration_s": 27.343,
+    "resolution": "1080x1920",
+    "fps": 30,
+    "frames": 819,
+    "video": "H.264",
+    "audio": "AAC 24000Hz",
+    "video_decode": "PASS",
+    "audio_decode": "PASS",
+    "audio_bitstream_equal_to_previous": true,
+    "sha256": "2024073f1e12d52ba3171641062282400f54697c2ff45b245ad09e70381a1ac2"
+  },
+  "local_tests": "22 PASS",
+  "github_ci": "0 runs; workflow write blocked",
+  "draft_pr": "blocked",
+  "release": "NOT_APPROVED",
+  "reference_v33": "unavailable",
+  "source_note": "portable core on branch; exact full local renderer in downloadable ZIP",
+  "rights": "synthetic scene; inherited voice rights unverified",
+  "employee_approval": false,
+  "auto_post": false
+}
