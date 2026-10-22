@@ -14,11 +14,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Restore FFmpeg
+      - name: Check FFmpeg first; install only if missing
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y ffmpeg
+          if command -v ffmpeg >/dev/null && command -v ffprobe >/dev/null; then
+            echo 'FFmpeg already present on runner'
+          else
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
           ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
       - run: python -m pip install pillow
       - run: python -m unittest discover -s quality_cycles/cycle762 -p 'test_*.py' -v
       - run: python quality_cycles/cycle762/ci_smoke.py
