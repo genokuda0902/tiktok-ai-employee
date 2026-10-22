@@ -1,0 +1,21 @@
+name: cycle759 vertical MP4 smoke
+on:
+  push:
+    branches:
+      - 'quality/cycle759-*'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-mp4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free video and Japanese font dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check Pillow
+      - name: Render and decode synthetic vertical video
+        run: python quality/cycle759/ci_smoke.py

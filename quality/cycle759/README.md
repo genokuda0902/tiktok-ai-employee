@@ -1,0 +1,1 @@
+cycle759: Original scene 7 code-demo visual redesign, 10-genre neutral storyboard previews. Local MP4 validated. No auto-posting, no merge, no publication approval. GitHub CI is a synthetic-audio smoke fixture, not proof of Japanese voice quality.
