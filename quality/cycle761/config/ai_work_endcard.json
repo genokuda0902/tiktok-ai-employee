@@ -1,0 +1,8 @@
+{
+  "genre": "ai_work", "asset_rights": "synthetic_local_only", "approval": "HUMAN_REVIEW",
+  "title": "3ステップで再現", "subtitle": "架空の売上表を使って試す",
+  "steps": ["売上データを用意", "B6に合計式を入力", "65万円を目視で確認"],
+  "proof": "=SUM(B2:B5)  →  650,000円",
+  "caption": "保存して、あとで試そう",
+  "disclaimer": "※ 架空データ／操作イメージ／公開未承認"
+}
