@@ -1,0 +1,24 @@
+name: cycle762-render-smoke
+on:
+  push:
+    branches:
+      - 'quality/cycle762-*'
+  workflow_dispatch:
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version | head -n 1
+      - run: python -m pip install pillow
+      - run: python -m unittest discover -s quality_cycles/cycle762 -p 'test_*.py' -v
+      - run: python quality_cycles/cycle762/ci_smoke.py
