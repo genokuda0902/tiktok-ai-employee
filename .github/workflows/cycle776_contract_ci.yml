@@ -12,7 +12,7 @@ permissions:
 jobs:
   qa:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -20,6 +20,10 @@ jobs:
           python-version: '3.11'
       - name: Test ten-genre safety and scene phases
         run: python -m unittest discover -s cycle776 -p 'test_cycle776_contract.py' -v
+      - name: Install FFmpeg for synthetic media check
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - name: Synthetic audio/video smoke (not Japanese, not publishable)
         run: |
           mkdir -p cycle776/ci_artifact
