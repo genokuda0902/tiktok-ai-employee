@@ -1,0 +1,14 @@
+{
+  "cycle": 760,
+  "review_only": true,
+  "panel": {
+    "top": 1505,
+    "height": 255,
+    "width": 1080,
+    "opacity": 1,
+    "background": "#06101C"
+  },
+  "disclosure": "架空データ・操作イメージ／要確認",
+  "genre_count": 10,
+  "approved": false
+}
