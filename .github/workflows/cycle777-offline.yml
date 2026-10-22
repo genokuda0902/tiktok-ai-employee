@@ -16,7 +16,7 @@ permissions:
 jobs:
   offline-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,6 +24,10 @@ jobs:
           python-version: '3.11'
       - name: Test offline subtitle core
         run: python -m unittest discover -s quality/cycle777/tests -p 'test_*.py' -v
+      - name: Install missing ffmpeg on runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Synthetic vertical MP4 codec and decode check
         run: |
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle777-smoke.mp4
