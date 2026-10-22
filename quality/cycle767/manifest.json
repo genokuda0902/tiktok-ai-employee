@@ -1,0 +1,16 @@
+{
+  "cycle": 767,
+  "genre": "AI・仕事効率化",
+  "status": "HUMAN_REVIEW",
+  "post_policy": "employee_manual_after_approval",
+  "asset_origin": "original_synthetic_pillow",
+  "synthetic_data": true,
+  "values": [
+    120000,
+    150000
+  ],
+  "quality_approval": false,
+  "reference_v33_accessed": true,
+  "reference_v33_sha256": "b190414f6e3e191cea184d80e28ca7a3404d37a3f212eb94964f95b7674ea712",
+  "scene": "12.8-16.433s legible two-month data review"
+}
