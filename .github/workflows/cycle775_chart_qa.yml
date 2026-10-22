@@ -1,0 +1,61 @@
+name: Cycle775 Chart Render Smoke QA
+on:
+  push:
+    branches:
+      - quality/cycle775-bright-result-20261023
+  pull_request:
+    paths:
+      - 'src/cycle775_chart_contract.py'
+      - 'src/result_reveal.py'
+      - 'tests/test_cycle775_chart_contract.py'
+      - 'tests/test_result_reveal.py'
+      - 'manifest.json'
+      - '.github/workflows/cycle775_chart_qa.yml'
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-budget render dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install pillow==12.3.0
+      - name: Generate entirely synthetic CI-only video/audio fixture
+        run: |
+          mkdir -p input review_output
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x101f38:s=1080x1920:r=30:d=27.3 -f lavfi -i sine=frequency=440:sample_rate=24000:duration=27.3 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -ar 24000 -ac 1 -shortest input/cycle774_baseline.mp4
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          p=Path('manifest.json')
+          data=json.loads(p.read_text(encoding='utf-8'))
+          data['source_sha256']=hashlib.sha256(Path('input/cycle774_baseline.mp4').read_bytes()).hexdigest()
+          p.write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf-8')
+          PY
+      - name: Run contract and full renderer unit tests
+        run: |
+          python -m unittest discover -s tests -p 'test_cycle775_chart_contract.py' -v
+          python -m unittest discover -s tests -p 'test_result_reveal.py' -v
+      - name: Render synthetic-audio smoke video (not user deliverable)
+        run: |
+          python src/result_reveal.py --source input/cycle774_baseline.mp4 --manifest manifest.json --output review_output/cycle775_synthetic_smoke.mp4 --frames-dir review_output/frames
+          ffprobe -v error -show_entries stream=codec_name,width,height,nb_frames -show_entries format=duration -of json review_output/cycle775_synthetic_smoke.mp4 | tee review_output/probe.json
+          ffmpeg -v error -i review_output/cycle775_synthetic_smoke.mp4 -f null -
+          sha256sum review_output/cycle775_synthetic_smoke.mp4 > review_output/sha256.txt
+      - name: Upload synthetic smoke evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle775-synthetic-ci-smoke-not-for-publication
+          path: |
+            review_output/cycle775_synthetic_smoke.mp4
+            review_output/probe.json
+            review_output/sha256.txt
+          retention-days: 7
+          if-no-files-found: error
