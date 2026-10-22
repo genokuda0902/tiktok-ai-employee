@@ -1,0 +1,19 @@
+name: Cycle769 proof contract (review only)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle769/**'
+      - '.github/workflows/cycle769-proof-ci.yml'
+  workflow_dispatch:
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test fail-closed ten-genre proof contract
+        run: cd quality/cycle769 && python -m unittest -v test_proof_contract.py
