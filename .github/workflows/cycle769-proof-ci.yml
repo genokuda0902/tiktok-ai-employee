@@ -1,5 +1,10 @@
 name: Cycle769 proof contract (review only)
 on:
+  push:
+    branches: [quality/cycle769-proof-first-20261022]
+    paths:
+      - 'quality/cycle769/**'
+      - '.github/workflows/cycle769-proof-ci.yml'
   pull_request:
     paths:
       - 'quality/cycle769/**'
