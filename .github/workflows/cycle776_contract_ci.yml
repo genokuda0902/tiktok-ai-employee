@@ -1,0 +1,34 @@
+name: cycle776 ten-genre contract and synthetic smoke
+on:
+  push:
+    branches:
+      - quality/cycle776-operation-demo-20261023
+  pull_request:
+    paths:
+      - 'cycle776/**'
+      - '.github/workflows/cycle776_contract_ci.yml'
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test ten-genre safety and scene phases
+        run: python -m unittest discover -s cycle776 -p 'test_cycle776_contract.py' -v
+      - name: Synthetic audio/video smoke (not Japanese, not publishable)
+        run: |
+          mkdir -p cycle776/ci_artifact
+          ffmpeg -v error -y -f lavfi -i color=c=0x12243a:s=1080x1920:r=30:d=3 -f lavfi -i sine=frequency=440:sample_rate=24000:duration=3 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -ar 24000 -ac 1 -shortest cycle776/ci_artifact/synthetic_smoke.mp4
+          ffmpeg -v error -i cycle776/ci_artifact/synthetic_smoke.mp4 -f null -
+          ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of json cycle776/ci_artifact/synthetic_smoke.mp4 > cycle776/ci_artifact/probe.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle776-synthetic-CI-smoke-NOT-user-video
+          path: cycle776/ci_artifact/
+          retention-days: 7
+          if-no-files-found: error
