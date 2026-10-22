@@ -1,5 +1,11 @@
 name: cycle756 mobile hook tests
 on:
+  push:
+    branches:
+      - 'quality/cycle756-mobile-readable-hook-20261022'
+    paths:
+      - 'quality/cycle756/**'
+      - '.github/workflows/cycle756-mobile-hook.yml'
   pull_request:
     paths:
       - 'quality/cycle756/**'
