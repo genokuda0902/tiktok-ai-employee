@@ -1,7 +1,9 @@
 # Cycle776 — speech-aligned Japanese captions (HUMAN_REVIEW)
 
-Changes from cycle775: detect eight voice-activity blocks in the existing Japanese narration and retime the 16 caption cues to measured speech onsets/offsets. The image slides and inherited audio remain unchanged. The full FFmpeg/Pillow renderer, input MP4, output MP4, timing manifest, QA report, and rights notes are distributed in the cycle776 reproducible ZIP from ChatGPT.
+Local MP4 created from cycle775. Eight speech-activity blocks were measured from inherited Japanese narration and 16 caption cues were retimed. Source image slides and decoded audio PCM are unchanged.
 
-On the actual MP4, measured mean start deviation improved 97.3 ms → 45.0 ms; measured mean end deviation improved 112.6 ms → 45.0 ms. These are **voice activity** measurements, not Japanese phoneme or word-level alignment. 1080×1920, 429 frames, 14.314 s, AAC 48 kHz, 16 captions, 10 genre presets; audio PCM unchanged. Local unit tests 10/10 and full A/V decode verified. GitHub CI only checks synthetic alignment-core unit tests, not MP4 quality or rights.
+Local QA: 15/15; local unit tests: 10/10; 1080×1920, H.264, 30fps, 429 frames, 14.314s, AAC 48kHz. Mean measured onset deviation: 97.3 ms → 45.0 ms; offset: 112.6 ms → 45.0 ms. This is voice-activity timing, NOT phoneme/word-level forced alignment.
 
-No auto-post, no paid services, no merge. Source asset rights and human review remain outstanding.
+**GitHub status: incomplete.** This branch has the review note and synthetic test file. The alignment_core.py upload and draft PR were blocked by safety checks. The GitHub test file currently cannot run without the missing core module. No cycle776 GitHub Actions success is claimed. The complete working renderer, tests, source MP4, resulting MP4, and QA manifest are provided in the ChatGPT cycle776 ZIP. Restore missing code before attempting CI.
+
+No merge, no posting, no paid service. Inherited asset rights, smartphone playback and employee approval remain unverified.
