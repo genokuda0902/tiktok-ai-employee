@@ -1,0 +1,30 @@
+name: cycle771 offline image-slide QA
+on:
+  push:
+    branches:
+      - quality/cycle771-editorial-safe-20261023
+    paths:
+      - 'quality/cycle771/**'
+      - '.github/workflows/cycle771-offline-smoke.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle771/**'
+      - '.github/workflows/cycle771-offline-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Japanese font and ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Run unit and synthetic 1080x1920 MP4 test
+        run: python -m unittest discover -s quality/cycle771/tests -p test_ci_smoke.py -v
