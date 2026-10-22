@@ -1,0 +1,1 @@
+cycle765: 6.5-10.0s prompt entry, 105 frames. Local 1080x1920 MP4 and 10 tests passed. Full renderer and video delivered separately. GitHub CI and draft PR not completed. Manual approval required. No posting or merge.
