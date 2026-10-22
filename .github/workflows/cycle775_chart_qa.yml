@@ -1,0 +1,25 @@
+name: Cycle775 Chart Contract QA
+on:
+  push:
+    branches:
+      - quality/cycle775-bright-result-20261023
+  pull_request:
+    paths:
+      - 'src/cycle775_chart_contract.py'
+      - 'tests/test_cycle775_chart_contract.py'
+      - '.github/workflows/cycle775_chart_qa.yml'
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate code and numeric contract
+        run: |
+          python -m py_compile src/cycle775_chart_contract.py
+          python -m unittest discover -s tests -p 'test_cycle775_chart_contract.py' -v
