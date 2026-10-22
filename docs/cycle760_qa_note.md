@@ -1,0 +1,1 @@
+Cycle 760: prior subtitle ghosting is addressed locally by an opaque lower-third panel. Review only. No publishing or merging. Local MP4 and tests are attached to the run.
