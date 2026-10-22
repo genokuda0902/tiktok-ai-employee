@@ -1,0 +1,16 @@
+name: cycle758 offline hook config smoke
+on:
+  push:
+    branches:
+      - 'quality/cycle758-*'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install pytest
+      - run: python -m pytest -q quality/cycle758/tests/test_hook_config.py
