@@ -1,0 +1,31 @@
+name: cycle777 offline synthetic QA
+on:
+  push:
+    branches:
+      - quality/cycle777-audio-reactive-20261023
+    paths:
+      - 'quality/cycle777/**'
+      - '.github/workflows/cycle777-offline.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle777/**'
+      - '.github/workflows/cycle777-offline.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test offline subtitle core
+        run: python -m unittest discover -s quality/cycle777/tests -p 'test_*.py' -v
+      - name: Synthetic vertical MP4 codec and decode check
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle777-smoke.mp4
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0:s=x /tmp/cycle777-smoke.mp4)" = "1080x1920"
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle777-smoke.mp4 -f null -
