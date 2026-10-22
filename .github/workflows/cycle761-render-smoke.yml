@@ -1,0 +1,17 @@
+name: cycle761-test
+on:
+  push:
+    branches:
+      - 'quality/cycle761-*'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python quality_cycles/cycle761/test_render_final.py
+      - run: python quality_cycles/cycle761/smoke.py
