@@ -1,0 +1,47 @@
+{
+  "version": "cycle771",
+  "status": "template_only",
+  "note": "Genre-specific images, narration, subtitles and facts must be supplied separately. Do not reuse science narration for other genres.",
+  "genres": [
+    {
+      "name": "AI・仕事効率化",
+      "accent": "#72D8FF"
+    },
+    {
+      "name": "美容・身だしなみ",
+      "accent": "#F9B6C5"
+    },
+    {
+      "name": "恋愛・心理",
+      "accent": "#F0B8FF"
+    },
+    {
+      "name": "お金・節約",
+      "accent": "#9EE2A0"
+    },
+    {
+      "name": "営業・ビジネス",
+      "accent": "#F8C86B"
+    },
+    {
+      "name": "転職・キャリア",
+      "accent": "#9EB9FF"
+    },
+    {
+      "name": "健康・生活改善",
+      "accent": "#7BDDCB"
+    },
+    {
+      "name": "雑学・科学",
+      "accent": "#52EBD0"
+    },
+    {
+      "name": "旅行・グルメ",
+      "accent": "#FFCE8C"
+    },
+    {
+      "name": "商品比較・暮らし",
+      "accent": "#A9C6FF"
+    }
+  ]
+}
