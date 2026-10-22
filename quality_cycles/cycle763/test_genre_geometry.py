@@ -1,5 +1,5 @@
 import unittest
-from src.genre_geometry import GENRES, validate_genre, safe_caption
+from quality_cycles.cycle763.src.genre_geometry import GENRES, validate_genre, safe_caption
 
 class TestQuality(unittest.TestCase):
     def test_genres(self):
