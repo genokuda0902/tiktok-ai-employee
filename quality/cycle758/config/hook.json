@@ -1,0 +1,30 @@
+{
+  "cycle": 758,
+  "previous": 757,
+  "genre": "雑学・科学",
+  "resolution": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "stages": [
+    {
+      "start": 0,
+      "end": 0.167,
+      "caption": ""
+    },
+    {
+      "start": 0.167,
+      "end": 1,
+      "caption": "この基板、"
+    },
+    {
+      "start": 1,
+      "end": 2,
+      "caption": "実はパソコン。"
+    }
+  ],
+  "audio": "inherit_aac_copy",
+  "review": "HUMAN_REVIEW",
+  "publication_approved": false
+}

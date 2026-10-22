@@ -1,0 +1,19 @@
+name: cycle757 editorial slide tests
+on:
+  push:
+    branches:
+      - 'quality/cycle757-*'
+  pull_request:
+    paths:
+      - 'quality/cycle757/**'
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+      - run: python -m pip install --disable-pip-version-check pillow pytest
+      - run: python -m pytest -q quality/cycle757/tests/test_scene3_smoke.py
