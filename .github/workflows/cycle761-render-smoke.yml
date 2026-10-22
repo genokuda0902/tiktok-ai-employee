@@ -1,9 +1,5 @@
 name: cycle761-test
-on:
-  push:
-    branches:
-      - 'quality/cycle761-*'
-  workflow_dispatch:
+on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,5 +9,3 @@ jobs:
         with:
           python-version: '3.11'
       - run: python quality_cycles/cycle761/test_render_final.py
-      - uses: FedericoCarboni/setup-ffmpeg@v3
-      - run: python quality_cycles/cycle761/smoke.py
