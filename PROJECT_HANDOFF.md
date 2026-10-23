@@ -39,3 +39,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - User 16-panel storyboard visually inspected. Full TikTok市場分析/TikTok動画研究 transcripts and v33 original MP4 not available for direct comparison.
 - Inherited video/photo/voice rights, Japanese speech/caption semantic match, phone playback and human publication approval are NOT verified. REVIEW ONLY, DO NOT MERGE OR POST.
 - Next: narration semantic QA, approved-asset reproducible CI and actual v33 visual comparison. This renderer is **not** original recovered v33 code.
+
+## cycle798 QA checkpoint — 2026-10-24 JST (review only)
+- Based on unmerged cycle797 Draft PR #90 (head 33dc2504b753cca91967a58fe0b6c123406b2e2f). Main unchanged at 18e084c38db0dc55db7dfc0532b9451b1167f2aa.
+- Reimplemented an original, synthetic animated copy→paste step in frames 348–419 (11.6–14.0s). Unlike cycle797 opening-crop repair, this adds an explicit progression from AI result rows to spreadsheet rows. Only AI/仕事効率化 was rendered; 10-genre config/geometry is shared.
+- Local inherited Japanese-audio review MP4 (not committed/uploaded): cycle798_COPY_PASTE_DEMO_REVIEW_ONLY.mp4, SHA256 36e06562806644a0eb26296c73b931357733e9f089d361240c506a4595fb5588, H.264 1080×1920 30fps 714 frames, container 23.848s, AAC 48kHz copied bit-identically from cycle797. Full A/V decode PASS. 11 local tests PASS. MAE changed region 12.7s=57.0463, unchanged 8.0s=0.3524 and 15.0s=0.498.
+- CI workflow cycle798-review.yml renders ONLY original 2.4s synthetic segment with a 440Hz tone; not a full Japanese narration artifact. CI status must be checked separately; do not infer success from local tests.
+- Prior research: TikTok市場分析/TikTok動画研究 summaries used, full transcripts inaccessible; 16-panel user storyboard inspected, v33 original MP4 not available in this run. Speech/caption semantic sync, mobile device, rights, v33 parity and employee approval NOT verified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, paid service or auto-post.
