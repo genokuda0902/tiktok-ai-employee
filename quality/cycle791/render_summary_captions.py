@@ -38,7 +38,7 @@ def validate(config):
         a,b,s=float(cue['start']),float(cue['end']),cue['text']
         if abs(a-last)>0.002 or b-a<1.0 or b>duration+0.002:
             raise ValueError('Gap, overlap or invalid cue duration')
-        if not isinstance(s,str) or not (2<=len(s)<=23) or '\N' in s or '\n' in s:
+        if not isinstance(s,str) or not (2<=len(s)<=23) or '\\N' in s or '\n' in s:
             raise ValueError('Cue must fit one readable Japanese line')
         if any(ch in s for ch in ('{','}','\\')):
             raise ValueError('ASS markup must not be injected')
