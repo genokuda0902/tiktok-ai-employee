@@ -7,7 +7,9 @@ from cycles.cycle789.src import kinetic_captions as k
 
 class KineticTests(unittest.TestCase):
     def test_ten_genres(self):
-        self.assertEqual(len(k.GENRE_RGB), 10)
+        self.assertEqual(set(k.GENRE_RGB), {
+            "ai_work", "beauty", "relationships", "saving", "sales_business",
+            "career", "health", "science", "travel_food", "product_lifestyle"})
 
     def test_16_japanese_cues(self):
         self.assertEqual(len(k.SEGMENTS), 16)
