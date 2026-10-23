@@ -1,0 +1,47 @@
+name: Cycle791 RMS audio-cue tests and synthetic MP4 smoke
+on:
+  push:
+    branches: ['quality/cycle791-*']
+  pull_request:
+    paths:
+      - 'cycles/cycle791/**'
+      - '.github/workflows/cycle791-audio-cues.yml'
+jobs:
+  test-and-render:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local zero-fee dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install numpy
+      - name: Unit tests
+        run: python -m unittest discover -s cycles/cycle791/tests -v
+      - name: Render technical smoke only (synthetic tone, NOT Japanese narration)
+        run: |
+          mkdir -p /tmp/cycle791
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x082234:s=1080x1920:r=30:d=14.3 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=14.314 -c:v libx264 -preset ultrafast -crf 35 -pix_fmt yuv420p -c:a aac /tmp/cycle791/input.mp4
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x081b2b:s=1080x160 -frames:v 1 -threads 1 /tmp/cycle791/strip.png
+          python cycles/cycle791/src/audio_cue_renderer.py --input /tmp/cycle791/input.mp4 --strip /tmp/cycle791/strip.png --output /tmp/cycle791/smoke_NOT_PRODUCTION.mp4 --work /tmp/cycle791/work --genre science
+          python - <<'PY'
+          import json,subprocess
+          p='/tmp/cycle791/smoke_NOT_PRODUCTION.mp4'
+          meta=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-of','json',p]))
+          v=next(x for x in meta['streams'] if x['codec_type']=='video')
+          a=next(x for x in meta['streams'] if x['codec_type']=='audio')
+          assert (v['width'],v['height'],int(v['nb_frames']))==(1080,1920,429)
+          assert v['codec_name']=='h264' and a['codec_name']=='aac'
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i',p,'-f','null','-'],check=True)
+          print('TECHNICAL smoke passed. Synthetic audio only, not human approved.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle791-SYNTHETIC-SMOKE-NOT-PRODUCTION
+          path: /tmp/cycle791/smoke_NOT_PRODUCTION.mp4
+          retention-days: 3
