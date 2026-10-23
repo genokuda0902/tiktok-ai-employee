@@ -1,15 +1,15 @@
-"""cycle793 reusable science slide config. Full renderer and MP4 are in the local QA ZIP."""
+"""cycle793 reusable ten-genre configuration matching the 100-idea pilot."""
 GENRE_PALETTES = {
+    "ai_work": ("#0C1730", "#9B90FF", "#6AEDE2"),
+    "beauty": ("#162238", "#E5ACD7", "#F2CE8D"),
+    "love_psychology": ("#1B1B35", "#C0A2FF", "#75DCCB"),
+    "money_saving": ("#121A29", "#6BE1B8", "#F9C56C"),
+    "sales_business": ("#0F1929", "#58C5F6", "#F8D76B"),
+    "career": ("#13233D", "#83C5F9", "#FFD17D"),
+    "health_life": ("#10222C", "#6EE7BE", "#FFBB92"),
     "science": ("#0A1427", "#39E7D3", "#F7B955"),
-    "business": ("#0F1929", "#58C5F6", "#F8D76B"),
-    "finance": ("#121A29", "#6BE1B8", "#F9C56C"),
-    "history": ("#1C1B28", "#C6A0F5", "#E9C786"),
-    "health": ("#10222C", "#6EE7BE", "#FFBB92"),
-    "education": ("#13233D", "#83C5F9", "#FFD17D"),
-    "ai": ("#0C1730", "#9B90FF", "#6AEDE2"),
-    "lifestyle": ("#162238", "#E5ACD7", "#F2CE8D"),
-    "travel": ("#102838", "#70D6EA", "#FFCC8E"),
-    "psychology": ("#1B1B35", "#C0A2FF", "#75DCCB"),
+    "travel_food": ("#102838", "#70D6EA", "#FFCC8E"),
+    "product_life": ("#1C1B28", "#C6A0F5", "#E9C786"),
 }
 SCENES = [
     ("この基板、", "実はパソコン。"),
