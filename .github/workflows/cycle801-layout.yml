@@ -1,0 +1,43 @@
+name: cycle801 image-first layout CI
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle801/**'
+      - '.github/workflows/cycle801-layout.yml'
+  workflow_dispatch:
+jobs:
+  layout-and-format-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test 10-genre layout and subtitle bounds
+        run: cd quality/cycle801 && python -m unittest -v test_layout_contract.py
+      - name: Install zero-cost FFmpeg binary
+        run: |
+          python -m pip install --disable-pip-version-check imageio-ffmpeg
+          python - <<'PY'
+          import imageio_ffmpeg,os
+          os.symlink(imageio_ffmpeg.get_ffmpeg_exe(),'/tmp/ffmpeg')
+          with open(os.environ['GITHUB_PATH'],'a') as f:f.write('/tmp\n')
+          PY
+      - name: Create 1080x1920 synthetic technical sample (NOT Japanese voice)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x0B2B3A:s=1080x1920:r=30:d=14.3 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=14.3 \
+            -frames:v 429 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+      - name: Validate sample and full decode
+        run: |
+          ffmpeg -v error -xerror -i /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4 -f null -
+          test -s /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          ffmpeg -hide_banner -i /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4 2>&1 | grep -q '1080x1920'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle801-synthetic-technical-not-japanese
+          path: /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          retention-days: 7
