@@ -1,0 +1,67 @@
+{
+  "cycle": 791,
+  "mode": "review_only",
+  "publication_approved": false,
+  "rights_reviewed": false,
+  "genre": "ai_productivity",
+  "canvas": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "duration_seconds": 23.843,
+  "subtitle_kind": "scene_summary_not_verified_transcript",
+  "safe_area": {
+    "top_px": 1350,
+    "bottom_px": 1530,
+    "left_px": 100,
+    "right_px": 980
+  },
+  "cues": [
+    {
+      "start": 0,
+      "end": 1.5,
+      "text": "手作業の集計、AIでどう変わる？"
+    },
+    {
+      "start": 1.5,
+      "end": 3.4,
+      "text": "4か月分の売上データを用意"
+    },
+    {
+      "start": 3.4,
+      "end": 5.7,
+      "text": "同じ数字で結果を比較します"
+    },
+    {
+      "start": 5.7,
+      "end": 8.9,
+      "text": "集計したい内容をAIに入力"
+    },
+    {
+      "start": 8.9,
+      "end": 11,
+      "text": "グラフで売上の推移を確認"
+    },
+    {
+      "start": 11,
+      "end": 13.7,
+      "text": "結果を表にして確認"
+    },
+    {
+      "start": 13.7,
+      "end": 17.3,
+      "text": "手計算と表計算で検算"
+    },
+    {
+      "start": 17.3,
+      "end": 20.8,
+      "text": "4か月の合計は65万円"
+    },
+    {
+      "start": 20.8,
+      "end": 23.843,
+      "text": "表を用意→AIに指示→検算"
+    }
+  ]
+}

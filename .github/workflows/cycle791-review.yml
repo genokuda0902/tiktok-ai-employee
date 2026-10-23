@@ -1,0 +1,48 @@
+name: cycle791 full-duration synthetic-caption QA (NOT production)
+on:
+  push:
+    branches: ['quality/cycle791-*']
+    paths:
+      - 'quality/cycle791/**'
+      - '.github/workflows/cycle791-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle791/**'
+      - '.github/workflows/cycle791-review.yml'
+permissions:
+  contents: read
+jobs:
+  ten-genre-contract-and-full-duration-synthetic-mp4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-cost wheels (no voice API)
+        run: python -m pip install --disable-pip-version-check imageio-ffmpeg
+      - name: Check Japanese font (install free system font only if absent)
+        run: |
+          if ! fc-list :lang=ja family | grep -q 'Noto Sans CJK'; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq fonts-noto-cjk
+          fi
+          fc-list :lang=ja family | grep -m 1 'Noto Sans CJK'
+      - name: Unit tests across ten genres and fail-closed publication gate
+        run: python -m unittest discover -s quality/cycle791 -p 'test_*.py' -v
+      - name: Render 23.843-second SYNTHETIC tone fixture (NOT Japanese production video)
+        run: |
+          python quality/cycle791/render_synthetic_ci.py \
+            --config quality/cycle791/config.json \
+            --output review_output/cycle791/cycle791_FULL_DURATION_SYNTHETIC_TONE_REVIEW_ONLY.mp4
+      - name: Upload clearly labelled synthetic MP4, captions and technical report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle791-full-duration-SYNTHETIC-TONE-not-user-video
+          path: |
+            review_output/cycle791/cycle791_FULL_DURATION_SYNTHETIC_TONE_REVIEW_ONLY.mp4
+            review_output/cycle791/cycle791_FULL_DURATION_SYNTHETIC_TONE_REVIEW_ONLY.json
+            review_output/cycle791/cycle791_FULL_DURATION_SYNTHETIC_TONE_REVIEW_ONLY.ass
+          if-no-files-found: error
+          retention-days: 7
