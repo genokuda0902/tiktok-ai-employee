@@ -1,0 +1,41 @@
+name: cycle799 cinematic full-render synthetic CI
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle799/**'
+      - '.github/workflows/cycle799-cinematic.yml'
+  workflow_dispatch:
+jobs:
+  test-and-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check numpy pillow opencv-python-headless imageio-ffmpeg
+          python - <<'PY'
+          import imageio_ffmpeg,os
+          os.symlink(imageio_ffmpeg.get_ffmpeg_exe(),'/tmp/ffmpeg')
+          with open(os.environ['GITHUB_PATH'],'a') as f:f.write('/tmp\n')
+          PY
+      - name: Test 10-genre full renderer contract
+        run: cd quality/cycle799 && python -m unittest -v test_cinematic.py
+      - name: Generate 429-frame synthetic source (electronic tone, NOT Japanese)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x103047:s=1080x1920:r=30:d=14.3 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=14.3 -frames:v 429 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac /tmp/cycle799_source_synthetic.mp4
+      - name: Full end-to-end render using committed Python renderer
+        run: |
+          python quality/cycle799/cinematic.py --source /tmp/cycle799_source_synthetic.mp4 --output /tmp/cycle799_CI_SYNTHETIC_ONLY.mp4 --genre science
+          ffmpeg -v error -xerror -i /tmp/cycle799_CI_SYNTHETIC_ONLY.mp4 -f null -
+          test -s /tmp/cycle799_CI_SYNTHETIC_ONLY.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle799-synthetic-not-japanese
+          path: /tmp/cycle799_CI_SYNTHETIC_ONLY.mp4
+          retention-days: 7
