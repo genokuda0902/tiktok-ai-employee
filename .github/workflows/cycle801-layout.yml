@@ -35,7 +35,7 @@ jobs:
         run: |
           ffmpeg -v error -xerror -i /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4 -f null -
           test -s /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4
-          ffprobe -v error -show_entries stream=width,height,codec_name -of csv=p=0 /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          ffmpeg -hide_banner -i /tmp/cycle801_CI_SYNTHETIC_TONE_NOT_JAPANESE.mp4 2>&1 | grep -q '1080x1920'
       - uses: actions/upload-artifact@v4
         with:
           name: cycle801-synthetic-technical-not-japanese
