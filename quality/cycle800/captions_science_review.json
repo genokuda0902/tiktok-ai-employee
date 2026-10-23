@@ -1,0 +1,98 @@
+[
+  {
+    "start": 8,
+    "end": 30,
+    "text": "この基板、",
+    "accent": "基板"
+  },
+  {
+    "start": 30,
+    "end": 54,
+    "text": "実はパソコン。",
+    "accent": "パソコン"
+  },
+  {
+    "start": 63,
+    "end": 98,
+    "text": "手のひらサイズ、",
+    "accent": "手のひら"
+  },
+  {
+    "start": 98,
+    "end": 115,
+    "text": "でも本格派。",
+    "accent": "本格派"
+  },
+  {
+    "start": 123,
+    "end": 153,
+    "text": "画面につなげば、",
+    "accent": "画面"
+  },
+  {
+    "start": 153,
+    "end": 174,
+    "text": "操作できる。",
+    "accent": "操作"
+  },
+  {
+    "start": 182,
+    "end": 212,
+    "text": "必要なのは、",
+    "accent": "必要"
+  },
+  {
+    "start": 212,
+    "end": 238,
+    "text": "三つの接続。",
+    "accent": "三つ"
+  },
+  {
+    "start": 246,
+    "end": 262,
+    "text": "LEDも",
+    "accent": "LED"
+  },
+  {
+    "start": 262,
+    "end": 278,
+    "text": "光らせられる。",
+    "accent": "光"
+  },
+  {
+    "start": 285,
+    "end": 309,
+    "text": "入力、処理、",
+    "accent": "入力、処理"
+  },
+  {
+    "start": 309,
+    "end": 324,
+    "text": "出力。",
+    "accent": "出力"
+  },
+  {
+    "start": 334,
+    "end": 353,
+    "text": "最初は、",
+    "accent": "最初"
+  },
+  {
+    "start": 353,
+    "end": 372,
+    "text": "たった一行。",
+    "accent": "一行"
+  },
+  {
+    "start": 381,
+    "end": 401,
+    "text": "保存して、",
+    "accent": "保存"
+  },
+  {
+    "start": 401,
+    "end": 423,
+    "text": "あとで試そう。",
+    "accent": "試そう"
+  }
+]
