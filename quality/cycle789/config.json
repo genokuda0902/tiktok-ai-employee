@@ -1,0 +1,12 @@
+{
+  "mode": "review_only",
+  "canvas": [1080, 1920],
+  "fps": 30,
+  "genre": "ai_productivity",
+  "rights_reviewed": false,
+  "publication_approved": false,
+  "regions": [
+    {"box": [78, 331, 452, 858], "start": 3.15, "end": 5.35, "source_time": 3.6, "zoom_from": 1.0, "zoom_to": 1.07, "pan_x": 0.015, "pan_y": -0.01, "fade_seconds": 0.24},
+    {"box": [474, 331, 852, 858], "start": 3.15, "end": 5.35, "source_time": 3.6, "zoom_from": 1.07, "zoom_to": 1.0, "pan_x": -0.015, "pan_y": 0.01, "fade_seconds": 0.24}
+  ]
+}
