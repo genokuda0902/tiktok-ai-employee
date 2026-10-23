@@ -1,0 +1,20 @@
+{
+  "tts_engine": "Open JTalk",
+  "voice_model": "nitech_jp_atr503_m001.htsvoice",
+  "total_frames": 648,
+  "fps": 30,
+  "scene_end_frames": [
+    82,
+    169,
+    255,
+    344,
+    410,
+    496,
+    570,
+    648
+  ],
+  "caption_cues": 16,
+  "caption_alignment": "approximate proportional split of two clauses per synthesized sentence; not forced aligned",
+  "audio_pcm_md5": "58c74ddee1477665a8e20cfd3ff98d39",
+  "status": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
