@@ -21,10 +21,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install small free Python wheels
+      - name: Install Pillow and bundled FFmpeg wheel
         run: python -m pip install --disable-pip-version-check pillow imageio-ffmpeg
-      - name: Check FFmpeg availability
-        run: command -v ffmpeg && command -v ffprobe
+      - name: Install only free FFmpeg and FFprobe binaries (no speech engine)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          command -v ffmpeg
+          command -v ffprobe
       - name: Unit tests for opaque wipe and review-only gates
         run: python -m unittest discover -s quality/cycle790 -p 'test_*.py' -v
       - name: Build 3-second synthetic-tone source (NOT Japanese production video)
