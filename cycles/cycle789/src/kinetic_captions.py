@@ -6,12 +6,19 @@ No external APIs, paid services or automatic posting.
 from pathlib import Path
 
 GENRE_RGB = {
-    "science": "#35E8D2", "technology": "#80AAFF",
-    "business": "#FFD176", "career": "#77E2C4",
-    "finance": "#79D7FF", "history": "#F3BB81",
-    "travel": "#6AE4C7", "food": "#FFA877",
-    "health": "#77DBBD", "lifestyle": "#F0A5D8",
+    # Canonical 10 categories from the user's 100-idea plan.
+    "ai_work": "#35E8D2",          # AI・仕事効率化
+    "beauty": "#F0A5D8",           # 美容・身だしなみ
+    "relationships": "#FF98B9",    # 恋愛・心理
+    "saving": "#79D7FF",           # お金・節約
+    "sales_business": "#FFD176",   # 営業・ビジネス
+    "career": "#77E2C4",           # 転職・キャリア
+    "health": "#77DBBD",           # 健康・生活改善
+    "science": "#35E8D2",          # 雑学・科学
+    "travel_food": "#FFA877",      # 旅行・グルメ
+    "product_lifestyle": "#A8CFFF", # 商品比較・暮らし
 }
+
 SEGMENTS = [
     ("この", "基板、"), ("実は", "パソコン。"),
     ("手のひら", "サイズ、"), ("でも", "本格派。"),
