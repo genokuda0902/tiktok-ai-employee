@@ -1,0 +1,42 @@
+{
+  "genre_id": "ai_productivity",
+  "quality_approved": false,
+  "publication_approved": false,
+  "publish_mode": "employee_manual_only",
+  "source_rights": "unverified_review_only",
+  "audio_rights": "unverified_review_only",
+  "caption_kind": "scene_summary_not_verbatim_transcript",
+  "source_sha256": "84ff1621b3d0a5399676964a7acb1bbdd3bef1577cc371ab77e1aee9b4acb54a",
+  "beats": [
+    {
+      "start": 0,
+      "end": 2.9,
+      "label": "hook"
+    },
+    {
+      "start": 2.9,
+      "end": 5.7,
+      "label": "prepare"
+    },
+    {
+      "start": 5.7,
+      "end": 8.5,
+      "label": "prompt"
+    },
+    {
+      "start": 8.5,
+      "end": 12.7,
+      "label": "result"
+    },
+    {
+      "start": 12.7,
+      "end": 20.3,
+      "label": "verify"
+    },
+    {
+      "start": 20.3,
+      "end": 23.843,
+      "label": "save"
+    }
+  ]
+}
