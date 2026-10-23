@@ -1,0 +1,35 @@
+name: cycle794 artwork wipe QA
+on:
+  pull_request:
+    paths:
+      - "quality/cycle794/**"
+      - ".github/workflows/cycle794-artwork-wipe.yml"
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg only if missing
+        run: |
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle794 -p "test_*.py" -v
+      - name: Generate synthetic source (no inherited assets)
+        run: |
+          mkdir -p /tmp/cycle794
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=#12293b:s=1080x1920:r=30" -f lavfi -i "sine=frequency=440:sample_rate=48000" -frames:v 429 -c:v libx264 -preset ultrafast -crf 30 -c:a aac -shortest /tmp/cycle794/input.mp4
+      - name: Render synthetic technical MP4
+        run: |
+          python quality/cycle794/render.py --input /tmp/cycle794/input.mp4 --output /tmp/cycle794/output.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle794/output.mp4 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,nb_frames -of csv=p=0 /tmp/cycle794/output.mp4 | grep -x '1080,1920,429'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle794-synthetic-smoke-mp4
+          path: /tmp/cycle794/output.mp4
+          retention-days: 7
