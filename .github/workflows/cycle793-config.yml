@@ -1,0 +1,17 @@
+name: cycle793 reusable config checks
+on:
+  pull_request:
+    paths:
+      - 'cycle793/**'
+      - '.github/workflows/cycle793-config.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test ten-genre config and safe publication gate
+        run: python -m unittest discover -s cycle793 -p 'test_*.py' -v
