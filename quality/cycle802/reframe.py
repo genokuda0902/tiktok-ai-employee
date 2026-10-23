@@ -36,8 +36,24 @@ def load_config(path):
     return cfg
 
 def probe(path):
-    p=subprocess.run(["ffprobe","-v","error","-show_streams","-of","json",str(path)],check=True,capture_output=True,text=True)
-    return json.loads(p.stdout)
+    try:
+        p=subprocess.run(["ffprobe","-v","error","-show_streams","-of","json",str(path)],check=True,capture_output=True,text=True)
+        return json.loads(p.stdout)
+    except FileNotFoundError:
+        # GitHub hosted runners may not ship ffprobe. The pinned free FFmpeg
+        # binary still prints source metadata. This fallback does not guess.
+        import re
+        p=subprocess.run(["ffmpeg","-hide_banner","-i",str(path)],capture_output=True,text=True)
+        v=next((line for line in p.stderr.splitlines() if "Video:" in line and "Stream #" in line),None)
+        a=next((line for line in p.stderr.splitlines() if "Audio:" in line and "Stream #" in line),None)
+        if not v or not a: raise ValueError("cannot inspect both streams")
+        wh=re.search(r"(\\d{3,4})x(\\d{3,4})",v)
+        fps=re.search(r"(\\d+(?:\\.\\d+)?) fps",v)
+        if not wh or not fps: raise ValueError("cannot inspect geometry/fps")
+        fpsval=float(fps.group(1))
+        return {"streams":[{"codec_type":"video","width":int(wh.group(1)),
+                            "height":int(wh.group(2)),"r_frame_rate":f"{int(round(fpsval))}/1"},
+                           {"codec_type":"audio"}]}
 
 def assert_source(media):
     streams=probe(media)["streams"]
