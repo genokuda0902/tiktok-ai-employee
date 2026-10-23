@@ -1,0 +1,61 @@
+name: cycle793 synthetic collision repair CI (review only)
+on:
+  push:
+    branches: ['quality/cycle793-*']
+    paths:
+      - 'quality/cycle793/**'
+      - '.github/workflows/cycle793-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle793/**'
+      - '.github/workflows/cycle793-review.yml'
+permissions:
+  contents: read
+jobs:
+  ten-genre-collision-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free QA dependencies
+        run: python -m pip install --disable-pip-version-check Pillow numpy
+      - name: Install FFmpeg and Japanese font if missing
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null || [ ! -f /usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc ]; then
+            sudo apt-get update -qq
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ffmpeg fonts-noto-cjk
+          fi
+          command -v ffmpeg
+          command -v ffprobe
+          test -f /usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc
+      - name: Unit tests and ten genre contracts
+        run: python -m unittest discover -s quality/cycle793 -p 'test_*.py' -v
+      - name: Generate synthetic fixture (not user footage or Japanese speech)
+        run: python quality/cycle793/make_synthetic_fixtures.py --output-dir review_output/cycle793/fixtures
+      - name: Generate full-duration repaired synthetic-tone MP4
+        run: |
+          python quality/cycle793/repair_caption_collision.py \
+            --config quality/cycle793/config.json \
+            --input review_output/cycle793/fixtures/obstructed.mp4 \
+            --clean review_output/cycle793/fixtures/clean.mp4 \
+            --output review_output/cycle793/cycle793_SYNTHETIC_TONE_REVIEW_ONLY.mp4 \
+            --report review_output/cycle793/technical_qa.json
+      - name: Decode and check protected text / PCM audio
+        run: |
+          python quality/cycle793/verify_repair.py \
+            --input review_output/cycle793/fixtures/obstructed.mp4 \
+            --clean review_output/cycle793/fixtures/clean.mp4 \
+            --output review_output/cycle793/cycle793_SYNTHETIC_TONE_REVIEW_ONLY.mp4 \
+            --report review_output/cycle793/repair_check.json
+      - name: Upload synthetic-only QA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle793-collision-guard-SYNTHETIC-TONE-NOT-USER-VIDEO
+          path: |
+            review_output/cycle793/cycle793_SYNTHETIC_TONE_REVIEW_ONLY.mp4
+            review_output/cycle793/technical_qa.json
+            review_output/cycle793/repair_check.json
+          retention-days: 7

@@ -1,0 +1,14 @@
+{
+  "cycle": 793,
+  "genre": "ai_productivity",
+  "genres": ["ai_productivity","finance","career","business","education","lifestyle","science","travel","health","entertainment"],
+  "mode": "review_only", "rights_reviewed": false, "publication_approved": false,
+  "canvas": [1080,1920], "fps": 30, "duration_seconds": 23.843,
+  "collision_rules": [{
+    "start": 17.30, "end": 20.80,
+    "caption_box": [140, 1350, 800, 145],
+    "protected_box": [85, 1270, 890, 330],
+    "repair_band": [0, 1290, 1080, 300],
+    "reason": "Scene-summary label hides 650,000円; the scene already labels the total"
+  }]
+}
