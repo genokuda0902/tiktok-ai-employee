@@ -1,0 +1,42 @@
+name: cycle796 original ambient-gap bed synthetic CI
+on:
+  push:
+    branches: ['quality/cycle796-*']
+    paths:
+      - 'quality/cycle796/**'
+      - '.github/workflows/cycle796-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle796/**'
+      - '.github/workflows/cycle796-review.yml'
+permissions:
+  contents: read
+jobs:
+  audio-gap-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free bundled FFmpeg
+        run: |
+          python -m pip install --disable-pip-version-check imageio-ffmpeg
+          mkdir -p "$HOME/.local/bin"
+          python -c "import imageio_ffmpeg, os; os.symlink(imageio_ffmpeg.get_ffmpeg_exe(), os.path.expanduser('~/.local/bin/ffmpeg'))"
+          cp quality/cycle796/ffprobe_fallback.py "$HOME/.local/bin/ffprobe"
+          chmod +x "$HOME/.local/bin/ffprobe"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Run cross-genre and safety tests
+        run: python -m unittest discover -s quality/cycle796 -p 'test_*.py' -v
+      - name: Render and decode synthetic technical fixture
+        run: python quality/cycle796/make_synthetic.py review_output/cycle796
+      - name: Upload synthetic fixture only (not user media)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle796-original-audio-bed-synthetic-NOT-Japanese-narration
+          path: |
+            review_output/cycle796/cycle796_SYNTHETIC_REVIEW_ONLY.mp4
+            review_output/cycle796/qa.json
+          retention-days: 7
