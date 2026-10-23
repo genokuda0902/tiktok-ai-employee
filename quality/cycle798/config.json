@@ -1,0 +1,14 @@
+{
+  "cycle": 798,
+  "mode": "review_only",
+  "rights_reviewed": false,
+  "employee_approved": false,
+  "publication_approved": false,
+  "genres": ["AI・仕事効率化", "美容・身だしなみ", "恋愛・心理", "お金・節約", "営業・ビジネス", "転職・キャリア", "健康・生活改善", "雑学・科学", "旅行・グルメ", "商品比較・暮らし"],
+  "title": "AIの結果を、そのまま表へ。",
+  "source_label": "AIが整理した4か月の売上",
+  "destination_label": "表計算へ貼り付け",
+  "notice": "架空データ・操作イメージ／公開未承認",
+  "rows": [{"label":"1月", "value":120000}, {"label":"2月", "value":150000}, {"label":"3月", "value":200000}, {"label":"4月", "value":180000}],
+  "total": 650000
+}
