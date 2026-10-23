@@ -47,8 +47,8 @@ def probe(path):
         v=next((line for line in p.stderr.splitlines() if "Video:" in line and "Stream #" in line),None)
         a=next((line for line in p.stderr.splitlines() if "Audio:" in line and "Stream #" in line),None)
         if not v or not a: raise ValueError("cannot inspect both streams")
-        wh=re.search(r"(\\d{3,4})x(\\d{3,4})",v)
-        fps=re.search(r"(\\d+(?:\\.\\d+)?) fps",v)
+        wh=re.search(r"(\d{3,4})x(\d{3,4})",v)
+        fps=re.search(r"(\d+(?:\.\d+)?) fps",v)
         if not wh or not fps: raise ValueError("cannot inspect geometry/fps")
         fpsval=float(fps.group(1))
         return {"streams":[{"codec_type":"video","width":int(wh.group(1)),
