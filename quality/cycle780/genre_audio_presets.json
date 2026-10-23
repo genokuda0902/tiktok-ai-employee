@@ -1,0 +1,49 @@
+{
+  "cycle": 780,
+  "base_cycle": 779,
+  "quality_change": "Original synthesized ambient bed with speech ducking",
+  "genre_presets": {
+    "AI・仕事効率化": [
+      2,
+      -35
+    ],
+    "美容・身だしなみ": [
+      3,
+      -36
+    ],
+    "恋愛・心理": [
+      -2,
+      -36
+    ],
+    "お金・節約": [
+      0,
+      -35
+    ],
+    "営業・ビジネス": [
+      2,
+      -35
+    ],
+    "転職・キャリア": [
+      -1,
+      -36
+    ],
+    "健康・生活改善": [
+      1,
+      -36
+    ],
+    "雑学・科学": [
+      0,
+      -35
+    ],
+    "旅行・グルメ": [
+      3,
+      -35
+    ],
+    "商品比較・暮らし": [
+      -2,
+      -35
+    ]
+  },
+  "human_review_required": true,
+  "auto_post": false
+}
