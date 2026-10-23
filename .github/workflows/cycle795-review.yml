@@ -1,0 +1,43 @@
+name: cycle795 CTA protected-region synthetic CI
+on:
+  push:
+    branches: ['quality/cycle795-*']
+    paths:
+      - 'quality/cycle795/**'
+      - '.github/workflows/cycle795-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle795/**'
+      - '.github/workflows/cycle795-review.yml'
+permissions:
+  contents: read
+jobs:
+  protected-region-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free bundled FFmpeg (no apt)
+        run: |
+          python -m pip install --disable-pip-version-check imageio-ffmpeg
+          mkdir -p "$HOME/.local/bin"
+          python -c "import imageio_ffmpeg, os; os.symlink(imageio_ffmpeg.get_ffmpeg_exe(), os.path.expanduser('~/.local/bin/ffmpeg'))"
+          cp quality/cycle795/ffprobe_fallback.py "$HOME/.local/bin/ffprobe"
+          chmod +x "$HOME/.local/bin/ffprobe"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/ffmpeg" -version | head -1
+      - name: Test ten genre presets and fail-closed approval
+        run: python -m unittest discover -s quality/cycle795 -p 'test_*.py' -v
+      - name: Render and verify synthetic-tone 1080x1920 MP4
+        run: python quality/cycle795/make_synthetic.py review_output/cycle795
+      - name: Upload synthetic technical fixture only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle795-cta-synthetic-technical-not-user-video
+          path: |
+            review_output/cycle795/cycle795_SYNTHETIC_TONE_REVIEW_ONLY.mp4
+            review_output/cycle795/qa.json
+          retention-days: 7

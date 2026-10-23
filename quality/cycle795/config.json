@@ -1,0 +1,40 @@
+{
+  "cycle": 795,
+  "genre": "ai_productivity",
+  "genres": [
+    "ai_productivity",
+    "finance",
+    "career",
+    "business",
+    "education",
+    "lifestyle",
+    "science",
+    "travel",
+    "health",
+    "entertainment"
+  ],
+  "mode": "review_only",
+  "rights_reviewed": false,
+  "publication_approved": false,
+  "clean_reference_review_only": true,
+  "canvas": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "duration_seconds": 23.843,
+  "restore_region": [
+    0,
+    1300,
+    1080,
+    240
+  ],
+  "protected_cta_box": [
+    68,
+    1320,
+    676,
+    185
+  ],
+  "start_seconds": 21,
+  "end_seconds": 23.843
+}
