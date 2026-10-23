@@ -1,0 +1,40 @@
+name: Cycle789 kinetic captions smoke tests
+on:
+  push:
+    branches:
+      - 'quality/cycle789-*'
+  pull_request:
+    paths:
+      - 'cycles/cycle789/**'
+      - '.github/workflows/cycle789-kinetic-captions.yml'
+jobs:
+  caption-contract-and-smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free render dependencies
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Test all 10 genre caption contracts
+        run: python -m unittest discover -s cycles/cycle789/tests -v
+      - name: Generate Japanese-captioned visual smoke MP4 (silent, NOT production)
+        run: |
+          python - <<'PY'
+          from cycles.cycle788.src.scene_contract import CUES
+          from cycles.cycle789.src.kinetic_captions import render_ass
+          render_ass(CUES, "/tmp/cycle789.ass", "science")
+          PY
+          mkdir -p cycles/cycle789/output
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x082032:s=1080x1920:r=30:d=14.3 -f lavfi -i anullsrc=r=48000:cl=mono -filter_complex "ass=/tmp/cycle789.ass" -t 14.3 -c:v libx264 -preset ultrafast -crf 28 -pix_fmt yuv420p -c:a aac -b:a 96k -movflags +faststart cycles/cycle789/output/SMOKE_SILENT_NOT_FOR_PUBLICATION.mp4
+          ffmpeg -v error -xerror -i cycles/cycle789/output/SMOKE_SILENT_NOT_FOR_PUBLICATION.mp4 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0 cycles/cycle789/output/SMOKE_SILENT_NOT_FOR_PUBLICATION.mp4 | grep -Fx '1080,1920,30/1'
+      - name: Upload technical smoke artifact (not finished video)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle789-SMOKE-SILENT-NOT-PRODUCTION
+          path: cycles/cycle789/output/SMOKE_SILENT_NOT_FOR_PUBLICATION.mp4
+          retention-days: 3
