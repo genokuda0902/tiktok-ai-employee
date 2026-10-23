@@ -1,0 +1,39 @@
+name: cycle802 Japanese voice and original slide CI
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle802/**'
+      - '.github/workflows/cycle802-japanese-tts.yml'
+  workflow_dispatch:
+jobs:
+  free-japanese-voice-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free Open JTalk, Japanese voice and FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001 fonts-noto-cjk ffmpeg
+          python -m pip install --disable-pip-version-check pillow
+      - name: Verify shared ten-genre configuration and narration script
+        run: cd quality/cycle802 && python -m unittest -v test_contract.py
+      - name: Generate NEW Japanese speech and original 1080x1920 MP4
+        run: python quality/cycle802/tts_ci.py
+      - name: Verify audio, 1080x1920 video and full decode
+        run: |
+          file=quality/cycle802/out/cycle802_NEW_JAPANESE_TTS_TECHNICAL_HUMAN_REVIEW.mp4
+          test -s "$file"
+          ffmpeg -v error -xerror -i "$file" -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$file" | grep -qx '1080,1920'
+          ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 "$file" | grep -qx 'aac'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle802-new-japanese-voice-technical-human-review
+          path: |
+            quality/cycle802/out/cycle802_NEW_JAPANESE_TTS_TECHNICAL_HUMAN_REVIEW.mp4
+            quality/cycle802/out/voice_qa.json
+          retention-days: 7
