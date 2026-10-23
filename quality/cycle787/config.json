@@ -1,0 +1,13 @@
+{
+  "canvas": [1080, 1920],
+  "duration": 23.843,
+  "start": 15.57,
+  "end": 16.52,
+  "bbox": [602, 1324, 902, 1410],
+  "protected_text_boxes": [[630, 1340, 870, 1395]],
+  "safe_area": [50, 230, 920, 1460],
+  "rights_reviewed": false,
+  "publication_approved": false,
+  "genre": "ai_work_efficiency",
+  "portable_across_genres": true
+}
