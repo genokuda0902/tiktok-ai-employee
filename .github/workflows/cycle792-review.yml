@@ -1,0 +1,49 @@
+name: cycle792 synthetic four-month proof CI (review only)
+on:
+  push:
+    branches: ['quality/cycle792-*']
+    paths:
+      - 'quality/cycle792/**'
+      - '.github/workflows/cycle792-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle792/**'
+      - '.github/workflows/cycle792-review.yml'
+permissions:
+  contents: read
+jobs:
+  ten-genre-chart-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free Pillow
+        run: python -m pip install --disable-pip-version-check Pillow
+      - name: Japanese font availability
+        run: |
+          if [ ! -f /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc ]; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+          fi
+      - name: FFmpeg tools
+        run: command -v ffmpeg && command -v ffprobe || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+      - name: Test ten genres, data totals, and review gates
+        run: python -m unittest discover -s quality/cycle792 -p 'test_*.py' -v
+      - name: Generate 23.843s SYNTHETIC TONE video (NOT user video or Japanese voice)
+        run: |
+          python quality/cycle792/chart_proof.py \
+            --config quality/cycle792/config.json \
+            --synthetic-ci-fixture \
+            --output review_output/cycle792/cycle792_SYNTHETIC_TONE_REVIEW_ONLY.mp4 \
+            --frames review_output/cycle792/frames \
+            --report review_output/cycle792/cycle792_technical_qa.json
+      - name: Upload synthetic test artifact only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle792-four-month-proof-SYNTHETIC-TONE-NOT-USER-VIDEO
+          path: |
+            review_output/cycle792/cycle792_SYNTHETIC_TONE_REVIEW_ONLY.mp4
+            review_output/cycle792/cycle792_technical_qa.json
+          retention-days: 7
