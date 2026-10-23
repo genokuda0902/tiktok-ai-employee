@@ -1,0 +1,24 @@
+name: Cycle782 hook unit tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle782/**'
+      - '.github/workflows/cycle782-hook-tests.yml'
+  push:
+    branches:
+      - quality/cycle782-original-hook-20261023
+  workflow_dispatch:
+jobs:
+  hook-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free test dependencies
+        run: pip install Pillow
+      - name: Test procedural image and 10-genre guard
+        run: cd quality/cycle782 && python -m unittest -v test_hook.py
