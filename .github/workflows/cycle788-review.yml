@@ -1,0 +1,58 @@
+name: cycle788 review-only image-first MP4 CI
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle788/**'
+      - '.github/workflows/cycle788-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  quality-tests-and-mp4-fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free tools and Japanese speech runtime
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001 fonts-noto-cjk
+          python -m pip install Pillow
+      - name: Run unit tests
+        run: python -m unittest discover -s quality/cycle788 -p 'test_*.py' -v
+      - name: Generate complete Japanese-speech MP4 fixture
+        run: |
+          set -euxo pipefail
+          VOICE=$(dpkg -L hts-voice-nitech-jp-atr503-m001 | grep '\.htsvoice$' | head -1)
+          SYS_DIC=$(dpkg -L open-jtalk-mecab-naist-jdic | grep '/sys.dic$' | head -1)
+          python quality/cycle788/ci_fixture.py --out review_output/cycle788 --voice "$VOICE" --dic "$(dirname "$SYS_DIC")"
+      - name: Verify MP4 codecs, duration, audio and full decode
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          import json,subprocess
+          p='review_output/cycle788/cycle788_ci_fixture.mp4'
+          x=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',p]))
+          v=next(z for z in x['streams'] if z['codec_type']=='video')
+          a=next(z for z in x['streams'] if z['codec_type']=='audio')
+          assert (v['width'],v['height'])==(1080,1920)
+          assert v['codec_name']=='h264' and a['codec_name']=='aac'
+          assert 3.9<float(x['format']['duration'])<4.1
+          print('PASS',p,v['width'],v['height'],a['codec_name'])
+          PY
+          ffmpeg -v error -xerror -i review_output/cycle788/cycle788_ci_fixture.mp4 -f null -
+          sha256sum review_output/cycle788/cycle788_ci_fixture.mp4 > review_output/cycle788/cycle788_ci_fixture.sha256
+      - name: Upload reproducible review-only MP4 fixture
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle788-japanese-speech-mp4-fixture
+          path: |
+            review_output/cycle788/cycle788_ci_fixture.mp4
+            review_output/cycle788/cycle788_ci_fixture.sha256
+            review_output/cycle788/report.json
+          if-no-files-found: error
+          retention-days: 7
