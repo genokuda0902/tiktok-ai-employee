@@ -1,0 +1,16 @@
+{
+  "canvas": [1080, 1920],
+  "mode": "review_only",
+  "hook_seconds": 1.5,
+  "headline": "その集計、\nまだ手作業？",
+  "subtitle": "BEFORE → AFTER を先に見せる",
+  "before_label": "BEFORE",
+  "after_label": "AFTER",
+  "before_crop": [95, 645, 560, 1115],
+  "after_crop": [58, 582, 1015, 1445],
+  "disclosure": "※架空データを使ったデモ映像です",
+  "rights_reviewed": false,
+  "publication_approved": false,
+  "genre": "ai_productivity",
+  "portable_across_genres": true
+}
