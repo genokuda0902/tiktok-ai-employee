@@ -1,0 +1,12 @@
+# cycle795 — artwork-only clean dip transitions
+- Fixes cycle794's hard vertical seam/duplicated CPU text during wipe transitions.
+- Uses cycle793 clean source as input to **replace** the faulty wipe; not a new genre.
+- 7 transitions; 10-frame matte dip with feathered edges inside artwork rectangle.
+- Protects title/subtitle zones, preserves Japanese AAC packets via `-c:a copy`.
+- Reusable 10-genre color registry; input assets are **not** stored in GitHub.
+- CI smoke is synthetic audio, **not** a Japanese production render.
+- 1080x1920, 30fps; run: `python render.py --input reviewed.mp4 --output human_review.mp4`
+- Publication: HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+- Do not merge, auto-post, pay for services, or claim inherited asset rights without approval.
+- Previous CI #39975163884: canceled during apt-get FFmpeg downloads, no artifact.
+- This CI uses the pip-distributed FFmpeg executable instead of apt-get.

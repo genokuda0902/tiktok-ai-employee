@@ -1,0 +1,50 @@
+name: cycle795 safe artwork transitions
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle795/**'
+      - '.github/workflows/cycle795-clean-dip.yml'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pip wheels (avoid slow apt FFmpeg install)
+        run: python -m pip install --disable-pip-version-check numpy opencv-python-headless imageio-ffmpeg
+      - name: Use bundled FFmpeg from Python wheel
+        run: |
+          python - <<'PY'
+          import imageio_ffmpeg, os
+          exe=imageio_ffmpeg.get_ffmpeg_exe()
+          os.symlink(exe,'/tmp/ffmpeg')
+          with open(os.environ['GITHUB_PATH'],'a') as f:f.write('/tmp\n')
+          print('FFmpeg:',exe)
+          PY
+      - name: Unit tests
+        run: cd quality/cycle795 && python -m unittest -v test_render.py
+      - name: Synthetic technical video and audio
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x0d263a:s=1080x1920:r=30:d=1.5 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1.5 -c:v libx264 -preset ultrafast -c:a aac /tmp/c795_source.mp4
+          python quality/cycle795/render.py --input /tmp/c795_source.mp4 --output /tmp/c795_smoke.mp4 --frames 15,15,15
+          ffmpeg -v error -i /tmp/c795_smoke.mp4 -f null -
+          python - <<'PY'
+          import cv2
+          c=cv2.VideoCapture('/tmp/c795_smoke.mp4')
+          assert c.isOpened()
+          assert int(c.get(cv2.CAP_PROP_FRAME_WIDTH))==1080
+          assert int(c.get(cv2.CAP_PROP_FRAME_HEIGHT))==1920
+          assert int(c.get(cv2.CAP_PROP_FRAME_COUNT))==45
+          print('Video geometry/frame count PASS')
+          c.release()
+          PY
+      - name: Upload technical test (NOT the Japanese finished video)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle795-technical-smoke
+          path: /tmp/c795_smoke.mp4
+          retention-days: 7
