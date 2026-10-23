@@ -1,0 +1,42 @@
+name: cycle798 copy-paste story synthetic CI
+on:
+  push:
+    branches: ['quality/cycle798-*']
+    paths:
+      - 'quality/cycle798/**'
+      - '.github/workflows/cycle798-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle798/**'
+      - '.github/workflows/cycle798-review.yml'
+permissions:
+  contents: read
+jobs:
+  copy-paste-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free dependencies
+        run: |
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk ffmpeg >/dev/null
+      - name: Run 11 safety and story tests
+        run: python -m unittest discover -s quality/cycle798 -p 'test_*.py' -v
+      - name: Generate 2.4s original synthetic visual proof and audio smoke
+        run: |
+          mkdir -p review_output/cycle798
+          python quality/cycle798/copy_paste_story.py --config quality/cycle798/config.json --segment review_output/cycle798/copy_paste_segment_VIDEO_ONLY.mp4
+          ffmpeg -hide_banner -loglevel error -y -i review_output/cycle798/copy_paste_segment_VIDEO_ONLY.mp4 -f lavfi -i 'sine=frequency=440:duration=2.4:sample_rate=48000' -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 96k -shortest review_output/cycle798/copy_paste_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          ffprobe -v error -show_entries stream=codec_name,width,height,nb_frames -of json review_output/cycle798/copy_paste_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          ffmpeg -v error -i review_output/cycle798/copy_paste_SYNTHETIC_TONE_NOT_JAPANESE.mp4 -f null -
+      - name: Upload synthetic proof, never user media
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle798-original-copy-paste-SYNTHETIC-TONE-NOT-JAPANESE
+          path: review_output/cycle798/copy_paste_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          retention-days: 7
