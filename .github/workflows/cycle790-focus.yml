@@ -1,0 +1,41 @@
+name: Cycle790 focus pulse render tests
+on:
+  push:
+    branches: ['quality/cycle790-*']
+  pull_request:
+    paths: ['cycles/cycle790/**', '.github/workflows/cycle790-focus.yml']
+jobs:
+  tests-and-render:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-cost local video tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Unit tests (10 genre palettes and focus safety)
+        run: python -m unittest discover -s cycles/cycle790/tests -v
+      - name: Render full-length technical smoke MP4 (synthetic audio, NOT production)
+        run: |
+          mkdir -p /tmp/cycle790
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x092333:s=1080x1920:r=30:d=14.3 -f lavfi -i sine=frequency=330:sample_rate=48000:duration=14.314 -c:v libx264 -preset ultrafast -crf 33 -pix_fmt yuv420p -c:a aac /tmp/cycle790/input.mp4
+          python cycles/cycle790/src/focus_overlay.py --input /tmp/cycle790/input.mp4 --output /tmp/cycle790/smoke_NOT_PRODUCTION.mp4 --work /tmp/cycle790/work --genre science
+          python - <<'PY'
+          import json,subprocess
+          p='/tmp/cycle790/smoke_NOT_PRODUCTION.mp4'
+          meta=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-of','json',p]))
+          video=next(x for x in meta['streams'] if x['codec_type']=='video')
+          audio=next(x for x in meta['streams'] if x['codec_type']=='audio')
+          assert (video['width'],video['height'],int(video['nb_frames']))==(1080,1920,429)
+          assert video['codec_name']=='h264' and audio['codec_name']=='aac'
+          subprocess.run(['ffmpeg','-v','error','-i',p,'-f','null','-'],check=True)
+          print('CI smoke: 1080x1920 / 429 frames / H.264 + AAC / full decode PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle790-SMOKE-SYNTHETIC-NOT-PRODUCTION
+          path: /tmp/cycle790/smoke_NOT_PRODUCTION.mp4
+          retention-days: 3
