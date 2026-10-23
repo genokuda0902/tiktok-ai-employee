@@ -53,7 +53,7 @@ def synthetic_source():
 
 
 def extract_first_frame(video):
-    command = ['ffmpeg','-hide_banner','-loglevel','error','-i',str(video),
+    command = ['ffmpeg','-hide_banner','-loglevel','error','-ss','0.60','-i',str(video),
                '-frames:v','1','-f','image2pipe','-vcodec','png','pipe:1']
     p = subprocess.run(command, capture_output=True, check=True)
     import io
