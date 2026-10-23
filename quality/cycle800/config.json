@@ -1,0 +1,38 @@
+{
+  "cycle": 800,
+  "mode": "review_only",
+  "rights_reviewed": false,
+  "employee_approved": false,
+  "publication_approved": false,
+  "genres": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "chart": {
+    "title": "月別売上の推移",
+    "labels": [
+      "1月",
+      "2月",
+      "3月",
+      "4月"
+    ],
+    "values": [
+      120000,
+      150000,
+      200000,
+      180000
+    ],
+    "unit": "円",
+    "total": 650000,
+    "claim": "グラフで傾向を確認"
+  },
+  "disclaimer": "架空データ／画面は再現イメージ／公開未承認"
+}
