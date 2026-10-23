@@ -29,3 +29,13 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+
+## Review-only checkpoint: cycle797 (2026-10-24 JST, stacked Draft PR #90)
+- Based on cycle796 Draft PR #87; **main remains unchanged**. Branch: quality/cycle797-crop-safe-hook-20261024.
+- Fixed visible 0–3.2s opening card Japanese footer clipping: recreated readable BEFORE/AFTER cards, synthetic 4-month table summing to 650,000円, and separate caption/disclaimer safe lanes.
+- Actual local review-only MP4: H.264/AAC 1080×1920, 30fps, 714 frames, 23.848s, SHA-256 b01d16cce051fb27ab37ab6f61c67609a657bbaa0ffa08ae67fd56c2cef7d091. AAC packets unchanged from cycle796, full decode PASS, 11 local tests PASS.
+- CI: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40000599194 SUCCESS. CI uses synthetic image proof only, not user footage, voice or completed Japanese MP4.
+- User 16-panel storyboard visually inspected. Full TikTok市場分析/TikTok動画研究 transcripts and v33 original MP4 not available for direct comparison.
+- Inherited video/photo/voice rights, Japanese speech/caption semantic match, phone playback and human publication approval are NOT verified. REVIEW ONLY, DO NOT MERGE OR POST.
+- Next: narration semantic QA, approved-asset reproducible CI and actual v33 visual comparison. This renderer is **not** original recovered v33 code.

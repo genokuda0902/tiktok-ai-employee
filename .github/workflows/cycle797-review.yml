@@ -1,0 +1,47 @@
+name: cycle797 crop-safe hook synthetic CI
+on:
+  push:
+    branches: ['quality/cycle797-*']
+    paths:
+      - 'quality/cycle797/**'
+      - '.github/workflows/cycle797-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle797/**'
+      - '.github/workflows/cycle797-review.yml'
+permissions:
+  contents: read
+jobs:
+  crop-safe-hook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free layout dependencies
+        run: |
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+      - name: Ten-genre layout and safety tests
+        run: python -m unittest discover -s quality/cycle797 -p 'test_*.py' -v
+      - name: Generate synthetic image-only layout proof
+        run: |
+          mkdir -p review_output/cycle797
+          PYTHONPATH=quality/cycle797 python - <<'PY'
+          import json
+          from pathlib import Path
+          from PIL import Image
+          from hook_layout import make_background, make_frame
+          cfg=json.loads(Path('quality/cycle797/config.json').read_text())
+          a=Image.new('RGB',(344,286),(70,80,95));b=Image.new('RGB',(337,277),(100,150,155))
+          make_frame(1.0,make_background(),(a,b),cfg).save('review_output/cycle797/synthetic_layout_NOT_USER_MEDIA.png')
+          PY
+      - name: Upload synthetic image proof (not narrated MP4)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle797-synthetic-hook-layout-NOT-Japanese-MP4
+          path: review_output/cycle797/synthetic_layout_NOT_USER_MEDIA.png
+          retention-days: 7
