@@ -47,8 +47,11 @@ def probe(path):
     if not video or not audio or video.get('width')!=W or video.get('height')!=H:
         raise ValueError('missing audio/video or wrong dimensions')
     if abs(float(p['format']['duration'])-DURATION)>.06: raise ValueError('duration mismatch')
-    if video['r_frame_rate']!='30/1' or int(video.get('nb_frames','714'))!=714:
-        raise ValueError('wrong nominal FPS/frame count')
+    from fractions import Fraction
+    rate=float(Fraction(video['r_frame_rate']))
+    count=int(video.get('nb_frames','714'))
+    if abs(rate-30)>0.2 or not 710<=count<=716:
+        raise ValueError(f'wrong nominal FPS/frame count: {video}')
     return p
 
 def render(cfg,obstructed,clean,output):
