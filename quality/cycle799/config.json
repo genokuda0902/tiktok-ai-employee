@@ -1,0 +1,29 @@
+{
+  "cycle": 799,
+  "mode": "review_only",
+  "rights_reviewed": false,
+  "employee_approved": false,
+  "publication_approved": false,
+  "genres": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "title": "4か月の合計を検算。",
+  "values": [
+    120000,
+    150000,
+    200000,
+    180000
+  ],
+  "total": 650000,
+  "formula": "=SUM(B2:B5)",
+  "disclaimer": "架空データ・操作イメージ／公開未承認"
+}
