@@ -1,0 +1,3 @@
+# cycle783 — LED circuit clarity / HUMAN_REVIEW
+
+Distinct change from cycle782: scene 5 now illustrates GPIO → example 330Ω resistor → LED → GND instead of ambiguous GPIO return wiring. The local full render preserves Japanese narration, BGM and 16 embedded subtitle cues. Antialiased 2x illustration and 160ms fades. Source and tests are included in the local reproducibility ZIP. Ten genre color presets are configured; nine additional genre MP4s are not approved. The 330Ω resistor is an example only, not a universal circuit recommendation. Inherited audiovisual rights, naturalness and smartphone playback are not yet approved. No merge, payment or automatic posting.
