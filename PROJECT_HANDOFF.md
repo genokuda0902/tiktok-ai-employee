@@ -51,3 +51,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Stacked on cycle798 Draft PR #91; main unchanged. Replaced 14.0–17.2s redundant manual/formula proof scene with 96 original frames and a staged, legible arithmetic → =SUM(B2:B5) → 650,000円 agreement. Fictional data, 10-genre reusable layout; one AI efficiency review demo.
 - Local inherited Japanese-narrated MP4 is for private human review only and is not committed. Original v33 MP4 and TikTok research transcripts unavailable for direct inspection; consult prior summaries only.
 - CI: 14 tests plus original 3.2s synthetic-tone video only; no rights-unverified video/audio uploaded. Full narration semantic matching, mobile playback, rights and publication approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge or auto-post.
+
+## 2026-10-24 cycle802 review-only checkpoint (unmerged)
+- Stacked Draft PR #100: https://github.com/genokuda0902/tiktok-ai-employee/pull/100 (base is unmerged PR #97 branch). Main is unchanged.
+- Implemented configurable scene-window optical centering: only 0–3.2s and 20.8–23.85s shift +136px; middle scenes stay unchanged to avoid right-edge UI clipping. 10-genre validation, fail-closed rights and publication checks.
+- Implementation and CI fix commit: 8e8a8df516fda61ff8b9b449c1cc7fd6b5cf5a0e.
+- 13 unit tests on GitHub PASS, push CI SUCCESS: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40037793350 ; PR CI SUCCESS: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40037799801 .
+- CI artifact 12537518362 was downloaded and verified: 2.000s H.264/AAC 1080x1920, **synthetic 440Hz tone, NOT Japanese voice**. Real user media never uploaded.
+- Local review-only Japanese-voice MP4: 23.848s, 714 frames 30fps, H.264/AAC 1080x1920; SHA256 ebd6bb1d1961d01b2253c6015700bff03ce2ed06cdc1d7fd07c9efa588b123fa. Inherited AAC packet hash matches cycle801. Full A/V decode PASS. Not committed or posted.
+- Prior TikTok市場分析/TikTok動画研究 summaries and Library 16-panel storyboard inspected; full original task transcripts and v33 original MP4 unavailable for direct comparison. Japanese speech/subtitle semantic sync, phone playback, rights and employee approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.

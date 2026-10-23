@@ -1,0 +1,44 @@
+{
+  "cycle": 802,
+  "mode": "review_only",
+  "rights_reviewed": false,
+  "employee_approved": false,
+  "publication_approved": false,
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "shift_px": 136,
+  "left_safe_px": 180,
+  "right_safe_px": 160,
+  "genres": [
+    "AI・仕事効率化",
+    "美容・身だしなみ",
+    "恋愛・心理",
+    "お金・節約",
+    "営業・ビジネス",
+    "転職・キャリア",
+    "健康・生活改善",
+    "雑学・科学",
+    "旅行・グルメ",
+    "商品比較・暮らし"
+  ],
+  "max_duration": 25,
+  "windows": [
+    {
+      "start": 0,
+      "end": 3.2,
+      "important_content_x": [
+        60,
+        770
+      ]
+    },
+    {
+      "start": 20.8,
+      "end": 23.85,
+      "important_content_x": [
+        60,
+        770
+      ]
+    }
+  ]
+}
