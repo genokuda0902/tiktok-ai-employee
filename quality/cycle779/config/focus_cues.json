@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "genre": "雑学・科学",
+  "cues": [
+    {"effect":"halo", "label":"LED turns on", "start":8.43, "end":9.36, "fade":0.24, "x":823, "y":852, "radius":184, "color":[91,255,201]},
+    {"effect":"halo", "label":"Save call-to-action", "start":12.83, "end":14.18, "fade":0.30, "x":540, "y":812, "radius":220, "color":[90,240,207]}
+  ]
+}
