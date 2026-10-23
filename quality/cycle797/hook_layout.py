@@ -126,6 +126,11 @@ def make_background():
     return im
 
 
+def card_motion_dx(index, t):
+    settle=max(0.,1.-t/0.52)**2
+    return int(((-12 if index==0 else 4)*settle))
+
+
 def make_frame(t, bg, stills, cfg):
     im=bg.copy().convert('RGBA');d=ImageDraw.Draw(im,'RGBA')
     d.rounded_rectangle((70,215,470,270),radius=20,fill=(2,52,67,245),outline=(74,221,220,245),width=2)
@@ -134,9 +139,8 @@ def make_frame(t, bg, stills, cfg):
     d.text((72,424),'まだ手作業？',font=font(76,True),fill=(246,251,255))
     d.text((75,544),'BEFORE  →  AFTER で比較',font=font(32),fill=(110,236,229))
     # slide-in animation on cards, with bounded motion and clean full-width footers.
-    settle=max(0.,1.-t/0.52)**2
     for i,(box,pic) in enumerate(zip(CARDS,stills)):
-        x0,y0,x1,y1=box;dx=int(((-60 if i==0 else 60)*settle))
+        x0,y0,x1,y1=box;dx=card_motion_dx(i,t)
         x0+=dx;x1+=dx
         border=(255,173,144,255) if i==0 else (74,242,227,255)
         d.rounded_rectangle((x0,y0,x1,y1),radius=25,fill=(3,18,39,255),outline=border,width=5)
