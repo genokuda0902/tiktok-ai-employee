@@ -32,7 +32,16 @@ jobs:
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x0d263a:s=1080x1920:r=30:d=1.5 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1.5 -c:v libx264 -preset ultrafast -c:a aac /tmp/c795_source.mp4
           python quality/cycle795/render.py --input /tmp/c795_source.mp4 --output /tmp/c795_smoke.mp4 --frames 15,15,15
           ffmpeg -v error -i /tmp/c795_smoke.mp4 -f null -
-          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,nb_frames -of compact /tmp/c795_smoke.mp4
+          python - <<'PY'
+          import cv2
+          c=cv2.VideoCapture('/tmp/c795_smoke.mp4')
+          assert c.isOpened()
+          assert int(c.get(cv2.CAP_PROP_FRAME_WIDTH))==1080
+          assert int(c.get(cv2.CAP_PROP_FRAME_HEIGHT))==1920
+          assert int(c.get(cv2.CAP_PROP_FRAME_COUNT))==45
+          print('Video geometry/frame count PASS')
+          c.release()
+          PY
       - name: Upload technical test (NOT the Japanese finished video)
         uses: actions/upload-artifact@v4
         with:
