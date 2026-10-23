@@ -1,0 +1,37 @@
+name: cycle798 guided motion contract + synthetic MP4 smoke
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle798/**'
+      - '.github/workflows/cycle798-guided-motion.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test 10 genres, 8 scenes, moving targets and subtitle safe area
+        run: cd quality/cycle798 && python -m unittest -v test_motion_contract.py
+      - name: Install zero-cost FFmpeg executable
+        run: |
+          python -m pip install --disable-pip-version-check imageio-ffmpeg
+          python - <<'PY'
+          import imageio_ffmpeg, os
+          os.symlink(imageio_ffmpeg.get_ffmpeg_exe(), '/tmp/ffmpeg')
+          with open(os.environ['GITHUB_PATH'], 'a') as f:
+              f.write('/tmp\n')
+          PY
+      - name: Generate synthetic smoke MP4 only (NOT final Japanese narration)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x091f31:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac /tmp/cycle798_synthetic_technical_only.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle798_synthetic_technical_only.mp4 -f null -
+          test -s /tmp/cycle798_synthetic_technical_only.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle798-synthetic-technical-only
+          path: /tmp/cycle798_synthetic_technical_only.mp4
+          retention-days: 7
