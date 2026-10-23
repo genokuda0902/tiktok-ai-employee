@@ -1,0 +1,31 @@
+name: cycle792 original hero tests (optional synthetic smoke)
+on:
+  pull_request:
+    paths:
+      - 'cycles/cycle792/**'
+      - '.github/workflows/cycle792-hero-smoke.yml'
+  workflow_dispatch:
+jobs:
+  hero-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests (no paid services or network)
+        run: python -m unittest discover -s cycles/cycle792 -p 'test_*.py' -v
+      - name: Optional synthetic smoke if FFmpeg is preinstalled
+        run: |
+          if command -v ffmpeg >/dev/null && command -v ffprobe >/dev/null; then
+            ffmpeg -hide_banner -loglevel error -f lavfi -i 'color=c=0x062536:s=1080x1920:r=30:d=2' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' -shortest -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -y cycle792_SYNTHETIC_SMOKE_NOT_FOR_POSTING.mp4
+            ffprobe -v error -show_entries stream=codec_name,width,height,sample_rate -of json cycle792_SYNTHETIC_SMOKE_NOT_FOR_POSTING.mp4
+            ffmpeg -v error -xerror -i cycle792_SYNTHETIC_SMOKE_NOT_FOR_POSTING.mp4 -f null -
+          else
+            echo '::warning::FFmpeg absent on runner; synthetic smoke skipped. Final Japanese MP4 was verified locally.'
+          fi
+      - uses: actions/upload-artifact@v4
+        if: hashFiles('cycle792_SYNTHETIC_SMOKE_NOT_FOR_POSTING.mp4') != ''
+        with:
+          name: cycle792-SYNTHETIC-SMOKE-NOT-FINAL
+          path: cycle792_SYNTHETIC_SMOKE_NOT_FOR_POSTING.mp4
+          retention-days: 3
