@@ -1,0 +1,7 @@
+# cycle800 — storyboard bar-chart scene (REVIEW ONLY)
+2026-10-24 JST. Stacked on unmerged Draft PR #94; main remains unchanged.
+Original reference storyboard panel 8 (14–16 seconds) shows an Excel-like animated blue bar chart. Prior cycle799 instead used arithmetic/formula proof. This cycle replaces **14.0–17.2s, 96 frames** with an original, animated spreadsheet-inspired bar chart showing fictional 1–4 month values 120000/150000/200000/180000 yen and total 650000 yen.
+Not an actual Excel recording, not proof of time savings. Chart renderer supports 2–8 bars and shared config for 10 genres, but only AI-efficiency was locally rendered.
+Reproduce the rights-safe 3.2s video-only scene: install Python Pillow, FFmpeg and fonts-noto-cjk; `python quality/cycle800/chart_scene.py --config quality/cycle800/config.json --segment chart.mp4`.
+Local human-review MP4 combines this segment with **rights-unverified inherited footage and Japanese AAC from cycle799**; do not commit/upload that media. CI uses an original 3.2s segment plus synthetic tone only. Speech/subtitle semantic sync, rights, original v33 MP4 parity, device playback and employee approval remain unverified. No merge, automatic posting or spending. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+Reference sources: user 16-panel storyboard directly inspected; TikTok市場分析 and TikTok動画研究 summaries consulted, complete transcripts unavailable; v33 original MP4 not available in this run. Prior research prefers image-first, strong hook, real UI demonstration, short subtitles, safe areas and manual review.
