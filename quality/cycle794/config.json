@@ -1,0 +1,55 @@
+{
+  "cycle": 794,
+  "genre": "ai_productivity",
+  "genres": [
+    "ai_productivity",
+    "finance",
+    "career",
+    "business",
+    "education",
+    "lifestyle",
+    "science",
+    "travel",
+    "health",
+    "entertainment"
+  ],
+  "mode": "review_only",
+  "rights_reviewed": false,
+  "publication_approved": false,
+  "canvas": [
+    1080,
+    1920
+  ],
+  "safe_margin": 0.05,
+  "duration_seconds": 23.843,
+  "protected_caption_box": [
+    200,
+    1470,
+    600,
+    115
+  ],
+  "focus_events": [
+    {
+      "start": 6.22,
+      "end": 7.78,
+      "box": [
+        128,
+        904,
+        855,
+        350
+      ],
+      "purpose": "prompt input visual guidance"
+    },
+    {
+      "start": 7.8,
+      "end": 8.6,
+      "box": [
+        738,
+        1285,
+        240,
+        100
+      ],
+      "purpose": "send button visual guidance"
+    }
+  ]
+}
