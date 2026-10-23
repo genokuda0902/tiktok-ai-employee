@@ -2,12 +2,18 @@ import json
 import unittest
 from pathlib import Path
 from PIL import Image, ImageDraw
-from hook_layout import GENRES, CARDS, CAPTION, SAFE, check_config, fit_font, make_background, make_frame
+from hook_layout import GENRES, CARDS, CAPTION, SAFE, check_config, fit_font, make_background, make_frame, card_motion_dx
 
 CFG=json.loads((Path(__file__).parent/'config.json').read_text(encoding='utf8'))
 class TestHookLayout(unittest.TestCase):
     def test_ten_genres(self): self.assertEqual(len(GENRES),10)
     def test_contract(self): self.assertTrue(check_config(CFG))
+    def test_animation_stays_in_safe(self):
+        for t in (0.0,0.1,0.25,0.52,1.2,3.1):
+            for i,b in enumerate(CARDS):
+                dx=card_motion_dx(i,t)
+                self.assertGreaterEqual(b[0]+dx,SAFE[0])
+                self.assertLessEqual(b[2]+dx,SAFE[2])
     def test_full_text_fits(self):
         d=ImageDraw.Draw(Image.new('RGB',(1000,1000)))
         for txt in (CFG['before_label'],CFG['after_label']):
