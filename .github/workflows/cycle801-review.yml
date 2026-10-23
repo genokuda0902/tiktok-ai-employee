@@ -1,0 +1,42 @@
+name: cycle801 kinetic hook review CI
+on:
+  push:
+    branches: ['quality/cycle801-*']
+    paths:
+      - 'quality/cycle801/**'
+      - '.github/workflows/cycle801-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle801/**'
+      - '.github/workflows/cycle801-review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-hook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow + bundled FFmpeg (no apt)
+        run: |
+          python -m pip install --disable-pip-version-check Pillow==11.3.0 imageio-ffmpeg==0.6.0
+          mkdir -p "$RUNNER_TEMP/ci-bin"
+          ln -s "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/ci-bin/ffmpeg"
+          echo "$RUNNER_TEMP/ci-bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/ci-bin/ffmpeg" -version
+      - name: Review-only unit tests
+        run: python -m unittest discover -s quality/cycle801 -p 'test_*.py' -v
+      - name: Generate rights-safe synthetic 3.2s MP4
+        run: |
+          mkdir -p review_output/cycle801
+          python quality/cycle801/hook_motion.py --config quality/cycle801/config.json --synthetic --output review_output/cycle801/hook_video_only.mp4
+          ffmpeg -hide_banner -loglevel error -y -i review_output/cycle801/hook_video_only.mp4 -f lavfi -i 'sine=frequency=440:duration=3.2:sample_rate=48000' -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 96k -shortest review_output/cycle801/hook_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          ffmpeg -v error -i review_output/cycle801/hook_SYNTHETIC_TONE_NOT_JAPANESE.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle801-hook-SYNTHETIC-TONE-NOT-JAPANESE
+          path: review_output/cycle801/hook_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          retention-days: 7

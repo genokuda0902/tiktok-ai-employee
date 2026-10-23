@@ -1,0 +1,7 @@
+# cycle801 — image-first opening hook motion (REVIEW ONLY)
+
+Date: 2026-10-24 JST. Parent: unmerged Draft PR #96 / cycle800. Previous CI run 40023957560 was **CANCELLED** during slow apt dependency installation; no cycle800 artifact was produced. This cycle removes apt installs from its smoke CI (Pillow only, hosted FFmpeg) and adds motion to previously static 0–3.2s intro, without modifying the Japanese narration, caption wording, 14–17.2s bar chart, or the other scenes. It uses subtle focus glows and confined Ken Burns motion on existing before/after card image regions, protecting text and CTA lanes. This is a visual-motion enhancement, not proof of retention improvement.
+
+**Reproduction (local rights-unverified input only):** `python quality/cycle801/hook_motion.py --config quality/cycle801/config.json --source-video /path/to/cycle800_review.mp4 --output hook_video_only.mp4`. For CI: use `--synthetic` instead of `--source-video`; CI uploads only a synthetic-tone 3.2s demonstration, not a full Japanese video.
+
+**Rights and quality:** Existing photo/video/voice are inherited locally for human review, NEVER committed to GitHub. 10-genre config/geometry contract; only AI productivity example locally rendered. The original v33 source video and complete TikTok市場分析/TikTok動画研究 transcripts remain unavailable; reference storyboard was retrieved from user Library. No automatic publishing, merge, paid service or approval claim. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
