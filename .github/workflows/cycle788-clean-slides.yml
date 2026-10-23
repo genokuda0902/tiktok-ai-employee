@@ -1,0 +1,21 @@
+name: Cycle788 scene contract tests
+on:
+  push:
+    branches:
+      - 'quality/cycle788-*'
+  pull_request:
+    paths:
+      - 'cycles/cycle788/**'
+      - '.github/workflows/cycle788-clean-slides.yml'
+jobs:
+  scene-contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run contract tests
+        run: python -m unittest discover -s cycles/cycle788/tests -v
