@@ -1,0 +1,50 @@
+name: cycle796 photo-stage contract and technical smoke
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle796/**'
+      - '.github/workflows/cycle796-photo-story.yml'
+  workflow_dispatch:
+jobs:
+  contract-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install wheels only (no apt, no paid TTS)
+        run: python -m pip install --disable-pip-version-check opencv-python-headless imageio-ffmpeg
+      - name: Install bundled FFmpeg on PATH
+        run: |
+          python - <<'PY'
+          import imageio_ffmpeg, os
+          exe=imageio_ffmpeg.get_ffmpeg_exe()
+          os.symlink(exe, '/tmp/ffmpeg')
+          with open(os.environ['GITHUB_PATH'],'a') as f: f.write('/tmp\n')
+          print(exe)
+          PY
+      - name: Ten-genre timeline and subtitle-safety tests
+        run: cd quality/cycle796 && python -m unittest -v test_stage_contract.py
+      - name: Create 1080x1920 technical MP4 (synthetic tone, NOT Japanese narration)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x081c2e:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac /tmp/cycle796_technical_only.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle796_technical_only.mp4 -f null -
+          python - <<'PY'
+          import cv2
+          p='/tmp/cycle796_technical_only.mp4'
+          c=cv2.VideoCapture(p)
+          assert c.isOpened()
+          assert int(c.get(cv2.CAP_PROP_FRAME_WIDTH)) == 1080
+          assert int(c.get(cv2.CAP_PROP_FRAME_HEIGHT)) == 1920
+          assert int(c.get(cv2.CAP_PROP_FRAME_COUNT)) == 60
+          c.release()
+          print('Synthetic technical MP4: 1080x1920 / 60 frames / PASS')
+          PY
+      - name: Upload synthetic technical test only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle796-synthetic-technical-only
+          path: /tmp/cycle796_technical_only.mp4
+          retention-days: 7
