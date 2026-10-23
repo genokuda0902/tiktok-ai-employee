@@ -14,6 +14,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Unit tests
         run: python -m unittest discover -s cycles/cycle792 -p 'test_*.py' -v
+      - name: Install FFmpeg if absent (free Ubuntu packages)
+        run: |
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          ffmpeg -version | head -1
       - name: Technical video smoke (no Japanese voice; not the final video)
         run: |
           ffmpeg -hide_banner -loglevel error -f lavfi -i 'color=c=0x062536:s=1080x1920:r=30:d=2' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' -shortest -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -y cycle792_SYNTHETIC_SMOKE_NOT_FOR_POSTING.mp4
