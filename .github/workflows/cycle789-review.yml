@@ -1,0 +1,38 @@
+name: cycle789 fast review-only photo motion QA
+on:
+  push:
+    branches:
+      - 'quality/cycle789-*'
+    paths:
+      - 'quality/cycle789/**'
+      - '.github/workflows/cycle789-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle789/**'
+      - '.github/workflows/cycle789-review.yml'
+permissions:
+  contents: read
+jobs:
+  motion-tests-and-fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install small free Python wheels (no apt-get)
+        run: python -m pip install --disable-pip-version-check pillow imageio-ffmpeg
+      - name: Test review-only safety and 10-genre configuration
+        run: python -m unittest discover -s quality/cycle789 -p 'test_*.py' -v
+      - name: Render synthetic MP4 fixture with bundled FFmpeg
+        run: python quality/cycle789/ci_fixture.py --output review_output/cycle789/fixture.mp4
+      - name: Check synthetic H.264 AAC 1080x1920 full decode
+        run: python quality/cycle789/verify_fixture.py --path review_output/cycle789/fixture.mp4
+      - name: Upload synthetic review-only fixture (not full video)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle789-synthetic-mp4-smoke-fixture
+          path: review_output/cycle789/
+          retention-days: 7
+          if-no-files-found: error
