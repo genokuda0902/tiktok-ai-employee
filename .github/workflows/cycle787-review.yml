@@ -1,0 +1,21 @@
+name: cycle787 review-only focus QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle787/**'
+      - '.github/workflows/cycle787-review.yml'
+  workflow_dispatch:
+jobs:
+  safe-area-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free Pillow dependency
+        run: python -m pip install Pillow
+      - name: Run local-equivalent unit tests
+        run: python -m unittest discover -s quality/cycle787 -p 'test_*.py' -v
