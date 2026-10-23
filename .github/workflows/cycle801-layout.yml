@@ -16,7 +16,7 @@ jobs:
           python-version: '3.11'
       - name: Test 10-genre layout and subtitle bounds
         run: cd quality/cycle801 && python -m unittest -v test_layout_contract.py
-      - name: Create 1080x1920 synthetic technical sample (NOT Japanese voice)
+      - name: Install zero-cost FFmpeg binary\n        run: |\n          python -m pip install --disable-pip-version-check imageio-ffmpeg\n          python - <<'PY'\n          import imageio_ffmpeg,os\n          os.symlink(imageio_ffmpeg.get_ffmpeg_exe(),'/tmp/ffmpeg')\n          with open(os.environ['GITHUB_PATH'],'a') as f:f.write('/tmp\\n')\n          PY\n      - name: Create 1080x1920 synthetic technical sample (NOT Japanese voice)
         run: |
           ffmpeg -hide_banner -loglevel error -y \
             -f lavfi -i color=c=0x0B2B3A:s=1080x1920:r=30:d=14.3 \
