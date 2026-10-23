@@ -1,0 +1,1 @@
+cycle785: Two text-safe transition cuts at frames 324-328 and 508-514. Local tests passed. Human review required.
