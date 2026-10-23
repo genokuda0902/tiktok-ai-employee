@@ -1,0 +1,11 @@
+{
+  "mode": "review_only",
+  "publication_approved": false,
+  "rights_reviewed": false,
+  "genre": "ai_productivity",
+  "canvas": [1080, 1920],
+  "fps": 30,
+  "fixes": [
+    {"first_frame": 411, "last_frame": 428, "before_at": 13.60, "after_at": 14.36}
+  ]
+}
