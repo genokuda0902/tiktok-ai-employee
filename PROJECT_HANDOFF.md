@@ -29,3 +29,11 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+
+## cycle818 checkpoint — 2026-10-24 JST (review only)
+- Draft PR #129: https://github.com/genokuda0902/tiktok-ai-employee/pull/129 (head quality/cycle818-japanese-editorial-20261024, base parallel unmerged PR #128). main still 18e084c38db0dc55db7dfc0532b9451b1167f2aa.
+- New 10-genre Japanese editorial overlay localizes eight scene headings and English review/debug footer; it does not change main narration, primary scene content or inherited AAC bitstream.
+- Local 8/8 tests PASS; private review MP4 1080x1920/30fps/718 frames/23.933s, full decode PASS, AAC packet MD5 unchanged, SHA256 e74d3ebac022725f5709603aa1a3392160e00f7994cacb8be1016831ae0681a5. CI uses synthetic tone only. Exact details: quality/cycle818/CYCLE818_DELTA.md.
+- Full TikTok市場分析/TikTok動画研究 transcripts and v33 original MP4 inaccessible in this run. 16-panel user storyboard found. No cinematic quality equivalence or publication approval.
+- Priority: independently verify Japanese narration/semantic caption sync, approved source stills for clean-source renderer, rights, phone playback and reference comparison. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, charge or auto-post.

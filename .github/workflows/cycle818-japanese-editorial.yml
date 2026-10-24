@@ -1,0 +1,62 @@
+name: cycle818 Japanese editorial synthetic QA
+on:
+  push:
+    branches:
+      - 'quality/cycle818-*'
+  pull_request:
+    branches:
+      - 'quality/cycle817-clean-source-audio-20261024'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Test 10-genre localization
+        run: PYTHONPATH=quality/cycle818 python -m unittest discover -s quality/cycle818 -p 'test_*.py' -v
+      - name: Render synthetic video and test A/V
+        run: |
+          mkdir -p review_output
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x081d30:s=1080x1920:r=30' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000' \
+            -t 3 -c:v libx264 -preset ultrafast -crf 35 \
+            -pix_fmt yuv420p -c:a aac -b:a 96k \
+            review_output/source_SYNTHETIC.mp4
+          python quality/cycle818/localize.py \
+            --source review_output/source_SYNTHETIC.mp4 \
+            --output review_output/cycle818_SYNTHETIC_REVIEW_ONLY.mp4 \
+            --genre sales_business --synthetic-source
+          ffmpeg -hide_banner -loglevel error -xerror \
+            -i review_output/cycle818_SYNTHETIC_REVIEW_ONLY.mp4 -f null -
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          q=json.loads(Path('review_output/qa818.json').read_text())
+          assert q['cycle']==818 and q['scene_count']==8 and q['genre_count']==10
+          assert q['width']==1080 and q['height']==1920
+          assert q['synthetic_source'] is True
+          assert q['japanese_voice_content_verified'] is False
+          assert q['word_level_caption_alignment_verified'] is False
+          assert q['publication_approved'] is False and q['auto_post'] is False
+          print('SYNTHETIC CI PASS; real Japanese narration and rights NOT verified')
+          PY
+      - name: Upload synthetic-only artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle818-synthetic-japanese-editorial
+          path: |
+            review_output/cycle818_SYNTHETIC_REVIEW_ONLY.mp4
+            review_output/qa818.json
+          retention-days: 7
