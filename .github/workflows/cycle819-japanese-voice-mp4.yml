@@ -1,0 +1,46 @@
+name: cycle819-japanese-voice-mp4
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle819/**'
+      - '.github/workflows/cycle819-japanese-voice-mp4.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  japanese-voice-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline Japanese speech and video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Unit tests
+        run: |
+          python -m unittest discover -s quality/cycle819 -p 'test_*.py' -v
+          python -m unittest discover -s quality/cycle818 -p 'test_*.py' -v
+      - name: Generate original eight synthetic slides and timing
+        run: python quality/cycle818/make_fixture818.py --root _cycle819_ci
+      - name: Generate Japanese narration, replacing the synthetic beep
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle819_ci
+      - name: Render complete 1080x1920 Japanese narrated MP4
+        run: python quality/cycle818/render818_ci.py --root _cycle819_ci --output _cycle819_ci/output/cycle819_JAPANESE_VOICE_HUMAN_REVIEW.mp4
+      - name: Decode all video frames and verify audio and captions
+        run: python quality/cycle818/validate818_ci.py --mp4 _cycle819_ci/output/cycle819_JAPANESE_VOICE_HUMAN_REVIEW.mp4 --ass _cycle819_ci/output/captions818.ass
+      - name: Upload review artifact (never publication approval)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle819-JAPANESE-VOICE-HUMAN-REVIEW-NOT-APPROVED
+          path: |
+            _cycle819_ci/output/cycle819_JAPANESE_VOICE_HUMAN_REVIEW.mp4
+            _cycle819_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle819_ci/tts_qa819.json
+            _cycle819_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
