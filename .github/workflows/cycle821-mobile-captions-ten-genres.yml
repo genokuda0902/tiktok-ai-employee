@@ -1,0 +1,48 @@
+name: cycle821-mobile-captions-ten-genres
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle821/**'
+      - '.github/workflows/cycle821-mobile-captions-ten-genres.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ten-genre-review-artifact:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline media tools and Japanese voice
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Verify ten distinct scripts and existing voice match
+        run: |
+          python -m unittest discover -s quality/cycle821 -p 'test_*.py' -v
+          python quality/cycle821/genre_catalog821.py --output _cycle821_ci/genre_catalog_10x8.json
+      - name: Create original portrait-free slide images
+        run: python quality/cycle820/make_art820.py --root _cycle821_ci --genre sales_business
+      - name: Synthesize Japanese narration locally with Open JTalk
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle821_ci
+      - name: Render complete 1080x1920 three-line caption MP4
+        run: python quality/cycle821/render821.py --root _cycle821_ci --output _cycle821_ci/output/cycle821_THREE_LINE_MOBILE_READABILITY_HUMAN_REVIEW.mp4
+      - name: Verify all video frames, Japanese audio and caption layout
+        run: python quality/cycle821/validate821_ci.py _cycle821_ci
+      - name: Upload review-only video, tests and attribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle821-THREE-LINE-JAPANESE-VOICE-REVIEW-NOT-APPROVED
+          path: |
+            _cycle821_ci/output/cycle821_THREE_LINE_MOBILE_READABILITY_HUMAN_REVIEW.mp4
+            _cycle821_ci/output/qa821_ci.json
+            _cycle821_ci/genre_catalog_10x8.json
+            _cycle821_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle821_ci/NOT_FOR_PUBLICATION.txt
+            _cycle821_ci/tts_qa819.json
+          if-no-files-found: error
+          retention-days: 7
