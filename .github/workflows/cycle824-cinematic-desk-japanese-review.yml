@@ -1,0 +1,45 @@
+name: cycle824-cinematic-desk-japanese-review
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle824/**'
+      - '.github/workflows/cycle824-cinematic-desk-japanese-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Test 10-genre compatibility and safety
+        run: python -m unittest discover -s quality/cycle824 -p 'test_*.py' -v
+      - name: Generate original spatial desk scenes
+        run: python quality/cycle824/cycle824_ci.py --root _cycle824_ci --step prepare
+      - name: Generate offline Japanese voice
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle824_ci
+      - name: Render Japanese review MP4
+        run: python quality/cycle824/cycle824_ci.py --root _cycle824_ci --step render
+      - name: Verify decoded MP4, sound and subtitles
+        run: python quality/cycle824/cycle824_ci.py --root _cycle824_ci --step verify
+      - name: Upload human-review-only artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle824-CINEMATIC-DESK-JAPANESE-HUMAN-REVIEW
+          path: |
+            _cycle824_ci/output/cycle824_CI_DESK_JAPANESE_HUMAN_REVIEW.mp4
+            _cycle824_ci/output/qa824_ci.json
+            _cycle824_ci/source/asset_provenance824.json
+            _cycle824_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle824_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
