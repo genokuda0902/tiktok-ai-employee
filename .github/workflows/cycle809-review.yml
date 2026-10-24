@@ -13,7 +13,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - name: Run review-only 10-genre contract checks
-        run: python -m unittest discover -s quality/cycle809 -p 'test_contract.py'
+      - name: Run five standard-library review-only tests
+        run: |
+          python -c "import runpy; d=runpy.run_path('quality/cycle809/test_contract.py'); tests=[v for k,v in d.items() if k.startswith('test_')]; [t() for t in tests]; print(len(tests), 'tests PASS')"
       - name: Confirm posting gate
         run: python -c "import runpy; c=runpy.run_path('quality/cycle809/contract.py'); assert not c['AUTO_POST'] and not c['EMPLOYEE_APPROVAL']"
