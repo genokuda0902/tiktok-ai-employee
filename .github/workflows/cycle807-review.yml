@@ -1,0 +1,29 @@
+name: cycle807 photo caption contract review
+on:
+  push:
+    branches: ['quality/cycle807-*']
+    paths:
+      - 'quality/cycle807/**'
+      - '.github/workflows/cycle807-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle807/**'
+      - '.github/workflows/cycle807-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check 10-genre, Japanese wrapping, manual approval gate
+        run: python -m unittest discover -s quality/cycle807 -p 'test_*.py' -v
+      - name: Explain review limitation
+        run: |
+          echo "Contract CI only. The local cycle807 MP4 uses an AI-generated photo asset not stored in GitHub."
+          echo "No paid services, no merge, no auto-post. Full MP4 QA is recorded in local ZIP."
