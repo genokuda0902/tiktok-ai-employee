@@ -26,6 +26,7 @@ jobs:
         run: |
           set -euxo pipefail
           python -m pip install --disable-pip-version-check Pillow==11.3.0
+          sudo timeout 240 apt-get install -y --no-install-recommends ffmpeg
           command -v ffmpeg
           command -v ffprobe
           curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/NotoSansJP-Bold.otf" "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/JP/NotoSansJP-Bold.otf"
