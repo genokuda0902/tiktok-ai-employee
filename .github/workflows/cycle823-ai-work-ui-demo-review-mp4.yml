@@ -1,0 +1,45 @@
+name: cycle823-ai-work-ui-demo-review-mp4
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle823/**'
+      - '.github/workflows/cycle823-ai-work-ui-demo-review-mp4.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline free tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Test reusable 10-genre UI
+        run: python -m unittest discover -s quality/cycle823 -p 'test_*.py' -v
+      - name: Generate original review-only slides
+        run: python quality/cycle823/cycle823_ci.py --root _cycle823_ci --step prepare
+      - name: Generate offline Japanese voice
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle823_ci
+      - name: Render Japanese MP4
+        run: python quality/cycle823/cycle823_ci.py --root _cycle823_ci --step render
+      - name: Verify MP4 and subtitles
+        run: python quality/cycle823/cycle823_ci.py --root _cycle823_ci --step verify
+      - name: Save review-only MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle823-AI-WORK-UI-DEMO-JAPANESE-HUMAN-REVIEW
+          path: |
+            _cycle823_ci/output/cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4
+            _cycle823_ci/output/qa823_ci.json
+            _cycle823_ci/source/asset_provenance823.json
+            _cycle823_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle823_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
