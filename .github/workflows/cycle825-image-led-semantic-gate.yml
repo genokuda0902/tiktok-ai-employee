@@ -1,0 +1,97 @@
+name: cycle825 image-led Japanese review and script-caption parity
+on:
+  push:
+    branches:
+      - 'quality/cycle825-*'
+  pull_request:
+    paths:
+      - 'quality/cycle825/**'
+      - '.github/workflows/cycle825-image-led-semantic-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-cost offline tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Eight safety and caption audit tests
+        run: python -m unittest discover -s quality/cycle825 -p 'test_*.py' -v
+      - name: Generate eight original fictional AI-work images
+        run: python quality/cycle823/cycle823_ci.py --root _cycle825_ci --step prepare
+      - name: Generate fresh offline Japanese narration
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle825_ci
+      - name: Render 24 subtitle states and full base MP4
+        run: |
+          python quality/cycle823/cycle823_ci.py --root _cycle825_ci --step render
+          python quality/cycle823/cycle823_ci.py --root _cycle825_ci --step verify
+      - name: Fail closed on Japanese narration-script to caption mismatch
+        run: |
+          python quality/cycle825/audit825.py --root _cycle825_ci --report _cycle825_ci/output/script_caption_audit825.json
+      - name: Create review-only provenance for procedural image
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('_cycle825_ci/review_asset.json')
+          p.write_text(json.dumps({'origin':'procedural_original','review_allowed':True,
+           'private_data':False,'publication_approved':False,'notes':'Synthetic CI visual, no external imagery'}))
+          PY
+      - name: Render caption-safe image-led insert preserving Japanese AAC
+        run: |
+          python quality/cycle825/image_scene825.py \
+            --source _cycle825_ci/output/cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4 \
+            --image _cycle825_ci/source/scene_03.png \
+            --manifest _cycle825_ci/review_asset.json \
+            --output _cycle825_ci/output/cycle825_AI_WORK_IMAGE_LED_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --start 6.47 --duration 2.98
+      - name: Verify exact media properties, audio identity and full decode
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          root=Path('_cycle825_ci')
+          before=root/'output/cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4'
+          after=root/'output/cycle825_AI_WORK_IMAGE_LED_JAPANESE_REVIEW_ONLY.mp4'
+          q=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(after)]))
+          v=next(x for x in q['streams'] if x['codec_type']=='video')
+          a=next(x for x in q['streams'] if x['codec_type']=='audio')
+          def audio_hash(path):
+              return subprocess.check_output(['ffmpeg','-v','error','-i',str(path),
+                 '-map','0:a:0','-c','copy','-f','md5','-']).decode().strip()
+          checks={'h264_1080x1920_30fps':v['codec_name']=='h264' and (v['width'],v['height'])==(1080,1920) and v['r_frame_rate']=='30/1',
+                  '775_frames':int(v.get('nb_frames',0))==775,
+                  'aac_48k':a['codec_name']=='aac' and a['sample_rate']=='48000',
+                  'audio_bitstream_unchanged':audio_hash(before)==audio_hash(after),
+                  'script_caption_parity_passed':json.loads((root/'output/script_caption_audit825.json').read_text())['source_text_parity'],
+                  'japanese_tts_provenance':(root/'tts_qa819.json').exists(),
+                  'full_audio_video_decode':subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(after),'-f','null','-']).returncode==0}
+          report={'cycle':825,'genre':'ai_work','checks':checks,'sha256':hashlib.sha256(after.read_bytes()).hexdigest(),
+             'reference_v33_directly_compared':False,'human_listening_verified':False,
+             'word_level_alignment_verified':False,'smartphone_verified':False,
+             'rights_approved':False,'publication_approved':False,'auto_post':False}
+          (root/'output/qa825.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          assert all(checks.values()),checks
+          PY
+      - name: Upload playable Japanese MP4, license, tests and provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle825-JAPANESE-IMAGE-REVIEW-ONLY
+          path: |
+            _cycle825_ci/output/cycle825_AI_WORK_IMAGE_LED_JAPANESE_REVIEW_ONLY.mp4
+            _cycle825_ci/output/qa825.json
+            _cycle825_ci/output/script_caption_audit825.json
+            _cycle825_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle825_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
