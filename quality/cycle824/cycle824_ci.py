@@ -48,7 +48,7 @@ def upgrade_scene(path,number):
     im.convert('RGB').save(path,optimize=True)
 
 def prepare(root:Path):
-    prior.prepare(root,'ai_work')
+    prior.prepare(root)
     for i in range(1,9):
         upgrade_scene(root/'source'/f'scene_{i:02}.png',i)
     manifest={'cycle':824,'visual_change':'flat UI to original spatial laptop/desk',
