@@ -29,3 +29,12 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+## 2026-10-24 — cycle814 review-only checkpoint (unmerged)
+- Stacked Draft PR #122 on unmerged #120: https://github.com/genokuda0902/tiktok-ai-employee/pull/122
+- Saved shared 10-genre focus renderer and 13 tests; actual sanitized Calc scene zooms 1.52x and pans from B2 target to D2 computed gap, with callouts delayed until visible in source pixels.
+- Local private review MP4 SHA256 `66ebd1f7fd81dcdfef2ce1fba09106f91f28fd36140d68cfcc799402fb8feda2`; 1080x1920, 30fps, 718 frames, 23.933s, H.264/AAC 48kHz, full decode PASS, inherited AAC bitstream identical to cycle813.
+- 13 local tests PASS; synthetic-only CI SUCCESS https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40084621421, artifact 12556363201 downloaded and decoded. CI artifact is NOT the private Japanese-narrated MP4.
+- Research task full transcripts and v33 original MP4 unavailable; user's 16-panel storyboard inspected. No direct quality parity claim.
+- Independent ASR/caption semantics, asset rights, smartphone playback, employee approval pending. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, billing or automatic TikTok post.
+- Full reproducible delta: `quality/cycle813/CYCLE814_DELTA.md`.
