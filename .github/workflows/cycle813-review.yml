@@ -1,4 +1,4 @@
-name: cycle813 real Calc insert synthetic QA
+name: cycle814 focused Calc demo synthetic QA
 on:
   push:
     branches: ['quality/cycle813-*']
@@ -33,7 +33,7 @@ jobs:
           echo "$RUNNER_TEMP/cycle813-bin" >> "$GITHUB_PATH"
           if ! command -v ffprobe; then timeout 180 sudo apt-get install -y --no-install-recommends ffmpeg; fi
           command -v ffprobe
-      - name: Run 11 ten-genre and privacy tests
+      - name: Run 13 ten-genre and focus/privacy tests
         run: PYTHONPATH=quality/cycle813 python -m unittest discover -s quality/cycle813 -p 'test_*.py' -v
       - name: Generate synthetic video and screen test fixtures (NOT user footage)
         run: |
@@ -55,15 +55,15 @@ jobs:
           python quality/cycle813/calc_screen_insert.py \
             --source "$RUNNER_TEMP/cycle813_source.mp4" \
             --capture "$RUNNER_TEMP/cycle813_synthetic_capture.mp4" \
-            --output review_output/cycle813_SYNTHETIC_REVIEW_ONLY.mp4 \
+            --output review_output/cycle814_SYNTHETIC_REVIEW_ONLY.mp4 \
             --fictional-data --synthetic-capture --synthetic-source
-          ffmpeg -hide_banner -loglevel error -xerror -i review_output/cycle813_SYNTHETIC_REVIEW_ONLY.mp4 -f null -
-          python -c "import json; q=json.load(open('review_output/cycle813_qa.json')); assert q['publication_approved'] is False and q['auto_post'] is False and q['aac_bitstream_identical'] is True and q['synthetic_source'] is True and q['real_spreadsheet_gui_capture'] is False and q['frames']==718"
+          ffmpeg -hide_banner -loglevel error -xerror -i review_output/cycle814_SYNTHETIC_REVIEW_ONLY.mp4 -f null -
+          python -c "import json; q=json.load(open('review_output/cycle814_qa.json')); assert q['publication_approved'] is False and q['auto_post'] is False and q['aac_bitstream_identical'] is True and q['synthetic_source'] is True and q['real_spreadsheet_gui_capture'] is False and q['frames']==718 and q['cycle']==814 and q['source_crop_in_bounds'] is True"
       - name: Upload synthetic QA MP4 only (no inherited voice or actual GUI footage)
         uses: actions/upload-artifact@v4
         with:
-          name: cycle813-synthetic-review-mp4-and-qa
+          name: cycle814-synthetic-review-mp4-and-qa
           path: |
-            review_output/cycle813_SYNTHETIC_REVIEW_ONLY.mp4
-            review_output/cycle813_qa.json
+            review_output/cycle814_SYNTHETIC_REVIEW_ONLY.mp4
+            review_output/cycle814_qa.json
           retention-days: 7

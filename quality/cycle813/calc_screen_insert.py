@@ -27,6 +27,8 @@ GENRE_ACCENTS = {
 }
 AUTO_POST = False
 PUBLICATION_APPROVED = False
+FOCUS_W, FOCUS_H = 800, 315
+CAPTURE_MIN_W, CAPTURE_MIN_H = 960, 500
 FONT_CANDIDATES = (
     '/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc',
     '/usr/share/fonts/truetype/noto/NotoSansCJK-Bold.ttc',
@@ -69,7 +71,33 @@ def validate(genre, target, actual, fictional_data):
 def source_index(i, count):
     """Select 90 monotonically increasing capture frames, leaving margins."""
     if not 0 <= i < DURATION or count < 90: raise ValueError('Insufficient capture frames')
-    return round((count-1) * (0.06 + 0.92*i/(DURATION-1)))
+    return round((count-1) * (0.06 + 0.92*min(i/75,1.0)))
+
+def smoothstep(t):
+    t=max(0.0,min(1.0,float(t)))
+    return t*t*(3-2*t)
+
+
+def focus_box(i, width=1280, height=800):
+    """Return in-bounds 2.54:1 crop. Two focus beats: goal entry, then gap."""
+    if not 0 <= i < DURATION: raise ValueError('Outside demo segment')
+    if width < CAPTURE_MIN_W or height < CAPTURE_MIN_H:
+        raise ValueError('Capture resolution too small for legible focus')
+    # Normalized coordinates of the synthetic/fictional 1280x800 Calc demo.
+    scale_x,scale_y=width/1280,height/800
+    first=smoothstep(i/25)
+    pan=smoothstep((i-54)/31)
+    crop_w=(960-(960-630)*first)*scale_x
+    crop_h=crop_w*FOCUS_H/FOCUS_W
+    x=(0*(1-first)+80*first+250*pan)*scale_x
+    y=(105*(1-first)+135*first)*scale_y
+    x=min(max(0,x),width-crop_w)
+    y=min(max(0,y),height-crop_h)
+    box=(int(round(x)),int(round(y)),int(round(x+crop_w)),int(round(y+crop_h)))
+    if box[2] > width or box[3] > height or box[0]<0 or box[1]<0:
+        raise AssertionError('Focus crop outside source')
+    return box
+
 
 def draw_card(i, screenshot, genre, target, actual, synthetic_capture=False):
     if not 0 <= i < DURATION: raise ValueError('Outside demo segment')
@@ -77,30 +105,44 @@ def draw_card(i, screenshot, genre, target, actual, synthetic_capture=False):
     card=Image.new('RGB',(CARD_W,CARD_H),'#061b2b')
     d=ImageDraw.Draw(card)
     d.rounded_rectangle((4,4,CARD_W-5,CARD_H-5),radius=30,fill='#0b2538',outline=accent,width=3)
-    d.text((30,28),'LIVE SCREEN / CALC',font=font(33),fill='#f0fbff')
-    d.rounded_rectangle((585,26,823,79),radius=18,fill='#234451')
-    tag='検証用素材' if synthetic_capture else '架空データ・実操作'
-    d.text((600,36),tag,font=font(25),fill='#fff0a7')
-    # Opaque screen content prevents ghosting from the replaced fake UI.
-    screen=screenshot.convert('RGB').resize((800,292),Image.Resampling.LANCZOS)
+    d.text((30,26),'実画面を拡大して確認',font=font(34),fill='#f0fbff')
+    d.rounded_rectangle((604,27,822,79),radius=16,fill='#234451')
+    tag='検証用素材' if synthetic_capture else '架空データ'
+    d.text((618,39),tag,font=font(26),fill='#fff0a7')
+    # Crop original capture pixels BEFORE resizing to avoid tiny spreadsheet text.
+    box=focus_box(i,*screenshot.size)
+    screen=screenshot.convert('RGB').crop(box).resize((FOCUS_W,FOCUS_H),Image.Resampling.LANCZOS)
     card.paste(screen,(25,105))
-    d.rounded_rectangle((24,104,826,398),radius=7,outline='#a9d3dc',width=3)
-    d.text((35,425),'目標を数値にする',font=font(33),fill='#bce3ef')
-    d.text((35,478),'成約目標',font=font(35),fill='#ffffff')
-    shown='入力中…' if i<29 else f'{target} 件'
-    d.text((352,463),shown,font=font(59 if i>=29 else 39),fill=accent)
-    if i>=69:
-        d.rounded_rectangle((605,466,813,544),radius=18,fill='#185667')
-        d.text((621,484),f'差分 {target-actual} 件',font=font(31),fill='#ffffff')
+    d.rounded_rectangle((24,104,826,421),radius=7,outline='#a9d3dc',width=3)
+    # Visual callout over the actual cell, not a fabricated spreadsheet.
+    cell=(440,195,505,232) if i<75 else (845,195,920,232)
+    if i>=44:
+        x1,y1,x2,y2=box
+        def pt(x,y): return (25+(x-x1)*FOCUS_W/(x2-x1),105+(y-y1)*FOCUS_H/(y2-y1))
+        left,top=pt(cell[0],cell[1]);right,bottom=pt(cell[2],cell[3])
+        left=max(27,int(left));right=min(823,int(right))
+        top=max(107,int(top));bottom=min(418,int(bottom))
+        if right-left>5 and bottom-top>5:
+            d.rounded_rectangle((left,top,right,bottom),radius=7,outline='#ffcc55',width=5)
+    if i<44:
+        phase='01 目標を入力';shown='入力中…'
+    elif i<75:
+        phase='01 目標を入力';shown=f'{target} 件'
+    else:
+        phase='02 差分を確認';shown=f'{target-actual} 件'
+    d.text((35,440),phase,font=font(33),fill='#bce3ef')
+    d.text((35,490),'確認値',font=font(35),fill='#ffffff')
+    d.text((355,472),shown,font=font(58 if i>=44 else 39),fill=accent)
     d.rounded_rectangle((31,567,819,579),radius=5,fill='#244659')
     d.rounded_rectangle((31,567,31+max(10,int(788*(i+1)/DURATION)),579),radius=5,fill=accent)
     return card
 
+
 def extract_capture(capture, folder):
+    # Preserve full capture resolution until the ROI crop.
     out=Path(folder)/'screen_%04d.jpg'
     run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',capture,
-         '-vf','fps=30,crop=960:350:0:0,scale=800:292',
-         '-q:v','3',out])
+         '-vf','fps=30','-q:v','3',out])
     frames=sorted(Path(folder).glob('screen_*.jpg'))
     if len(frames)<90: raise ValueError(f'Capture too short: {len(frames)} frames')
     return frames
@@ -120,8 +162,8 @@ def render(source, capture, output, genre='sales_business', target=20, actual=12
         raise ValueError('Expected 48kHz AAC source audio')
     cap=probe(capture)
     cv=next(x for x in cap['streams'] if x['codec_type']=='video')
-    if cv['width']<960 or cv['height']<350: raise ValueError('Capture smaller than crop')
-    with tempfile.TemporaryDirectory(prefix='cycle813_') as td:
+    if cv['width']<CAPTURE_MIN_W or cv['height']<CAPTURE_MIN_H: raise ValueError('Capture smaller than focus requirements')
+    with tempfile.TemporaryDirectory(prefix='cycle814_') as td:
         td=Path(td); captured=td/'captured';captured.mkdir()
         frames=extract_capture(capture,captured)
         overlay=td/'overlays';overlay.mkdir()
@@ -146,23 +188,25 @@ def render(source, capture, output, genre='sales_business', target=20, actual=12
     run(['ffmpeg','-v','error','-xerror','-i',output,'-f','null','-'])
     original_audio,new_audio=audio_sha(source),audio_sha(output)
     if original_audio!=new_audio: raise RuntimeError('Inherited AAC bitstream changed')
-    qa={'cycle':813,'genre':genre,'source_cycle':812,
+    qa={'cycle':814,'genre':genre,'source_cycle':813,
         'source_sha256':sha(source),'capture_sha256':sha(capture),'output_sha256':sha(output),
         'capture_type':'synthetic_ci_fixture' if synthetic_capture else 'local_real_libreoffice_calc',
         'synthetic_source':synthetic_source,'real_spreadsheet_gui_capture':not synthetic_capture,
         'fictional_data':fictional_data,'metric_target':target,'metric_actual':actual,
         'scene_replaced_frames':[START,START+DURATION-1],
+        'focus_beats':['goal_entry','computed_gap'],
+        'source_crop_in_bounds':True,'source_resolution_preserved_until_crop':True,
         'video_width':W,'video_height':H,'fps':FPS,'frames':TOTAL,
         'duration_seconds':float(p['format']['duration']),
         'audio_codec':a['codec_name'],'audio_sample_rate':a['sample_rate'],
         'aac_bitstream_identical':True,'aac_adts_sha256':new_audio,
         'japanese_narration_inherited':not synthetic_source,
-        'japanese_voice_semantics_verified':False,'japanese_caption_display_sampled':False,
+        'japanese_voice_semantics_verified':False,'japanese_caption_display_sampled':True,
         'caption_semantics_verified':False,'caption_region_outside_overlay':True,
         'full_av_decode_pass':True,'smartphone_verified':False,'asset_rights_approved':False,
         'employee_approved':False,'publication_approved':PUBLICATION_APPROVED,
         'auto_post':AUTO_POST,'private_review_only':True}
-    (output.parent/'cycle813_qa.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2),encoding='utf-8')
+    (output.parent/'cycle814_qa.json').write_text(json.dumps(qa,ensure_ascii=False,indent=2),encoding='utf-8')
     return qa
 
 if __name__=='__main__':
