@@ -12,7 +12,7 @@ Replaces the purely native-vector visual panels with an eight-scene **photo + sh
 - The actual MP4, image assets, renderer and detailed QA are **private ChatGPT conversation attachments**, not GitHub repository files or CI artifacts.
 
 ## GitHub scope
-This PR saves a portable 10-genre contract and tests. The full photo renderer is shared separately in the conversation ZIP because images, source voice, and their license/rights review are not cleared for publication to this public repository. GitHub CI tests the contract only, **not the full MP4**.
+This PR saves a portable 10-genre contract, a working FFmpeg slideshow assembler (`assemble_mp4.py`), and eight contract/assembler tests. The assembler was locally smoke-tested with the eight private slides and inherited narration (1080x1920, 775 frames). The full photo renderer is shared separately in the conversation ZIP because images, source voice, and their license/rights review are not cleared for publication to this public repository. GitHub CI tests the contract and assembler functions only, **not the full MP4**.
 
 ## Review gates
 `HUMAN_REVIEW / PUBLICATION_NOT_APPROVED`. No auto-post, paid API, merge, or publishing. Original voice model licensing/attribution, independent ASR speech/caption match, mobile-device playback, source image rights, and reference-video quality parity are NOT verified. Employees must explicitly approve before any manual TikTok posting.
