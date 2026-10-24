@@ -1,0 +1,69 @@
+name: cycle813 real Calc insert synthetic QA
+on:
+  push:
+    branches: ['quality/cycle813-*']
+    paths:
+      - 'quality/cycle813/**'
+      - '.github/workflows/cycle813-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle813/**'
+      - '.github/workflows/cycle813-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-purchase tools and Japanese font
+        run: |
+          set -euxo pipefail
+          python -m pip install --disable-pip-version-check Pillow==11.3.0 imageio-ffmpeg==0.6.0
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/NotoSansJP-Bold.otf" "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/JP/NotoSansJP-Bold.otf"
+          test -s "$RUNNER_TEMP/NotoSansJP-Bold.otf"
+          echo "CYCLE813_FONT=$RUNNER_TEMP/NotoSansJP-Bold.otf" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/cycle813-bin"
+          ln -s "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/cycle813-bin/ffmpeg"
+          echo "$RUNNER_TEMP/cycle813-bin" >> "$GITHUB_PATH"
+          if ! command -v ffprobe; then timeout 180 sudo apt-get install -y --no-install-recommends ffmpeg; fi
+          command -v ffprobe
+      - name: Run 11 ten-genre and privacy tests
+        run: PYTHONPATH=quality/cycle813 python -m unittest discover -s quality/cycle813 -p 'test_*.py' -v
+      - name: Generate synthetic video and screen test fixtures (NOT user footage)
+        run: |
+          set -euxo pipefail
+          mkdir -p review_output
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x0b2538:s=1080x1920:r=30:d=23.933333' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=23.933333' \
+            -map 0:v:0 -map 1:a:0 -c:v libx264 -preset ultrafast -crf 34 \
+            -frames:v 718 -pix_fmt yuv420p -c:a aac -ar 48000 \
+            "$RUNNER_TEMP/cycle813_source.mp4"
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'testsrc2=size=1280x800:rate=30:duration=5.4' \
+            -an -c:v libx264 -preset ultrafast -crf 32 \
+            "$RUNNER_TEMP/cycle813_synthetic_capture.mp4"
+      - name: Render synthetic review MP4, decode and enforce review gate
+        run: |
+          set -euxo pipefail
+          python quality/cycle813/calc_screen_insert.py \
+            --source "$RUNNER_TEMP/cycle813_source.mp4" \
+            --capture "$RUNNER_TEMP/cycle813_synthetic_capture.mp4" \
+            --output review_output/cycle813_SYNTHETIC_REVIEW_ONLY.mp4 \
+            --fictional-data --synthetic-capture --synthetic-source
+          ffmpeg -hide_banner -loglevel error -xerror -i review_output/cycle813_SYNTHETIC_REVIEW_ONLY.mp4 -f null -
+          python -c "import json; q=json.load(open('review_output/cycle813_qa.json')); assert q['publication_approved'] is False and q['auto_post'] is False and q['aac_bitstream_identical'] is True and q['synthetic_source'] is True and q['real_spreadsheet_gui_capture'] is False and q['frames']==718"
+      - name: Upload synthetic QA MP4 only (no inherited voice or actual GUI footage)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle813-synthetic-review-mp4-and-qa
+          path: |
+            review_output/cycle813_SYNTHETIC_REVIEW_ONLY.mp4
+            review_output/cycle813_qa.json
+          retention-days: 7
