@@ -1,0 +1,63 @@
+name: cycle821 photo-first hook QA
+on:
+  push:
+    branches:
+      - 'quality/cycle821-*'
+  pull_request:
+    branches:
+      - 'quality/cycle820-complete-action-20261025'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  photo-first-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free renderer dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Run 10-genre motion and safe-area tests
+        run: PYTHONPATH=quality/cycle821 python -m unittest discover -s quality/cycle821 -p 'test_*.py' -v
+      - name: Generate and decode SYNTHETIC video (not Japanese speech)
+        run: |
+          mkdir -p review_output
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x071b2a:s=1080x1920:r=30' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000' \
+            -t 6 -c:v libx264 -preset ultrafast -crf 39 \
+            -pix_fmt yuv420p -c:a aac -b:a 64k \
+            review_output/source_SYNTHETIC.mp4
+          python quality/cycle821/cinematic_hook.py \
+            --source review_output/source_SYNTHETIC.mp4 \
+            --output review_output/cycle821_SYNTHETIC_NOT_FOR_PUBLICATION.mp4 \
+            --genre sales_business --synthetic
+          ffmpeg -hide_banner -loglevel error -xerror \
+            -i review_output/cycle821_SYNTHETIC_NOT_FOR_PUBLICATION.mp4 -f null -
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          qa=json.loads(Path('review_output/qa821.json').read_text())
+          assert qa['cycle']==821 and qa['genre_count']==10
+          assert (qa['width'],qa['height'],qa['fps'])==(1080,1920,'30/1')
+          assert qa['hook_frames']==90 and qa['synthetic_audio'] is True
+          assert qa['japanese_narration_semantics_verified'] is False
+          assert qa['caption_audio_semantics_verified'] is False
+          assert qa['publication_approved'] is False and qa['auto_post'] is False
+          print('PASS: synthetic video decoded; not Japanese speech; not publishable')
+          PY
+      - name: Upload SYNTHETIC QA-only MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle821-SYNTHETIC-NOT-FOR-PUBLICATION
+          path: |
+            review_output/cycle821_SYNTHETIC_NOT_FOR_PUBLICATION.mp4
+            review_output/qa821.json
+          if-no-files-found: error
+          retention-days: 7
