@@ -22,6 +22,8 @@ jobs:
           find /usr/share -name '*.htsvoice' -print
       - name: Test narration and 10 genre contract
         run: cd quality/cycle803 && python -m unittest -v test_contract.py
+      - name: Test cycle804 video assembly contract
+        run: python -m unittest discover -s quality/cycle804 -p 'test_*.py' -v
       - name: Generate fresh Japanese narration
         run: python quality/cycle803/tts_ci.py
       - name: Verify audio decode
