@@ -1,0 +1,29 @@
+name: cycle808 sharp original art review
+on:
+  push:
+    branches: ['quality/cycle808-*']
+    paths:
+      - 'quality/cycle808/**'
+      - '.github/workflows/cycle808-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle808/**'
+      - '.github/workflows/cycle808-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Ten-genre, subtitle, license and manual-approval tests
+        run: python -m unittest discover -s quality/cycle808 -p 'test_*.py' -v
+      - name: Confirm no video build claim
+        run: |
+          echo "Contract CI only; actual local MP4 and full renderer are in user-delivered ZIP."
+          echo "No automatic publishing, merge or paid API call."
