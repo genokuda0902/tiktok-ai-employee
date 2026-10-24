@@ -38,3 +38,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Research task full transcripts and v33 original MP4 unavailable; user's 16-panel storyboard inspected. No direct quality parity claim.
 - Independent ASR/caption semantics, asset rights, smartphone playback, employee approval pending. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, billing or automatic TikTok post.
 - Full reproducible delta: `quality/cycle813/CYCLE814_DELTA.md`.
+
+## 2026-10-24 — cycle815 review-only checkpoint (unmerged)
+- Stacked Draft PR #123 on #122: https://github.com/genokuda0902/tiktok-ai-employee/pull/123
+- Added 10-genre reusable fictional KPI 3-beat animated panel (6–9s) and 12 tests. Local private Japanese-narrated MP4 SHA256 `c90c94e40af64aeb2932ab70c9b5acf57cae09d9baff8bb157da80a674f91402`; 1080x1920, 30fps, 718 frames, 23.933s, inherited AAC bitstream unchanged, full decode PASS.
+- Synthetic-only GitHub Actions PASS: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40088325725, artifact 12557159419 downloaded, ZIP integrity and full A/V decode verified. CI synthetic tone is NOT the private Japanese narration.
+- User-provided 16-panel storyboard directly inspected; full TikTok市場分析/TikTok動画研究 transcripts and original v33 MP4 inaccessible. No v33 quality equivalence claim.
+- Independent ASR/caption meaning, asset/voice rights, phone playback, employee approval pending. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, billing or automatic posting.
+- Details: `quality/cycle815/CYCLE815_DELTA.md`.
