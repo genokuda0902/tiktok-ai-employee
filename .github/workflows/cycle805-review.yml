@@ -1,0 +1,60 @@
+name: cycle805 new-topic Japanese voice + caption review
+on:
+  push:
+    branches: ['quality/cycle805-*']
+    paths:
+      - 'quality/cycle805/**'
+      - '.github/workflows/cycle805-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle805/**'
+      - '.github/workflows/cycle805-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  render-original-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free font and Python dependencies (no apt)
+        run: |
+          set -euxo pipefail
+          python -m pip install --disable-pip-version-check Pillow==11.3.0 imageio-ffmpeg==0.6.0
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/NotoSansJP-Bold.otf" "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/JP/NotoSansJP-Bold.otf"
+          test -s "$RUNNER_TEMP/NotoSansJP-Bold.otf"
+          echo "CYCLE805_FONT=$RUNNER_TEMP/NotoSansJP-Bold.otf" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/ci-bin"
+          ln -s "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/ci-bin/ffmpeg"
+          echo "$RUNNER_TEMP/ci-bin" >> "$GITHUB_PATH"
+      - name: Retrieve newly synthesized Japanese narration (cycle804 artifact)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p "$RUNNER_TEMP/cycle805_voice"
+          gh run download 40047591409 --repo genokuda0902/tiktok-ai-employee --name cycle804-business-japanese-voice-review --dir "$RUNNER_TEMP/cycle805_voice"
+          test -s "$RUNNER_TEMP/cycle805_voice/cycle803_business_japanese.m4a"
+          test -s "$RUNNER_TEMP/cycle805_voice/voice_timing.json"
+          echo "CYCLE805_VOICE_DIR=$RUNNER_TEMP/cycle805_voice" >> "$GITHUB_ENV"
+      - name: Test original 10-genre renderer and safe caption contract
+        run: python -m unittest discover -s quality/cycle805 -p 'test_*.py' -v
+      - name: Render full review-only Japanese voice MP4
+        run: |
+          set -euxo pipefail
+          python quality/cycle805/render_editorial.py --audio "$CYCLE805_VOICE_DIR/cycle803_business_japanese.m4a" --timing "$CYCLE805_VOICE_DIR/voice_timing.json" --slides-dir "$RUNNER_TEMP/cycle805_slides" --output review_output/cycle805_BUSINESS_NEW_VOICE_REVIEW_ONLY.mp4 --fast
+          ffmpeg -hide_banner -v error -xerror -i review_output/cycle805_BUSINESS_NEW_VOICE_REVIEW_ONLY.mp4 -f null -
+          test -s review_output/qa.json
+      - name: Upload original video for private human review ONLY
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle805-NEW-JAPANESE-VOICE-REVIEW-ONLY-NOT-APPROVED
+          path: |
+            review_output/cycle805_BUSINESS_NEW_VOICE_REVIEW_ONLY.mp4
+            review_output/qa.json
+          retention-days: 7
