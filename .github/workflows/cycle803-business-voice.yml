@@ -15,9 +15,9 @@ jobs:
       - name: Install free Open JTalk without apt index refresh
         run: |
           set -euxo pipefail
-          command -v ffmpeg
           apt-cache policy open-jtalk hts-voice-nitech-jp-atr503-m001
-          timeout 360s sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          timeout 360s sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001 ffmpeg
+          command -v ffmpeg
           command -v open_jtalk
           find /usr/share -name '*.htsvoice' -print
       - name: Test narration and 10 genre contract
