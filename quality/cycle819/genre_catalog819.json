@@ -1,0 +1,64 @@
+{
+  "schema_version": "819.1",
+  "common": {
+    "resolution": [
+      1080,
+      1920
+    ],
+    "fps": 30,
+    "format": "H264_AAC_MP4",
+    "publication_gate": "EMPLOYEE_MANUAL_APPROVAL"
+  },
+  "genres": {
+    "ai_work": {
+      "accent": "#73CBFF",
+      "hook": "AIで作業時間はどう変わる？",
+      "cta": "明日ひとつ試そう"
+    },
+    "beauty": {
+      "accent": "#FF9EC4",
+      "hook": "肌の印象を変える習慣",
+      "cta": "気になる方法を保存"
+    },
+    "love_psychology": {
+      "accent": "#C3A2FF",
+      "hook": "伝わる会話の共通点",
+      "cta": "次の会話で試そう"
+    },
+    "money_saving": {
+      "accent": "#FFD475",
+      "hook": "無理なく節約するには？",
+      "cta": "今日の支出を確認"
+    },
+    "sales_business": {
+      "accent": "#5DE7C4",
+      "hook": "質問を変えれば行動が変わる",
+      "cta": "保存して明日ひとつ試そう"
+    },
+    "career": {
+      "accent": "#86B7FF",
+      "hook": "伸びる人の学び方",
+      "cta": "今週の行動を決めよう"
+    },
+    "health_life": {
+      "accent": "#B6E984",
+      "hook": "生活を整える小さな工夫",
+      "cta": "無理なく一つから"
+    },
+    "science": {
+      "accent": "#8DD9FF",
+      "hook": "この現象の理由は？",
+      "cta": "気になったら調べよう"
+    },
+    "travel_food": {
+      "accent": "#FFBB8C",
+      "hook": "次の旅で見たい景色",
+      "cta": "行きたい場所を保存"
+    },
+    "product_life": {
+      "accent": "#D8B0FF",
+      "hook": "暮らしが変わる使い方",
+      "cta": "必要かどうか比べよう"
+    }
+  }
+}
