@@ -1,0 +1,19 @@
+name: cycle811-safe-area-contract
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle811/**'
+      - '.github/workflows/cycle811-safe-area.yml'
+  workflow_dispatch:
+jobs:
+  safe-area:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run seven no-dependency safe-area tests
+        run: python quality/cycle811/test_safe_area.py
+      - name: Confirm no publishing
+        run: python -c "import runpy; x=runpy.run_path('quality/cycle811/safe_area.py'); assert not x['AUTO_POST'] and not x['EMPLOYEE_APPROVAL']"
