@@ -1,0 +1,61 @@
+name: cycle817 root cause depth synthetic QA
+on:
+  push:
+    branches:
+      - 'quality/cycle817-*'
+  pull_request:
+    branches:
+      - 'quality/cycle816-before-after-reveal-20261024'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free render prerequisites
+        run: |
+          python -m pip install --disable-pip-version-check pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk ffmpeg
+      - name: Unit test shared 10-genre scene
+        run: PYTHONPATH=quality/cycle817 python -m unittest discover -s quality/cycle817 -p 'test_*.py' -v
+      - name: Render synthetic review MP4 (NOT Japanese narration)
+        run: |
+          mkdir -p review_output
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x061b2c:s=1080x1920:r=30' \
+            -f lavfi -i 'sine=frequency=220:sample_rate=48000' \
+            -t 23.933333 -c:v libx264 -preset ultrafast -crf 34 \
+            -pix_fmt yuv420p -c:a aac -b:a 96k \
+            review_output/cycle817_synthetic_source.mp4
+          python quality/cycle817/root_cause_depth.py \
+            --source review_output/cycle817_synthetic_source.mp4 \
+            --output review_output/cycle817_SYNTHETIC_REVIEW_ONLY.mp4 \
+            --genre sales_business --fictional-example --synthetic-source
+          ffmpeg -hide_banner -loglevel error -xerror \
+            -i review_output/cycle817_SYNTHETIC_REVIEW_ONLY.mp4 -f null -
+          python - <<'PY'
+          import json
+          q=json.load(open('review_output/cycle817_qa.json'))
+          assert q['cycle']==817 and q['frames']==718
+          assert q['aac_bitstream_identical'] and q['full_av_decode_pass']
+          assert q['synthetic_source'] is True
+          assert q['japanese_narration_inherited'] is False
+          assert q['publication_approved'] is False and q['auto_post'] is False
+          assert q['independent_asr_verified'] is False
+          print('SYNTHETIC CI PASS; Japanese voice and rights NOT verified')
+          PY
+      - name: Upload synthetic-only artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle817-synthetic-root-cause-review
+          path: |
+            review_output/cycle817_SYNTHETIC_REVIEW_ONLY.mp4
+            review_output/cycle817_qa.json
+          retention-days: 7

@@ -54,3 +54,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Public GitHub Actions renders **synthetic tone/video only**, not the private Japanese-narrated MP4. See PR checks for current run result.
 - User 16-panel storyboard directly inspected; full TikTok市場分析/TikTok動画研究 task transcripts and original v33 MP4 unavailable. Independent Japanese ASR/caption meaning, rights, smartphone playback, employee approval outstanding.
 - Full reproduction and QA: `quality/cycle816/CYCLE816_DELTA.md`. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, billing, or auto-post.
+
+## 2026-10-24 — cycle817 review-only checkpoint (unmerged)
+- Based on unmerged PR #125; 12–15s root-cause WHY×3 card becomes a three-step reveal with ten genre accents and subtitle-safe bounds. 13 local unit tests PASS.
+- Local private review MP4: 1080×1920, 30fps, 718 frames, 23.933333s, H.264/AAC 48kHz; full decode PASS and inherited AAC ADTS identical. SHA256 `13d57b63743cc014edfff48a9c596eb56f1305d1a74d1d2ea2e0c5e2998bf009`. MP4 not uploaded to public GitHub due to unverified rights.
+- GitHub Actions uses synthetic video/tone ONLY. Research transcripts and original v33 MP4 inaccessible; user 16-panel storyboard directly inspected.
+- Unverified: Japanese speech meaning/caption semantic match, asset/voice rights, smartphone playback, employee review. PUBLICATION_NOT_APPROVED. No merge, billing or auto-post.
+- Details: `quality/cycle817/CYCLE817_DELTA.md`.
