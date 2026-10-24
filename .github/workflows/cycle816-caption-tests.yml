@@ -1,0 +1,20 @@
+name: cycle816 caption timing tests
+on:
+  pull_request:
+    paths:
+      - "quality/cycle816/**"
+      - ".github/workflows/cycle816-caption-tests.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  caption-timing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run zero-dependency caption tests
+        run: python -m unittest discover -s quality/cycle816 -p "test_*.py" -v
