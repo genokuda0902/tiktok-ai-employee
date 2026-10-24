@@ -53,3 +53,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - CI at commit 188c51cdfa208e4e635719ee3ff9ff58d377c023: push SUCCESS https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40109976201 ; PR SUCCESS https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40109991759 ; synthetic artifact 12566370866 downloaded, ZIP tested and H.264/AAC full decoded. CI audio is synthetic tone, NOT Japanese speech.
 - User storyboard inspected; full research task transcripts and original v33 MP4 inaccessible. Japanese speech/caption semantic match, inherited rights, smartphone playback and employee approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, charge or auto-post.
 - Next: independently verify Japanese voice and subtitle semantic alignment, acquire approved high-quality image-first media, and compare original v33 if accessible.
+
+
+## cycle821 checkpoint — 2026-10-25 JST (REVIEW ONLY)
+- Work branch `quality/cycle821-photo-first-hook-20261025` is stacked on unmerged cycle820 PR #134. No merge or automatic posting.
+- Changes **0–3s opening only**: new AI-generated original desk image (local review package, not committed), 90-frame slow camera push, sequential Japanese headline and 10-genre theme palette. No external stock media or personal data. Previous cycle820 changed 15–18s.
+- Local source and six tests saved in `quality/cycle821/`; synthetic-only CI in `.github/workflows/cycle821-photo-first-qa.yml`. CI uses an original procedural placeholder and 440Hz tone; it does NOT validate Japanese speech.
+- Local review MP4: 23.933333s, 1080x1920, 30fps/718 frames, H.264/AAC 48kHz; full decode PASS, audio MD5 unchanged `c8ab89827b140b5d28e6169711b03bf0`. Local MP4 SHA256 `b3fe32b8f609d12384be29ce7be814d685b5214436e812d54132e8877336c9a4`. 1.5s visual MAD 46.3164 vs cycle820; 4.5s 0.4073.
+- Market/video research task full transcripts and reference v33 MP4 remain inaccessible; 16-frame storyboard and prior summaries informed opening hook and image-first treatment. Japanese speech/caption semantic match, inherited rights, smartphone playback and employee approval NOT verified.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Next: independent speech/subtitle semantic verification and extend image-first storytelling beyond 0–3s; obtain original v33 for direct comparison.
