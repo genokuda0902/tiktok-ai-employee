@@ -62,3 +62,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local review MP4: 23.933333s, 1080x1920, 30fps/718 frames, H.264/AAC 48kHz; full decode PASS, audio MD5 unchanged `c8ab89827b140b5d28e6169711b03bf0`. Local MP4 SHA256 `b3fe32b8f609d12384be29ce7be814d685b5214436e812d54132e8877336c9a4`. 1.5s visual MAD 46.3164 vs cycle820; 4.5s 0.4073.
 - Market/video research task full transcripts and reference v33 MP4 remain inaccessible; 16-frame storyboard and prior summaries informed opening hook and image-first treatment. Japanese speech/caption semantic match, inherited rights, smartphone playback and employee approval NOT verified.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Next: independent speech/subtitle semantic verification and extend image-first storytelling beyond 0–3s; obtain original v33 for direct comparison.
+
+## Cycle822 checkpoint — 2026-10-25 (draft, not merged)
+- Branch `quality/cycle822-image-led-closing-20261025` based on cycle821 Draft PR #136; new renderer `quality/cycle822/editorial_close.py`, 10-genre QA tests and isolated CI.
+- 21–24s closing switches from illustrative 8→20 results to original-photo action CTA, preserving previous scenes and AAC in local review. Photo remains outside GitHub; CI uses a synthetic placeholder and 440Hz tone.
+- Local video and exact checksums are distributed as separate review package; do not mistake the CI synthetic artifact for Japanese speech.
+- Full TikTok market/video research transcripts and original v33 MP4 unavailable in this cycle; reference parity unverified.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, paid services, or unapproved merge. Next: Japanese speech-to-subtitle semantic verification and diverse rights-cleared visual assets.
