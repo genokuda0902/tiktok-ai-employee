@@ -1,0 +1,63 @@
+name: cycle810 synthetic result-growth QA (review only)
+on:
+  push:
+    branches: ['quality/cycle810-*']
+    paths:
+      - 'quality/cycle810/**'
+      - '.github/workflows/cycle810-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle810/**'
+      - '.github/workflows/cycle810-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          set -euxo pipefail
+          python -m pip install --disable-pip-version-check Pillow==11.3.0 imageio-ffmpeg==0.6.0
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/NotoSansJP-Bold.otf" "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/JP/NotoSansJP-Bold.otf"
+          test -s "$RUNNER_TEMP/NotoSansJP-Bold.otf"
+          echo "CYCLE810_FONT=$RUNNER_TEMP/NotoSansJP-Bold.otf" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/cycle810-bin"
+          ln -s "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/cycle810-bin/ffmpeg"
+          echo "$RUNNER_TEMP/cycle810-bin" >> "$GITHUB_PATH"
+          if ! command -v ffprobe; then timeout 180 sudo apt-get install -y --no-install-recommends ffmpeg; fi
+          command -v ffprobe
+      - name: Unit tests (ten genre configurations)
+        run: python -m unittest discover -s quality/cycle810 -p 'test_*.py' -v
+      - name: Make fully synthetic source (NO inherited Japanese voice)
+        run: |
+          set -euxo pipefail
+          mkdir -p "$RUNNER_TEMP/cycle810" review_output
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x10243b:s=1080x1920:r=30:d=23.933333' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=23.933333' \
+            -map 0:v:0 -map 1:a:0 -c:v libx264 -preset ultrafast -crf 32 \
+            -frames:v 718 -pix_fmt yuv420p -c:a aac -ar 48000 \
+            "$RUNNER_TEMP/cycle810/synthetic_source.mp4"
+      - name: Render synthetic review and full A/V decode
+        run: |
+          set -euxo pipefail
+          python quality/cycle810/result_growth.py \
+            --source "$RUNNER_TEMP/cycle810/synthetic_source.mp4" \
+            --output review_output/cycle810_SYNTHETIC_QA_ONLY.mp4
+          ffmpeg -v error -xerror -i review_output/cycle810_SYNTHETIC_QA_ONLY.mp4 -f null -
+          python -c "import json; q=json.load(open('review_output/qa.json')); assert q['posting_allowed'] is False and q['fictional_data'] is True and q['frames']==718"
+      - name: Upload synthetic-only artifact (7 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle810-synthetic-video-and-qa-review-only
+          path: |
+            review_output/cycle810_SYNTHETIC_QA_ONLY.mp4
+            review_output/qa.json
+          retention-days: 7
