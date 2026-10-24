@@ -38,3 +38,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - The AI-work CI workflow generates its own Japanese Open JTalk narration, retains 24 Japanese caption states, and is designed to validate full decode/audio-bitstream equality; check actual Actions status before claiming CI success.
 - TikTok市場分析/動画研究 full transcripts and original v33 MP4 unavailable; user-provided 16-panel storyboard accessible in file library. No v33 parity claim.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Speech naturalness, word-level caption sync, rights and smartphone testing, employee approval still pending. No auto-post, paid services, or merge.
+
+
+## Cycle825 checkpoint — 2026-10-25 JST (Draft, not merged)
+- Main checked at 18e084c38db0dc55db7dfc0532b9451b1167f2aa; new branch quality/cycle825-image-led-semantic-gate-20261025 stacked on cycle824 PR #140. No merge or production posting.
+- Added quality/cycle825/image_scene825.py, audit825.py, eight unit tests and an isolated CI workflow. Ten genre IDs; provenance manifest fails closed on private or unapproved-for-review images. Script-to-caption equality gate compares all 8 TTS input sentences with 24 ASS states; DOES NOT verify actual spoken audio, pronunciation or word-level sync.
+- Local sales_business cycle825 review MP4 changes 6.47–9.45s from a flat KPI card to a new previously generated generic laptop/desk photo. Output 23.933333s, 1080x1920, H.264/30fps/718 frames, AAC/48kHz; full A/V decode PASS; inherited audio MD5 unchanged 8d0baabf50866471846346e7159046e2; output SHA256 3cf5dd5a286ce3f896b3df40e62218ba2d90841167123fb9fc6ebf291f361ce5. Eight local tests PASS. The image and inherited audio are not committed or uploaded to public GitHub.
+- CI builds separate ai_work Japanese Open JTalk review MP4 using original procedural art. Its actual status/artifact must be checked, not assumed.
+- Research summaries accessed; full TikTok市場分析 and TikTok動画研究 transcripts unavailable. 16-panel user storyboard found. Original v33 reference MP4 unavailable this cycle.
+- Remaining gates: original-v33 comparison, actual Japanese listening/transcription and word-level caption alignment, rights/publication approval, smartphone playback, employee approval. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
