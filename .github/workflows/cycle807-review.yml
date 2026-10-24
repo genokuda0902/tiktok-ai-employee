@@ -1,0 +1,65 @@
+name: cycle807 animated KPI evidence review (not approved)
+on:
+  push:
+    branches: ['quality/cycle807-*']
+    paths:
+      - 'quality/cycle807/**'
+      - '.github/workflows/cycle807-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle807/**'
+      - '.github/workflows/cycle807-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  render-japanese-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free dependencies, font and FFmpeg
+        run: |
+          set -euxo pipefail
+          python -m pip install --disable-pip-version-check Pillow==11.3.0 imageio-ffmpeg==0.6.0
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/NotoSansJP-Bold.otf" "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/JP/NotoSansJP-Bold.otf"
+          test -s "$RUNNER_TEMP/NotoSansJP-Bold.otf"
+          echo "CYCLE807_FONT=$RUNNER_TEMP/NotoSansJP-Bold.otf" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/cycle807-bin"
+          ln -s "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/cycle807-bin/ffmpeg"
+          echo "$RUNNER_TEMP/cycle807-bin" >> "$GITHUB_PATH"
+          if ! command -v ffprobe; then
+            timeout 180 sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+          command -v ffprobe
+      - name: Test ten genre evidence renderer and safety checks
+        run: python -m unittest discover -s quality/cycle807 -p 'test_*.py' -v
+      - name: Retrieve cycle806 rights-unapproved Japanese review video
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p "$RUNNER_TEMP/cycle807-input"
+          gh run download 40052191577 --repo genokuda0902/tiktok-ai-employee --name cycle806-JAPANESE-PACING-REVIEW-ONLY-NOT-APPROVED --dir "$RUNNER_TEMP/cycle807-input"
+          SOURCE="$(find "$RUNNER_TEMP/cycle807-input" -type f -name 'cycle806_BUSINESS_PACING_REVIEW_ONLY.mp4' -print -quit)"
+          test -n "$SOURCE"
+          test -s "$SOURCE"
+          echo "CYCLE807_SOURCE=$SOURCE" >> "$GITHUB_ENV"
+      - name: Render full 23.9-second Japanese-narrated review MP4
+        run: |
+          set -euxo pipefail
+          python quality/cycle807/evidence_kpi.py --source "$CYCLE807_SOURCE" --output review_output/cycle807_KPI_EVIDENCE_REVIEW_ONLY.mp4
+          ffmpeg -v error -xerror -i review_output/cycle807_KPI_EVIDENCE_REVIEW_ONLY.mp4 -f null -
+          test -s review_output/qa.json
+      - name: Upload unapproved review video for manual QA only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle807-JAPANESE-KPI-REVIEW-ONLY-NOT-APPROVED
+          path: |
+            review_output/cycle807_KPI_EVIDENCE_REVIEW_ONLY.mp4
+            review_output/qa.json
+          retention-days: 7
