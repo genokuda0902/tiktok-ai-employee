@@ -1,0 +1,19 @@
+name: cycle810-caption-contract
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle810/**'
+      - '.github/workflows/cycle810-caption-contract.yml'
+  workflow_dispatch:
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run six zero-dependency tests
+        run: python quality/cycle810/test_kinetic_captions.py
+      - name: Verify review-only gate
+        run: python -c "import runpy; c=runpy.run_path('quality/cycle810/kinetic_captions.py'); assert not c['AUTO_POST'] and not c['EMPLOYEE_APPROVAL']"
