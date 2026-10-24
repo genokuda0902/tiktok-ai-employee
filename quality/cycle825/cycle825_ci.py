@@ -95,6 +95,7 @@ def verify(root:Path):
       'aac_48khz':a['codec_name']=='aac' and a['sample_rate']=='48000',
       '24_caption_states':ass.count('Dialogue: 0,')==24,
       'shared_action_rail':(HERE/'action_rail.py').exists() and len(rail.PALETTES)==10,
+      'rail_survives_caption_cleaning':Image.open(root/'output'/'clean_scene_01.png').convert('RGB').getpixel((80,1370))==(56,198,192),
       'eight_distinct_actions':len(set(rail.ACTIONS))==8,
       'eight_distinct':all(ImageChops.difference(frames[i],frames[i+1]).getbbox() for i in range(7)),
       'full_decode':subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(mp4),'-map','0:v:0','-f','null','-'],capture_output=True).returncode==0,
