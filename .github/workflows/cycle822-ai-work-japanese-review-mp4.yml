@@ -1,0 +1,46 @@
+name: cycle822-ai-work-japanese-review-mp4
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle822/**'
+      - '.github/workflows/cycle822-ai-work-japanese-review-mp4.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ai-work-japanese-video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline free media and Japanese TTS
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Test 10-genre script catalog
+        run: python -m unittest discover -s quality/cycle821 -p 'test_*.py' -v
+      - name: Generate AI-work original editorial slides and timed script
+        run: python quality/cycle822/cycle822_ci.py --root _cycle822_ci --step prepare
+      - name: Generate Japanese voice offline with Open JTalk
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle822_ci
+      - name: Render review-only 1080x1920 Japanese MP4
+        run: python quality/cycle822/cycle822_ci.py --root _cycle822_ci --step render
+      - name: Verify audio video caption frames and genre
+        run: python quality/cycle822/cycle822_ci.py --root _cycle822_ci --step verify
+      - name: Upload review-only MP4 and technical QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle822-AI-WORK-JAPANESE-MP4-HUMAN-REVIEW
+          path: |
+            _cycle822_ci/output/cycle822_AI_WORK_JAPANESE_HUMAN_REVIEW.mp4
+            _cycle822_ci/output/qa822.json
+            _cycle822_ci/source/genre_proof822.json
+            _cycle822_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle822_ci/NOT_FOR_PUBLICATION.txt
+            _cycle822_ci/tts_qa819.json
+          if-no-files-found: error
+          retention-days: 7
