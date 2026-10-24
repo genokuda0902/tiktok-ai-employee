@@ -59,6 +59,10 @@ def overlay_image(index: int, genre: str, font_path: str = FONT) -> Image.Image:
     d.text((135, 1647), '※ 数値・画面は説明用の架空例です', font=small, fill='#c7d5e0')
     return canvas
 
+def overlay_framerate(nframes: int) -> str:
+    if nframes < 8: raise ValueError('Need at least 8 frames')
+    return f'{FPS*len(SCENE_TITLES)}/{nframes}'
+
 def probe(path: Path):
     p = subprocess.run(['ffprobe', '-v', 'error', '-show_streams', '-show_format',
                         '-of', 'json', str(path)], capture_output=True, text=True, check=True)
@@ -76,14 +80,16 @@ def render(source: Path, output: Path, genre: str = 'sales_business',
         raise ValueError('Expected 1080x1920 video with audio')
     if vs.get('avg_frame_rate') != '30/1':
         raise ValueError('Expected 30fps source')
+    nframes = int(vs.get('nb_frames') or round(float(info['format']['duration']) * FPS))
+    duration = nframes / FPS
     output.parent.mkdir(parents=True, exist_ok=True)
     temp = output.parent / 'overlays'; temp.mkdir(exist_ok=True)
     for i in range(8):
         overlay_image(i, genre, font_path).save(temp / f'overlay_{i:02}.png')
     overlay_movie = output.parent / 'overlay818.mov'
     subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error',
-        '-framerate', '1/3', '-start_number', '0', '-i', str(temp / 'overlay_%02d.png'),
-        '-vf', 'fps=30', '-t', str(718 / FPS), '-c:v', 'qtrle', '-pix_fmt', 'argb',
+        '-framerate', overlay_framerate(nframes), '-start_number', '0', '-i', str(temp / 'overlay_%02d.png'),
+        '-vf', 'fps=30', '-t', str(duration), '-c:v', 'qtrle', '-pix_fmt', 'argb',
         str(overlay_movie)], check=True)
     subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error',
         '-i', str(source), '-i', str(overlay_movie),
@@ -96,6 +102,7 @@ def render(source: Path, output: Path, genre: str = 'sales_business',
     report = {
         'cycle': 818, 'genre': genre, 'scene_count': 8, 'genre_count': 10,
         'width': outv['width'], 'height': outv['height'],
+        'source_frames': nframes, 'source_duration_s': duration,
         'synthetic_source': synthetic_source,
         'japanese_voice_content_verified': False,
         'word_level_caption_alignment_verified': False,
