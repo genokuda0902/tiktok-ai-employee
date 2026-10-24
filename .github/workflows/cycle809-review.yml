@@ -1,0 +1,22 @@
+name: cycle809-review-contract
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle809/**'
+      - '.github/workflows/cycle809-review.yml'
+  workflow_dispatch:
+jobs:
+  contract-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source Pillow for assembler import
+        run: python -m pip install --disable-pip-version-check Pillow
+      - name: Run eight review-only tests
+        run: |
+          python -c "import runpy; import pathlib; paths=['quality/cycle809/test_contract.py','quality/cycle809/test_assemble.py']; tests=[v for p in paths for k,v in runpy.run_path(p).items() if k.startswith('test_')]; [t() for t in tests]; print(len(tests), 'tests PASS')"
+      - name: Confirm posting gate
+        run: python -c "import runpy; c=runpy.run_path('quality/cycle809/contract.py'); assert not c['AUTO_POST'] and not c['EMPLOYEE_APPROVAL']"
