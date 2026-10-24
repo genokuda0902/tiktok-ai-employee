@@ -1,0 +1,40 @@
+{
+  "genre": "sales_business",
+  "voice_engine": "Open JTalk",
+  "voice_model": "nitech_jp_atr503_m001.htsvoice",
+  "status": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "sentences": [
+    {
+      "text": "仕事ができる人は、質問が違う。",
+      "seconds": 3.355
+    },
+    {
+      "text": "まず、目指すゴールを確認する。",
+      "seconds": 3.085
+    },
+    {
+      "text": "次に、今の数字を確かめる。",
+      "seconds": 3.025
+    },
+    {
+      "text": "そして、理想との差を一つに絞る。",
+      "seconds": 3.285
+    },
+    {
+      "text": "原因には、なぜを三回重ねる。",
+      "seconds": 3.265
+    },
+    {
+      "text": "対策は、今日できる行動に変える。",
+      "seconds": 3.36
+    },
+    {
+      "text": "結果を見て、また修正する。",
+      "seconds": 2.97
+    },
+    {
+      "text": "小さな改善が、強いチームをつくる。",
+      "seconds": 3.495
+    }
+  ]
+}
