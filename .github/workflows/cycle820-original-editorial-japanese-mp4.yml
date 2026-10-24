@@ -1,0 +1,47 @@
+name: cycle820-original-editorial-japanese-mp4
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle820/**'
+      - '.github/workflows/cycle820-original-editorial-japanese-mp4.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-editorial-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline video, Japanese voice, and font tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Verify 10 genres, visual sources and caption matching
+        run: |
+          python -m unittest discover -s quality/cycle820 -p 'test_*.py' -v
+          python -m unittest discover -s quality/cycle819 -p 'test_*.py' -v
+      - name: Generate original portrait-free 1080x1920 artwork
+        run: python quality/cycle820/make_art820.py --root _cycle820_ci --genre sales_business
+      - name: Generate licensed Japanese narration offline
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle820_ci
+      - name: Render complete Japanese voice and 24-caption MP4
+        run: python quality/cycle818/render818_ci.py --root _cycle820_ci --output _cycle820_ci/output/cycle820_ORIGINAL_ART_JAPANESE_VOICE_HUMAN_REVIEW.mp4
+      - name: Verify 1080x1920, 775 frames, full audio, CTA and decode
+        run: python quality/cycle818/validate818_ci.py --mp4 _cycle820_ci/output/cycle820_ORIGINAL_ART_JAPANESE_VOICE_HUMAN_REVIEW.mp4 --ass _cycle820_ci/output/captions818.ass
+      - name: Upload review-only MP4 and attribution
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle820-ORIGINAL-ART-JAPANESE-VOICE-HUMAN-REVIEW-NOT-APPROVED
+          path: |
+            _cycle820_ci/output/cycle820_ORIGINAL_ART_JAPANESE_VOICE_HUMAN_REVIEW.mp4
+            _cycle820_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle820_ci/source/asset_provenance.json
+            _cycle820_ci/tts_qa819.json
+            _cycle820_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
