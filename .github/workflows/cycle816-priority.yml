@@ -1,0 +1,61 @@
+name: cycle816 priority reveal synthetic review QA
+on:
+  push:
+    branches:
+      - 'quality/cycle816-*'
+  pull_request:
+    branches:
+      - 'quality/cycle815-kpi-gap-focus-20261024'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free renderer prerequisites
+        run: |
+          python -m pip install --disable-pip-version-check pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends fonts-noto-cjk ffmpeg
+      - name: Test 10-genre privacy-safe animation
+        run: PYTHONPATH=quality/cycle816 python -m unittest discover -s quality/cycle816 -p 'test_*.py' -v
+      - name: Render synthetic MP4 (NOT Japanese narration)
+        run: |
+          mkdir -p review_output
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x061b2c:s=1080x1920:r=30' \
+            -f lavfi -i 'sine=frequency=220:sample_rate=48000' \
+            -t 23.933333 -c:v libx264 -preset ultrafast -crf 34 \
+            -pix_fmt yuv420p -c:a aac -b:a 96k \
+            review_output/cycle816_synthetic_source.mp4
+          python quality/cycle816/priority_reveal.py \
+            --source review_output/cycle816_synthetic_source.mp4 \
+            --output review_output/cycle816_SYNTHETIC_REVIEW_ONLY.mp4 \
+            --genre sales_business --fictional-data --synthetic-source
+          ffmpeg -hide_banner -loglevel error -xerror \
+            -i review_output/cycle816_SYNTHETIC_REVIEW_ONLY.mp4 -f null -
+          python - <<'PY'
+          import json
+          q=json.load(open('review_output/cycle816_qa.json'))
+          assert q['cycle']==816 and q['frames']==718
+          assert q['aac_bitstream_identical'] and q['full_av_decode_pass']
+          assert q['synthetic_source'] is True
+          assert q['japanese_narration_inherited'] is False
+          assert q['publication_approved'] is False and q['auto_post'] is False
+          assert q['independent_asr_verified'] is False
+          print('SYNTHETIC CI QA PASS; Japanese voice NOT tested here')
+          PY
+      - name: Upload synthetic-only review video and QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle816-synthetic-priority-review
+          path: |
+            review_output/cycle816_SYNTHETIC_REVIEW_ONLY.mp4
+            review_output/cycle816_qa.json
+          retention-days: 7
