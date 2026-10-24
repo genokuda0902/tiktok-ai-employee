@@ -1,0 +1,64 @@
+name: cycle806 kinetic Japanese captions review
+on:
+  push:
+    branches: ['quality/cycle806-*']
+    paths:
+      - 'quality/cycle806/**'
+      - '.github/workflows/cycle806-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle806/**'
+      - '.github/workflows/cycle806-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  render-review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free dependencies and font; no apt refresh
+        run: |
+          set -euxo pipefail
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          command -v ffmpeg
+          command -v ffprobe
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/NotoSansJP-Bold.otf" "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/JP/NotoSansJP-Bold.otf"
+          test -s "$RUNNER_TEMP/NotoSansJP-Bold.otf"
+          sudo mkdir -p /usr/share/fonts/truetype/noto
+          sudo cp "$RUNNER_TEMP/NotoSansJP-Bold.otf" /usr/share/fonts/truetype/noto/NotoSansCJKjp-Bold.otf
+      - name: Retrieve cycle805 reviewed-source MP4 (no third-party images)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          mkdir -p "$RUNNER_TEMP/cycle805_base"
+          gh run download 40048007154 --repo genokuda0902/tiktok-ai-employee --name cycle805-NEW-JAPANESE-VOICE-REVIEW-ONLY-NOT-APPROVED --dir "$RUNNER_TEMP/cycle805_base"
+          test -s "$RUNNER_TEMP/cycle805_base/cycle805_BUSINESS_NEW_VOICE_REVIEW_ONLY.mp4"
+          echo "CYCLE805_BASE=$RUNNER_TEMP/cycle805_base/cycle805_BUSINESS_NEW_VOICE_REVIEW_ONLY.mp4" >> "$GITHUB_ENV"
+      - name: Test 10-genre and caption safety contract
+        run: python -m unittest discover -s quality/cycle806 -p 'test_*.py' -v
+      - name: Render review-only 1080x1920 Japanese MP4
+        run: |
+          set -euxo pipefail
+          python quality/cycle806/overlay806.py --base "$CYCLE805_BASE" --timing quality/cycle806/voice_timing.json --output review_output/cycle806_KINETIC_MOTION_HUMAN_REVIEW.mp4
+          ffmpeg -hide_banner -v error -xerror -i review_output/cycle806_KINETIC_MOTION_HUMAN_REVIEW.mp4 -f null -
+          test -s review_output/qa806.json
+          ffmpeg -v error -i "$CYCLE805_BASE" -map 0:a:0 -c:a copy -f adts - | sha256sum > review_output/previous_audio.sha256
+          ffmpeg -v error -i review_output/cycle806_KINETIC_MOTION_HUMAN_REVIEW.mp4 -map 0:a:0 -c:a copy -f adts - | sha256sum > review_output/new_audio.sha256
+          diff review_output/previous_audio.sha256 review_output/new_audio.sha256
+      - name: Save human-review-only MP4 and QA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle806-KINETIC-JAPANESE-REVIEW-ONLY-NOT-APPROVED
+          path: |
+            review_output/cycle806_KINETIC_MOTION_HUMAN_REVIEW.mp4
+            review_output/qa806.json
+            review_output/previous_audio.sha256
+            review_output/new_audio.sha256
+          retention-days: 7
