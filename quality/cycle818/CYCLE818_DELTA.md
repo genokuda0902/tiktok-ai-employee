@@ -11,14 +11,14 @@ Requires free Python Pillow, FFmpeg, Noto Sans CJK. Source is a locally approved
     PYTHONPATH=quality/cycle818 python -m unittest discover -s quality/cycle818 -p 'test_*.py' -v
     python quality/cycle818/localize.py --source /private/review817.mp4 --output /private/review818.mp4 --genre sales_business
 
-The script validates 10 genre names/colors, creates eight opaque localized overlays, muxes the output with audio stream copy, and writes qa818.json. Other genres are configuration-ready but not individually rendered as complete videos.
+The script validates 10 genre names/colors, adapts scene duration to 718/775 or other 30fps frame counts, creates eight opaque localized overlays, muxes the output with audio stream copy, and writes qa818.json. Other genres are configuration-ready but not individually rendered as complete videos.
 
 ## Local evidence
-- Tests 7/7 PASS.
+- Tests 8/8 PASS.
 - MP4 1080x1920, H.264 30fps, 718 frames, 23.933333s; AAC 48kHz mono.
 - Full audio/video decode PASS.
 - Input/output AAC packet MD5 both 8d0baabf50866471846346e7159046e2.
-- Output SHA256: 2fb8c40ae869e67844951dc7a17d8b8952faae01a820b3697799cb60b86b3a9f.
+- Output SHA256: e74d3ebac022725f5709603aa1a3392160e00f7994cacb8be1016831ae0681a5.
 - At 0.5s, changed header/scene-label mean pixel difference 9.91, content 1.24, footer 14.13; difference includes lossy video re-encode.
 - Actual private MP4 is only in the ChatGPT conversation sandbox, NOT a GitHub artifact. CI artifact is a separate synthetic tone-only MP4.
 - Japanese speech content and word-level caption alignment NOT independently verified. Rights, real-device playback and employee approval NOT verified.
