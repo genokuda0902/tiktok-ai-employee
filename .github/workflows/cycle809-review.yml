@@ -1,0 +1,19 @@
+name: cycle809-review-contract
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle809/**'
+      - '.github/workflows/cycle809-review.yml'
+  workflow_dispatch:
+jobs:
+  contract-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run review-only 10-genre contract checks
+        run: python -m unittest discover -s quality/cycle809 -p 'test_contract.py'
+      - name: Confirm posting gate
+        run: python -c "import runpy; c=runpy.run_path('quality/cycle809/contract.py'); assert not c['AUTO_POST'] and not c['EMPLOYEE_APPROVAL']"
