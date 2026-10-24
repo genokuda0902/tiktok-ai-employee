@@ -58,3 +58,6 @@ HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
 No automatic TikTok posting, employee delivery, merge, or paid services.
 Next: independent Japanese ASR/caption verification, reference v33 direct
 comparison, approved image-first visual assets.
+
+## cycle814 stacked follow-up (2026-10-24, review only)
+This branch improves the real Calc capture readability: crop original-resolution pixels, ease from overview to 1.52x target-cell zoom, pan to formula result and hold the computed 8 for inspection. Callout timing follows the real local screen recording. The code now writes `cycle814_qa.json` and the synthetic-only CI workflow emits `cycle814_SYNTHETIC_REVIEW_ONLY.mp4`. Run the same private command above but use the cycle813 output as `--source` and name the result `cycle814_CALC_FOCUS_REVIEW_ONLY.mp4`. Thirteen tests cover ten genre presets, crop safety and no automatic posting. See `CYCLE814_DELTA.md` for immutable QA hashes and limitations. No v33 quality parity, rights approval, independent ASR or employee publication approval.
