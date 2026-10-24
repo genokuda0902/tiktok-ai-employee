@@ -65,7 +65,7 @@ def diagram(im,i,accent):
   center(d,(540,1080),'目標を言葉にする',font(39),ink)
  elif i==2:
   d.line((180,1020,890,1020),fill='#B9C9C9',width=6)
-  vals=[210,290,360,455];labs=['1','2','3','4']
+  vals=[190,260,325,390];labs=['1','2','3','4']
   for j,h in enumerate(vals):
    x=200+j*178;rect(d,(x,1007-h,x+114,1007),20,accent if j==3 else '#B4D8D4')
    center(d,(x+57,1047),labs[j],font(33),muted)
