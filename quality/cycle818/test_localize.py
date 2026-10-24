@@ -1,5 +1,5 @@
 import unittest
-from localize import GENRE_ACCENTS, GENRE_LABELS, SCENE_TITLES, check_config, overlay_image
+from localize import GENRE_ACCENTS, GENRE_LABELS, SCENE_TITLES, check_config, overlay_image, overlay_framerate
 
 class LocalizationTests(unittest.TestCase):
     def test_ten_genres(self):
@@ -22,6 +22,10 @@ class LocalizationTests(unittest.TestCase):
         for i in range(8):
             im = overlay_image(i, 'sales_business')
             self.assertEqual(im.getpixel((540, 335))[3], 255)
+    def test_variable_length(self):
+        self.assertEqual(overlay_framerate(718), '240/718')
+        self.assertEqual(overlay_framerate(775), '240/775')
+        with self.assertRaises(ValueError): overlay_framerate(7)
     def test_japanese_titles(self):
         for s in SCENE_TITLES:
             self.assertTrue(any(ord(c) > 127 for c in s))
