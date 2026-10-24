@@ -118,7 +118,7 @@ def audio_hash(path):
         run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(path),'-map','0:a:0','-c:a','copy','-f','adts',tmp.name])
         return sha256(tmp.name)
 
-def render(source,output,genre='sales_business'):
+def render(source,output,genre='sales_business',synthetic_source=False):
     validate(genre)
     source,output=Path(source),Path(output)
     if not source.is_file(): raise FileNotFoundError(source)
@@ -147,7 +147,8 @@ def render(source,output,genre='sales_business'):
         'duration_seconds':round(float(p['format']['duration']),6),
         'hook_frames':HOOK_FRAMES,'hook_duration_seconds':HOOK_FRAMES/FPS,
         'aac_bitstream_identical':True,'aac_adts_sha256':after,
-        'japanese_audio_inherited':True,'japanese_voice_semantics_verified':False,
+        'synthetic_source':synthetic_source,'japanese_audio_inherited':not synthetic_source,
+        'japanese_voice_semantics_verified':False,
         'caption_region_outside_overlay':True,'caption_semantics_verified':False,
         'full_av_decode_pass':True,'smartphone_verified':False,
         'rights_approved':False,'publication_approved':PUBLICATION_APPROVED,
@@ -160,5 +161,6 @@ if __name__=='__main__':
     parser.add_argument('--source',required=True)
     parser.add_argument('--output',required=True)
     parser.add_argument('--genre',default='sales_business',choices=tuple(GENRE_ACCENTS))
+    parser.add_argument('--synthetic-source',action='store_true',help='CI synthetic tone: not Japanese narration')
     args=parser.parse_args()
-    print(json.dumps(render(args.source,args.output,args.genre),ensure_ascii=False,indent=2))
+    print(json.dumps(render(args.source,args.output,args.genre,args.synthetic_source),ensure_ascii=False,indent=2))
