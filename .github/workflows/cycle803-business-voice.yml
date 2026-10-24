@@ -1,0 +1,35 @@
+name: cycle803 free Japanese business voice
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle803/**'
+      - '.github/workflows/cycle803-business-voice.yml'
+  workflow_dispatch:
+jobs:
+  generate-business-voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free Open JTalk voice and FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001 ffmpeg
+      - name: Test narration and 10 genre contract
+        run: cd quality/cycle803 && python -m unittest -v test_contract.py
+      - name: Generate fresh Japanese narration
+        run: python quality/cycle803/tts_ci.py
+      - name: Verify audio decode
+        run: |
+          test -s quality/cycle803/out/cycle803_business_japanese.m4a
+          ffmpeg -v error -xerror -i quality/cycle803/out/cycle803_business_japanese.m4a -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle803-business-japanese-voice-review
+          path: |
+            quality/cycle803/out/cycle803_business_japanese.m4a
+            quality/cycle803/out/voice_timing.json
+          retention-days: 7
