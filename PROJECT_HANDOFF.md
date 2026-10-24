@@ -44,3 +44,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Replaces only 18–21s (90 frames) of cycle818 private review video: original procedural desk/paper chart, 1.5% push-in, ten-genre colors. No reference/stock assets or personal data included. Local 9/9 tests PASS; 23.933s H.264/AAC 1080×1920 full decode PASS, AAC MD5 unchanged (8d0baabf50866471846346e7159046e2). Local SHA256 f77c61ec3b31be160084f0546f27fa4934b66b84efdaad85ecd919a0f229cfb0.
 - Synthetic CI generates a tone, not Japanese speech; its status/artifact must be checked at latest PR head before claiming success. Private MP4 and inherited voice are NOT committed.
 - User storyboard inspected; research full transcripts and v33 original MP4 inaccessible. Voice/caption semantic verification, inherited rights, smartphone playback, and employee approval still pending. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Next: semantic audio/subtitle verification and approved image-first footage, not further flat chart animation.
+
+
+## cycle820 checkpoint — 2026-10-25 JST (REVIEW ONLY)
+- Stacked Draft PR #134: https://github.com/genokuda0902/tiktok-ai-employee/pull/134 (base unmerged PR #132; no main merge). main at check 18e084c38db0dc55db7dfc0532b9451b1167f2aa.
+- Original animated completed action-plan card replaces only 15–18s (90 frames) of cycle819 private review MP4. Clear 担当 / 行動 / 期限, deadline 今日の稼働終了まで. Ten genre colors and fail-closed missing-field tests.
+- Local 11 tests PASS; 23.933333s 1080x1920/30fps H.264/AAC; full A/V decode PASS; inherited AAC bitstream MD5 identical 8d0baabf50866471846346e7159046e2; local MP4 SHA256 9208ae3689d9c10d1f2f95f4f4dfd2fbbf00922b032a612933e16339f92d247c.
+- CI at commit 188c51cdfa208e4e635719ee3ff9ff58d377c023: push SUCCESS https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40109976201 ; PR SUCCESS https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40109991759 ; synthetic artifact 12566370866 downloaded, ZIP tested and H.264/AAC full decoded. CI audio is synthetic tone, NOT Japanese speech.
+- User storyboard inspected; full research task transcripts and original v33 MP4 inaccessible. Japanese speech/caption semantic match, inherited rights, smartphone playback and employee approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, charge or auto-post.
+- Next: independently verify Japanese voice and subtitle semantic alignment, acquire approved high-quality image-first media, and compare original v33 if accessible.
