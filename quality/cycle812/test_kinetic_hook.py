@@ -4,6 +4,11 @@ from kinetic_hook import (draw_frame, validate, GENRE_ACCENTS, STAGES,
                           HOOK_FRAMES, AUTO_POST, PUBLICATION_APPROVED)
 
 class KineticHookTests(unittest.TestCase):
+    def test_synthetic_source_is_explicit(self):
+        from pathlib import Path
+        source=Path(__file__).with_name("kinetic_hook.py").read_text()
+        self.assertIn("--synthetic-source",source)
+        self.assertIn("japanese_audio_inherited':not synthetic_source",source)
     def test_ten_genres(self):
         self.assertEqual(len(GENRE_ACCENTS),10)
         for genre in GENRE_ACCENTS: self.assertTrue(validate(genre).startswith('#'))
