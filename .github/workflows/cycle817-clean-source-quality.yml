@@ -3,7 +3,9 @@ on:
   pull_request:
     paths:
       - 'quality/cycle817/**'
+      - 'quality/cycle818/**'
       - '.github/workflows/cycle817-clean-source-quality.yml'
+      - '.github/workflows/cycle818-synthetic-mp4-artifact.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -29,5 +31,23 @@ jobs:
         run: |
           ffmpeg -hide_banner -version | head -n 1
           ffprobe -hide_banner -version | head -n 1
+
+      - name: Cycle818 unit tests
+        run: python -m unittest discover -s quality/cycle818 -p 'test_*.py' -v
+      - name: Cycle818 generate synthetic QA-only assets
+        run: python quality/cycle818/make_fixture818.py --root _cycle818_ci
+      - name: Cycle818 full MP4 render (synthetic tone; not Japanese narration)
+        run: python quality/cycle818/render818_ci.py --root _cycle818_ci --output _cycle818_ci/output/cycle818_SYNTHETIC_NOT_FOR_PUBLICATION.mp4
+      - name: Cycle818 decode and caption QA
+        run: python quality/cycle818/validate818_ci.py --mp4 _cycle818_ci/output/cycle818_SYNTHETIC_NOT_FOR_PUBLICATION.mp4 --ass _cycle818_ci/output/captions818.ass
+      - name: Upload cycle818 synthetic MP4 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle818-ci-synthetic-mp4-NOT-FOR-PUBLICATION
+          path: |
+            _cycle818_ci/output/cycle818_SYNTHETIC_NOT_FOR_PUBLICATION.mp4
+            _cycle818_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
 # This CI verifies code only. Real source assets and completed MP4 are not in
 # the repository because media rights and employee publication approval are pending.
