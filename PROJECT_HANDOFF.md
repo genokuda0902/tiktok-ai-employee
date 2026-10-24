@@ -47,3 +47,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - CI builds separate ai_work Japanese Open JTalk review MP4 using original procedural art. Its actual status/artifact must be checked, not assumed.
 - Research summaries accessed; full TikTok市場分析 and TikTok動画研究 transcripts unavailable. 16-panel user storyboard found. Original v33 reference MP4 unavailable this cycle.
 - Remaining gates: original-v33 comparison, actual Japanese listening/transcription and word-level caption alignment, rights/publication approval, smartphone playback, employee approval. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+
+
+## Cycle826 checkpoint — 2026-10-25 JST (Draft, NOT MERGED)
+- Latest main confirmed: 18e084c38db0dc55db7dfc0532b9451b1167f2aa. Based on open PR #141, no merge. Other open PR #142 is parallel and NOT incorporated.
+- Improvement vs cycle825 AI-work MP4: replace scene 4 at 9.687–12.917s (97 frames) from static instruction-card to fictional animated typing → execute → result preview. Preserve existing Japanese AAC bitstream, 24 caption states and lower caption region. 10 genre palette variants share the same compositor; only AI-work finished MP4 tested.
+- Local source: prior cycle825 CI artifact, 25.833333s 1080×1920 H264/30fps 775 frames AAC/48kHz. Local renderer 8 tests PASS; full A/V decode PASS; exact AAC packet MD5 unchanged; new MP4 SHA256 cf518c80313b2e1e1baa4602faf1293877f1fdfdc512a3044aed95f15e680b25. Artifact is in user conversation, NOT committed to public GitHub.
+- Added quality/cycle826/interaction826.py, test_interaction826.py, and .github/workflows/cycle826-live-prompt-japanese-review.yml. CI generates a SEPARATE new offline Japanese Open JTalk MP4 with attribution, checks script/24 ASS captions and audio bitstream identity, uploads a 7-day review artifact. Confirm actual Actions outcome separately; code commit alone does not prove CI success.
+- TikTok市場分析 and TikTok動画研究 full chat/task bodies unavailable; past research summaries consulted. User-provided 16-panel storyboard visually inspected; original v33 MP4 unavailable for direct comparison. Do not claim reference equivalence.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Actual speech recognition/naturalness, word-level caption sync, voice/image release rights, smartphone playback, employee approval remain pending. No paid API, auto-post or unauthorized merge.
