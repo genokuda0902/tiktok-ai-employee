@@ -1,0 +1,44 @@
+name: cycle803 original CTA review CI
+on:
+  push:
+    branches: ['quality/cycle803-*']
+    paths:
+      - 'quality/cycle803/**'
+      - '.github/workflows/cycle803-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle803/**'
+      - '.github/workflows/cycle803-review.yml'
+permissions:
+  contents: read
+jobs:
+  original-synthetic-cta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free font and Python dependencies (no apt)
+        run: |
+          python -m pip install --disable-pip-version-check Pillow==11.3.0 imageio-ffmpeg==0.6.0
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/NotoSansJP-Bold.otf" "https://raw.githubusercontent.com/notofonts/noto-cjk/main/Sans/SubsetOTF/JP/NotoSansJP-Bold.otf"
+          test -s "$RUNNER_TEMP/NotoSansJP-Bold.otf"
+          echo "CYCLE803_FONT=$RUNNER_TEMP/NotoSansJP-Bold.otf" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/ci-bin"
+          ln -s "$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')" "$RUNNER_TEMP/ci-bin/ffmpeg"
+          echo "$RUNNER_TEMP/ci-bin" >> "$GITHUB_PATH"
+      - name: Test 10-genre safety and original artwork
+        run: python -m unittest discover -s quality/cycle803 -p 'test_*.py' -v
+      - name: Render original CTA with synthetic tone ONLY
+        run: |
+          mkdir -p review_output/cycle803
+          python quality/cycle803/cinematic_cta.py --frames review_output/cycle803/frames --output review_output/cycle803/CTA_SYNTHETIC_TONE_NOT_JAPANESE.mp4 --synthetic-tone-ci --review-only
+          ffmpeg -hide_banner -v error -i review_output/cycle803/CTA_SYNTHETIC_TONE_NOT_JAPANESE.mp4 -f null -
+          ffmpeg -hide_banner -i review_output/cycle803/CTA_SYNTHETIC_TONE_NOT_JAPANESE.mp4 2>&1 | grep 'Stream #'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle803-original-CTA-SYNTHETIC-TONE-NOT-JAPANESE
+          path: review_output/cycle803/CTA_SYNTHETIC_TONE_NOT_JAPANESE.mp4
+          retention-days: 7
