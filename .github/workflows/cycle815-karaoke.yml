@@ -1,0 +1,24 @@
+name: cycle815 karaoke QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle815/**'
+      - '.github/workflows/cycle815-karaoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  subtitle-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate Python source
+        run: python -m compileall -q quality/cycle815
+      - name: Verify 24 caption states and 10 genres
+        run: cd quality/cycle815 && python -m unittest -v test_render815.py
