@@ -37,3 +37,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local 8/8 tests PASS; private review MP4 1080x1920/30fps/718 frames/23.933s, full decode PASS, AAC packet MD5 unchanged, SHA256 e74d3ebac022725f5709603aa1a3392160e00f7994cacb8be1016831ae0681a5. CI uses synthetic tone only. Exact details: quality/cycle818/CYCLE818_DELTA.md.
 - Full TikTok市場分析/TikTok動画研究 transcripts and v33 original MP4 inaccessible in this run. 16-panel user storyboard found. No cinematic quality equivalence or publication approval.
 - Priority: independently verify Japanese narration/semantic caption sync, approved source stills for clean-source renderer, rights, phone playback and reference comparison. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, charge or auto-post.
+
+
+## cycle819 checkpoint — 2026-10-25 JST (REVIEW ONLY)
+- Stacked Draft PR #132: https://github.com/genokuda0902/tiktok-ai-employee/pull/132 (base unmerged PR #129; parallel PR #130 unmerged). main remains 18e084c38db0dc55db7dfc0532b9451b1167f2aa.
+- Replaces only 18–21s (90 frames) of cycle818 private review video: original procedural desk/paper chart, 1.5% push-in, ten-genre colors. No reference/stock assets or personal data included. Local 9/9 tests PASS; 23.933s H.264/AAC 1080×1920 full decode PASS, AAC MD5 unchanged (8d0baabf50866471846346e7159046e2). Local SHA256 f77c61ec3b31be160084f0546f27fa4934b66b84efdaad85ecd919a0f229cfb0.
+- Synthetic CI generates a tone, not Japanese speech; its status/artifact must be checked at latest PR head before claiming success. Private MP4 and inherited voice are NOT committed.
+- User storyboard inspected; research full transcripts and v33 original MP4 inaccessible. Voice/caption semantic verification, inherited rights, smartphone playback, and employee approval still pending. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Next: semantic audio/subtitle verification and approved image-first footage, not further flat chart animation.
