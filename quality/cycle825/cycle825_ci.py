@@ -63,7 +63,18 @@ def prepare(root:Path):
         json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf8')
 
 def render(root:Path):
-    result=prior.render(root)
+    # The inherited cycle817 cleaner erases y=1155..1645. Reapply the shared
+    # action rail AFTER cleaning so step/progress indicators survive rendering.
+    original_clean=prior.rend.base.clean_slide
+    def clean_with_shared_rail(source,dest,accent):
+        original_clean(source,dest,accent)
+        scene=int(Path(source).stem.split('_')[-1])-1
+        rail.apply_action_rail(Image.open(dest),scene).convert('RGB').save(dest,optimize=True)
+    prior.rend.base.clean_slide=clean_with_shared_rail
+    try:
+        result=prior.render(root)
+    finally:
+        prior.rend.base.clean_slide=original_clean
     source=Path(result) if result else root/'output'/'cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4'
     dest=root/'output'/'cycle825_CI_ACTION_RAIL_JAPANESE_HUMAN_REVIEW.mp4'
     source.rename(dest)
