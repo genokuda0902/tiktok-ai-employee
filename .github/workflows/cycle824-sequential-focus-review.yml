@@ -1,0 +1,83 @@
+name: cycle824 sequential focus Japanese review MP4
+on:
+  push:
+    branches:
+      - 'quality/cycle824-*'
+  pull_request:
+    paths:
+      - 'quality/cycle824/**'
+      - '.github/workflows/cycle824-sequential-focus-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Test all ten genre palettes and safe-area focus
+        run: python -m unittest discover -s quality/cycle824 -p 'test_*.py' -v
+      - name: Prepare eight original AI-work visuals
+        run: python quality/cycle823/cycle823_ci.py --root _cycle824_ci --step prepare
+      - name: Generate offline Japanese narration
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle824_ci
+      - name: Render base Japanese video and 24 caption states
+        run: |
+          python quality/cycle823/cycle823_ci.py --root _cycle824_ci --step render
+          python quality/cycle823/cycle823_ci.py --root _cycle824_ci --step verify
+      - name: Add two-stage focus without changing audio
+        run: |
+          python quality/cycle824/focus824.py \
+            --source _cycle824_ci/output/cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4 \
+            --output _cycle824_ci/output/cycle824_AI_WORK_FOCUS_JAPANESE_HUMAN_REVIEW.mp4 \
+            --genre ai_work --start 16.0 --duration 3.3
+      - name: Verify full MP4 decode, Japanese voice provenance and AAC identity
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          root=Path('_cycle824_ci')
+          src=root/'output/cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4'
+          out=root/'output/cycle824_AI_WORK_FOCUS_JAPANESE_HUMAN_REVIEW.mp4'
+          def probe(p):
+              return json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(p)]))
+          def audio_md5(p):
+              return subprocess.check_output(['ffmpeg','-v','error','-i',str(p),'-map','0:a:0','-c','copy','-f','md5','-']).decode().strip()
+          q=probe(out)
+          v=next(s for s in q['streams'] if s['codec_type']=='video')
+          a=next(s for s in q['streams'] if s['codec_type']=='audio')
+          ass=(root/'output/captions817.ass').read_text()
+          checks={'video_h264_1080x1920_30fps':v['codec_name']=='h264' and (v['width'],v['height'])==(1080,1920) and v['r_frame_rate']=='30/1',
+                  '775_frames':int(v.get('nb_frames',0))==775,
+                  'aac_48k':a['codec_name']=='aac' and a['sample_rate']=='48000',
+                  'same_audio_bitstream':audio_md5(src)==audio_md5(out),
+                  '24_japanese_caption_states':ass.count('Dialogue: 0,')==24,
+                  'japanese_tts_provenance':(root/'tts_qa819.json').exists(),
+                  'full_av_decode':subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(out),'-f','null','-']).returncode==0}
+          report={'cycle':824,'genre':'ai_work','checks':checks,'sha256':hashlib.sha256(out.read_bytes()).hexdigest(),
+                  'reference_v33_directly_compared':False,'human_listening_verified':False,'smartphone_verified':False,
+                  'rights_approved':False,'publication_approved':False,'auto_post':False}
+          (root/'output/qa824.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          assert all(checks.values()),checks
+          PY
+      - name: Upload actual Japanese voice MP4 for human review
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle824-JAPANESE-FOCUS-REVIEW-ONLY
+          path: |
+            _cycle824_ci/output/cycle824_AI_WORK_FOCUS_JAPANESE_HUMAN_REVIEW.mp4
+            _cycle824_ci/output/qa824.json
+            _cycle824_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle824_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7

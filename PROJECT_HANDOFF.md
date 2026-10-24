@@ -29,3 +29,12 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+
+## Cycle824 checkpoint — 2026-10-25 JST (Draft PR #140; not merged)
+- Latest checked main: `18e084c38db0dc55db7dfc0532b9451b1167f2aa`. Branch `quality/cycle824-sequential-focus-20261025` is stacked on cycle823 PR #139 (AI-work Japanese UI), while sales-business cycle822 PR #137 remains separate.
+- Added `quality/cycle824/focus824.py`, six tests and isolated Japanese-MP4 GitHub Actions workflow. Sequentially highlights left and right action/Before-After regions above caption safe zone. All ten genre palettes supported, but only sales_business local review and ai_work CI video are exercised.
+- Local cycle824 sales_business MP4 derived from cycle822: 23.933333 s, 1080x1920, 30fps, 718 frames, H.264/AAC 48kHz, full decode PASS, inherited AAC MD5 `8d0baabf50866471846346e7159046e2`, SHA256 `9bc59d9a36f6d6a8afb6fd09f1f28b711bf2f1b0c5741982acba368102c842a5`. Local video not committed; distributed only in conversation.
+- The AI-work CI workflow generates its own Japanese Open JTalk narration, retains 24 Japanese caption states, and is designed to validate full decode/audio-bitstream equality; check actual Actions status before claiming CI success.
+- TikTok市場分析/動画研究 full transcripts and original v33 MP4 unavailable; user-provided 16-panel storyboard accessible in file library. No v33 parity claim.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Speech naturalness, word-level caption sync, rights and smartphone testing, employee approval still pending. No auto-post, paid services, or merge.
