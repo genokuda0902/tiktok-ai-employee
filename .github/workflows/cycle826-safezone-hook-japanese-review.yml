@@ -1,0 +1,48 @@
+name: cycle826-safezone-hook-japanese-review
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle826/**'
+      - '.github/workflows/cycle826-safezone-hook-japanese-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=2,<3' 'opencv-python-headless>=4.10,<5'
+      - name: Test mobile safe zone, Japanese captions and 10 genre palettes
+        run: python -m unittest discover -s quality/cycle826 -p 'test_cycle826.py' -v
+      - name: Generate original 8 scenes with exact same source as local
+        run: python quality/cycle826/cycle826.py --root _cycle826_ci --step slides
+      - name: Generate Japanese narration offline
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle826_ci
+      - name: Render 1080x1920 Japanese captions and voice
+        run: python quality/cycle826/cycle826.py --root _cycle826_ci --step render
+      - name: Decode and verify all video frames
+        run: python quality/cycle826/cycle826.py --root _cycle826_ci --step verify
+      - name: Generate 8-scene contact sheet
+        run: python quality/cycle826/cycle826.py --root _cycle826_ci --step contact
+      - name: Upload human-review-only video
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle826-SAFEZONE-HOOK-JAPANESE-HUMAN-REVIEW
+          path: |
+            _cycle826_ci/output/cycle826_SAFEZONE_HOOK_JAPANESE_HUMAN_REVIEW.mp4
+            _cycle826_ci/output/qa826.json
+            _cycle826_ci/output/contact_8scenes.jpg
+            _cycle826_ci/source/asset_provenance826.json
+            _cycle826_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle826_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
