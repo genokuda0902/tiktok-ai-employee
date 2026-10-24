@@ -1,0 +1,88 @@
+name: cycle826 Japanese live-prompt review MP4
+on:
+  push:
+    branches:
+      - 'quality/cycle826-*'
+  pull_request:
+    paths:
+      - 'quality/cycle826/**'
+      - '.github/workflows/cycle826-live-prompt-japanese-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline no-cost tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Verify animated 10-genre common renderer
+        run: python -m unittest discover -s quality/cycle826 -p 'test_*.py' -v
+      - name: Prepare original fictional AI-work scenes
+        run: python quality/cycle823/cycle823_ci.py --root _cycle826_ci --step prepare
+      - name: Generate new offline Japanese voice and license notice
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle826_ci
+      - name: Render Japanese base video and 24 subtitle states
+        run: |
+          python quality/cycle823/cycle823_ci.py --root _cycle826_ci --step render
+          python quality/cycle823/cycle823_ci.py --root _cycle826_ci --step verify
+      - name: Fail closed on script-to-caption mismatch
+        run: |
+          python quality/cycle825/audit825.py --root _cycle826_ci --report _cycle826_ci/output/script_caption_audit825.json
+      - name: Create review-only image manifest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('_cycle826_ci/review_asset.json')
+          p.write_text(json.dumps({'origin':'procedural_original','review_allowed':True,
+           'private_data':False,'publication_approved':False,
+           'notes':'Fictional procedural CI scene, not public-release approved'}))
+          PY
+      - name: Build cycle825 image-led base
+        run: |
+          python quality/cycle825/image_scene825.py \
+            --source _cycle826_ci/output/cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4 \
+            --image _cycle826_ci/source/scene_03.png \
+            --manifest _cycle826_ci/review_asset.json \
+            --output _cycle826_ci/output/cycle825_AI_WORK_IMAGE_LED_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --start 6.47 --duration 2.98
+      - name: Replace static prompt panel with live fictional typing and result
+        run: |
+          python quality/cycle826/interaction826.py \
+            --source _cycle826_ci/output/cycle825_AI_WORK_IMAGE_LED_JAPANESE_REVIEW_ONLY.mp4 \
+            --output _cycle826_ci/output/cycle826_AI_WORK_LIVE_PROMPT_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --report _cycle826_ci/output/qa826.json
+      - name: Check fail-closed video QA
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('_cycle826_ci/output/qa826.json')
+          report=json.loads(p.read_text())
+          assert all(report['checks'].values()),report
+          assert not report['publication_approved'] and not report['auto_post']
+          audit=json.loads(Path('_cycle826_ci/output/script_caption_audit825.json').read_text())
+          assert audit['source_text_parity'] and audit['caption_states']==24
+          print('cycle826 all QA checks passed; human review still required')
+          PY
+      - name: Upload actual Japanese narrated MP4 and review evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle826-LIVE-PROMPT-JAPANESE-REVIEW-ONLY
+          path: |
+            _cycle826_ci/output/cycle826_AI_WORK_LIVE_PROMPT_JAPANESE_REVIEW_ONLY.mp4
+            _cycle826_ci/output/qa826.json
+            _cycle826_ci/output/script_caption_audit825.json
+            _cycle826_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle826_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
