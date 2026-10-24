@@ -1,0 +1,41 @@
+name: cycle818-synthetic-mp4-artifact
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle818/**'
+      - '.github/workflows/cycle818-synthetic-mp4-artifact.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-review-fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free/open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle818 -p 'test_*.py' -v
+      - name: Generate rights-clear CI-only slides and synthetic tone
+        run: python quality/cycle818/make_fixture818.py --root _cycle818_ci
+      - name: Render actual 1080x1920 MP4 in CI
+        run: python quality/cycle818/render818_ci.py --root _cycle818_ci --output _cycle818_ci/output/cycle818_SYNTHETIC_NOT_FOR_PUBLICATION.mp4
+      - name: Full MP4 decode and caption validation
+        run: |
+          python quality/cycle818/validate818_ci.py --mp4 _cycle818_ci/output/cycle818_SYNTHETIC_NOT_FOR_PUBLICATION.mp4 --ass _cycle818_ci/output/captions818.ass
+      - name: Upload CI synthetic artifact (not Japanese narration)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle818-ci-synthetic-mp4-NOT-FOR-PUBLICATION
+          path: |
+            _cycle818_ci/output/cycle818_SYNTHETIC_NOT_FOR_PUBLICATION.mp4
+            _cycle818_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
