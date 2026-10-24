@@ -1,0 +1,19 @@
+name: cycle812-semantic-native-contract
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle812/**'
+      - '.github/workflows/cycle812-semantic-native.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test storyboard contract (offline, zero dependencies)
+        run: python quality/cycle812/test_scene_spec.py
+      - name: Verify review-only gate
+        run: python quality/cycle812/scene_spec.py
