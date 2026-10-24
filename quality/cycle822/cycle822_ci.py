@@ -96,10 +96,17 @@ def prepare(root):
 def render(root):
  # The previous renderer has a hard-coded sales script; replace it in memory.
  # No source file is modified. Exact phrase/narration equality is still checked.
- rend.base.PHRASES=[]
- for s in LINES:
-  n=len(s);a=max(1,round(n/3));b=max(a+1,round(2*n/3))
-  rend.base.PHRASES.append([s[:a],s[a:b],s[b:]])
+ semantic=[
+  ["AIで仕事を","早くするなら、","最初の一歩が大事。"],
+  ["まず、繰り返している","作業を","書き出す。"],
+  ["次に、完成形の","見本を","用意する。"],
+  ["指示は、目的と条件を","具体的に","伝える。"],
+  ["最初の出力は、","必ず自分で","確かめる。"],
+  ["違いがあれば、","修正点を一つずつ","伝える。"],
+  ["使える指示は、","テンプレートに","残す。"],
+  ["小さな時短を、","毎日の習慣に","しよう。"]]
+ assert all("".join(parts)==line for parts,line in zip(semantic,LINES))
+ rend.base.PHRASES=semantic
  out=root/"output"/"cycle822_AI_WORK_JAPANESE_HUMAN_REVIEW.mp4"
  return rend.render(root,out,"ai_work")
 
