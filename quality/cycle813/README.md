@@ -26,12 +26,21 @@ patterns only, never the private footage or audio.
 ## Local verification (2026-10-24)
 - Input cycle812 SHA256: 22852b9ded6616de421097e9d9dd139d88662c5e430290d7864edb9ca94e03a9
 - Calc capture SHA256: eede9ed60a6da387f31c5a65007699547d64d82434a00e1508d80497bd412d82
-- Review MP4 SHA256: bc998215871e4e754e27aea9cf704fe5fd4cded4b8e0f0e47f8f8b0d364e51ff
+- Review MP4 SHA256: ac4aee47e6f82af1e0630bbd51669c3e3dd838e389c05689fd22f5d6d29db3e1
 - 1080×1920 H.264 30fps 718 frames 23.933 s, AAC 48kHz.
 - Full video/audio decode PASS; AAC elementary stream identical to cycle812.
 - Eleven unit tests PASS; ten genre configurations validated.
+- At 4.5s, mean full-frame RGB pixel difference vs cycle812 is 27.507.
+- At untouched 7.2s, mean difference is 1.338 (re-encoding).
 - Speech semantics, Japanese caption alignment, naturalness, phone playback,
   rights and employee approval remain UNVERIFIED.
+
+## GitHub CI
+- Draft PR: https://github.com/genokuda0902/tiktok-ai-employee/pull/120
+- Push CI success: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40080537329
+- PR CI success: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40080545741
+- Synthetic-only artifact ID: 12554649213.
+- Artifact is NOT the Japanese-narrated private review MP4.
 
 ## Provenance
 Previous summaries from TikTok市場分析 and TikTok動画研究 were consulted:
