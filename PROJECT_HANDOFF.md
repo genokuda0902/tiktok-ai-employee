@@ -66,3 +66,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - `TikTok市場分析` and `TikTok動画研究` task definitions and prior research summaries consulted; full historical outputs unavailable. User 16-panel storyboard inspected directly. Original v33 MP4 unavailable for direct comparison.
 - Japanese voice and on-screen captions present; inherited text-to-caption audit covers 8 scenes / 24 states. Independent speech transcription/naturalness/word-level sync, smartphone playback, rights/employee approval unverified. `HUMAN_REVIEW / PUBLICATION_NOT_APPROVED`. No merge, payment or auto-post.
 - Next: independent speech/caption verification and more cinematic, rights-approved image-first demonstrations; compare to v33 when available.
+
+## 2026-10-25 cycle828 — review-only quality checkpoint (not merged)
+- Work branch: `quality/cycle828-apply-actions-20261025`, stacked on Draft PR #145; Draft PR #148. Latest inspected main: `18e084c38db0dc55db7dfc0532b9451b1167f2aa`. Parallel PR #146 remains unmerged.
+- Change from cycle827: AI-work 16.150–19.383s, 97 frames, static correction card replaced by an original fictional proposal-to-actions sequence with three progressive checkmarks and a moving cursor. Shared palette and tests for ten genres; full MP4 only ai_work.
+- Local review MP4: 25.833s, 1080×1920 H.264 30fps 775 frames, AAC 48kHz; full A/V decode, identical inherited AAC packet MD5, seven local tests PASS. Local SHA256 `6d23ca8acb30bffd6dbd89f3555c42cadb48db930c4cba90af0e8645787d2d73`.
+- GitHub workflow `.github/workflows/cycle828-japanese-apply-actions.yml` runs tests, generates original fictional Japanese-narrated MP4 and review-only 7-day artifact; check run `40141573361` for final conclusion, do not infer success from workflow creation.
+- Prior `TikTok市場分析` / `TikTok動画研究` summaries and user 16-panel storyboard inspected; full transcripts and original v33 MP4 unavailable. Independent speech/word-level sync, rights approval, smartphone QA, reference parity, and employee approval remain pending.
+- **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No paid services, auto-posting, merge or public release.
