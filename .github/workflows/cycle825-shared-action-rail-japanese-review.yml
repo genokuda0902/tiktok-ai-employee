@@ -1,0 +1,45 @@
+name: cycle825-shared-action-rail-japanese-review
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle825/**'
+      - '.github/workflows/cycle825-shared-action-rail-japanese-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Test ten genres and shared action rail
+        run: python -m unittest discover -s quality/cycle825 -p 'test_cycle825.py' -v
+      - name: Generate original fictional UI and shared action rail
+        run: python quality/cycle825/cycle825_ci.py --root _cycle825_ci --step prepare
+      - name: Generate offline Japanese narration
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle825_ci
+      - name: Render Japanese captions and audio
+        run: python quality/cycle825/cycle825_ci.py --root _cycle825_ci --step render
+      - name: Verify MP4 frames, audio, caption states and action rail
+        run: python quality/cycle825/cycle825_ci.py --root _cycle825_ci --step verify
+      - name: Upload human-review-only MP4 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle825-ACTION-RAIL-JAPANESE-HUMAN-REVIEW
+          path: |
+            _cycle825_ci/output/cycle825_CI_ACTION_RAIL_JAPANESE_HUMAN_REVIEW.mp4
+            _cycle825_ci/output/qa825_ci.json
+            _cycle825_ci/source/asset_provenance825.json
+            _cycle825_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle825_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
