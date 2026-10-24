@@ -1,0 +1,33 @@
+name: cycle817-clean-source-quality
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle817/**'
+      - '.github/workflows/cycle817-clean-source-quality.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-renderer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle817 -p 'test_*.py' -v
+      - name: Compile renderer
+        run: python -m py_compile quality/cycle817/render817.py
+      - name: FFmpeg availability
+        run: |
+          ffmpeg -hide_banner -version | head -n 1
+          ffprobe -hide_banner -version | head -n 1
+# This CI verifies code only. Real source assets and completed MP4 are not in
+# the repository because media rights and employee publication approval are pending.
