@@ -20,7 +20,7 @@ Do NOT commit source or local output MP4 to public repo without rights review.
 
 ## Verified local QA
 12/12 tests PASS; 1080x1920, 30fps, 718 frames, 23.933333s, H.264 + AAC 48kHz, full A/V decode PASS.
-Output MP4 SHA256: 7dea60d54d967831c44ae83f6bdf4192f85bbec8b671d411eac0e6eefc9192fa
+Output MP4 SHA256: 48c6bd1b0b3770311e00cec62293dd3e570431bdd0ea44b2c89bb71e29bbac73
 Preserved AAC ADTS SHA256: d9f3e2c986b32eda17ee64c3c89fc2ec2d428121715076c6d686edde85cd9093
 Speech content, naturalness, caption semantic alignment, voice/asset rights, original v33 direct comparison, smartphone playback and employee approval remain UNVERIFIED.
 CI only uses synthetic sine-tone media, NOT the rights-unapproved Japanese review video.
