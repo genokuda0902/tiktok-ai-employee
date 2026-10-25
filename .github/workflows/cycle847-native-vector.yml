@@ -1,0 +1,25 @@
+name: cycle847 native vector review-only CI
+on:
+  pull_request:
+    paths:
+      - "automation/cycle847/**"
+      - ".github/workflows/cycle847-native-vector.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow
+      - name: Test vector layout, ten genres, and fail-closed safety
+        working-directory: automation/cycle847
+        run: python -m unittest -v test_editorial_core
