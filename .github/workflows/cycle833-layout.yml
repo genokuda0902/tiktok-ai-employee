@@ -1,0 +1,19 @@
+name: cycle833 zero-cost layout checks
+on:
+  pull_request:
+    paths:
+      - "cycle833/**"
+      - ".github/workflows/cycle833-layout.yml"
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python syntax and 10-genre layout tests
+        run: |
+          python -m py_compile cycle833/focal_layout.py
+          python -m unittest discover -s cycle833 -p "test_*.py" -v
