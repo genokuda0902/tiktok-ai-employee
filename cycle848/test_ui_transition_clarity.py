@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from ui_transition_clarity import GENRES,POLICY,BOUNDARIES,repair_region
+from ui_transition_clarity import GENRES,POLICY,BOUNDARIES,repair_region,validate,sha256
 
 class TransitionTests(unittest.TestCase):
     def setUp(self):
@@ -34,6 +34,20 @@ class TransitionTests(unittest.TestCase):
         import inspect
         from ui_transition_clarity import render
         self.assertIn("'-c:a','copy'",inspect.getsource(render))
+    def test_reject_unknown_genre(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            src=Path(d)/'source.mp4';src.write_bytes(b'fictional')
+            with self.assertRaisesRegex(ValueError,'unsupported genre'):
+                validate(src,Path(d)/'out.mp4',{**POLICY,'source_sha256':sha256(src)},'other',self.b,10)
+    def test_reject_unsafe_manifest(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            src=Path(d)/'source.mp4';src.write_bytes(b'fictional')
+            with self.assertRaisesRegex(ValueError,'fail-closed'):
+                validate(src,Path(d)/'out.mp4',{**POLICY,'publication_approved':True,'source_sha256':sha256(src)},'ai_work',self.b,10)
     def test_nonmutating_input(self):
         original=self.a.copy();repair_region(self.a,90,self.b,self.clean,10)
         self.assertTrue(np.array_equal(original,self.a))
