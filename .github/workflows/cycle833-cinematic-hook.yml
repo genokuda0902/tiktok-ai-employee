@@ -1,0 +1,26 @@
+name: cycle833 cinematic hook synthetic AV smoke
+on:
+  push:
+    branches:
+      - 'quality/cycle833-*'
+  pull_request:
+    paths:
+      - 'quality/cycle833/**'
+      - '.github/workflows/cycle833-cinematic-hook.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm free local FFmpeg
+        run: ffmpeg -version | head -n 1
+      - name: Test ten-genre safe zones and synthesize fictional AV fixture
+        run: python3 -m unittest discover -s quality/cycle833 -p 'test_*.py' -v
+      - name: Human-review gate
+        run: |
+          echo 'Synthetic CI does NOT certify Japanese pronunciation, image rights, or original v33 parity.'
+          echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
