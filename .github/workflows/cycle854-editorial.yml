@@ -1,0 +1,16 @@
+name: cycle854 editorial core (no paid APIs)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle854/**'
+      - '.github/workflows/cycle854-editorial.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test 10-genre editorial core (no media or network calls)
+        run: python -m unittest discover -s quality/cycle854 -p 'test_editorial_core.py' -v
