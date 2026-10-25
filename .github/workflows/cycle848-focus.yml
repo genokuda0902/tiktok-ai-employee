@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify ffmpeg and Python
+      - name: Install free FFmpeg package and verify Python
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
           ffmpeg -version | head -1
           python --version
       - name: Test exact production overlay code
