@@ -1,0 +1,44 @@
+name: cycle828-clean-captions-mastered-voice-review
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle828/**'
+      - '.github/workflows/cycle828-clean-captions-mastering.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=2,<3' 'opencv-python-headless>=4.10,<5'
+      - name: Run regression tests
+        run: python -m unittest discover -s quality/cycle828 -p 'test_cycle828.py' -v
+      - name: Generate original 8 scenes
+        run: python quality/cycle826/cycle826.py --root _cycle828_ci --step slides
+      - name: Generate Japanese voice offline
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle828_ci
+      - name: Render review-only MP4
+        run: python quality/cycle828/cycle828.py --root _cycle828_ci --step render
+      - name: Verify MP4 full frame decode
+        run: python quality/cycle828/cycle828.py --root _cycle828_ci --step verify
+      - name: Upload review-only video
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle828-CLEAN-CAPTIONS-MASTERED-JAPANESE-REVIEW
+          path: |
+            _cycle828_ci/output/cycle828_CLEAN_CAPTIONS_MASTERED_VOICE_HUMAN_REVIEW.mp4
+            _cycle828_ci/output/qa828.json
+            _cycle828_ci/output/audio_master828.json
+            _cycle828_ci/output/captions828.ass
+          if-no-files-found: error
+          retention-days: 7
