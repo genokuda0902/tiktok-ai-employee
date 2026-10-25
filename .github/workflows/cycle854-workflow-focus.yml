@@ -1,0 +1,48 @@
+name: cycle854 offline workflow-focus review-only CI
+on:
+  push:
+    branches:
+      - 'automation/cycle854-*'
+  pull_request:
+    paths:
+      - 'cycle854/**'
+      - '.github/workflows/cycle854-workflow-focus.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Offline open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5' 'Pillow>=10,<13'
+      - name: Ten-genre and safe-region unit tests
+        run: |
+          python -m compileall -q cycle854
+          PYTHONPATH=cycle854 python -m unittest discover -s cycle854 -p 'test_*.py' -v
+      - name: Two-second synthetic MP4 smoke test (not Japanese production media)
+        run: |
+          mkdir -p /tmp/cycle854
+          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=0x304455:s=1080x1920:r=30 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000 -t 2 \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle854/source.mp4
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          from cycle854.scene2_workflow_focus import POLICY,sha256
+          Path('/tmp/cycle854/manifest.json').write_text(json.dumps({**POLICY,'source_sha256':sha256('/tmp/cycle854/source.mp4')}))
+          PY
+          python cycle854/scene2_workflow_focus.py \
+            --source /tmp/cycle854/source.mp4 --output /tmp/cycle854/output.mp4 \
+            --manifest /tmp/cycle854/manifest.json --report /tmp/cycle854/qa.json \
+            --window 8 45 --background-frame 12
+          ffmpeg -v error -xerror -i /tmp/cycle854/output.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height,nb_frames -of json /tmp/cycle854/output.mp4
