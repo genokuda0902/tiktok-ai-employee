@@ -30,3 +30,17 @@ jobs:
             -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 \
             -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest /tmp/c845_synthetic.mp4
           ffmpeg -v error -xerror -i /tmp/c845_synthetic.mp4 -f null -
+      - name: Exercise real render engine on synthetic-only media
+        run: |
+          PYTHONPATH=. python - <<'PY'
+          from pathlib import Path
+          from cycle845.transition_audio import GATE,sha256,render
+          source=Path('/tmp/c845_synthetic.mp4')
+          output=Path('/tmp/c845_rendered.mp4')
+          qa=render(source,output,{**GATE,'source_sha256':sha256(source)},
+                    cuts=(10,30),strict=False)
+          assert qa['full_av_decode'] and qa['video_stream_sha256_unchanged']
+          assert qa['cue_count']==2 and qa['voice_waveform_correlation']>.997
+          assert not qa['publication_approved']
+          print('Synthetic render PASS:',qa['output_sha256'])
+          PY
