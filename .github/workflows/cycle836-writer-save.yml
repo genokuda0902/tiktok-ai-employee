@@ -1,0 +1,34 @@
+name: cycle836 Writer save synthetic AV review
+on:
+  push:
+    branches:
+      - 'automation/cycle836-*'
+  pull_request:
+    paths:
+      - 'cycle836/**'
+      - '.github/workflows/cycle836-writer-save.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free codecs and Japanese fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Run portable 10-genre safety tests
+        run: PYTHONPATH=. python -m unittest discover -s cycle836 -p 'test_*.py' -v
+      - name: Synthetic-only audiovisual integration
+        run: bash cycle836/ci_smoke.sh
+      - name: Upload synthetic technical fixture only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle836-SYNTHETIC-NOT-JAPANESE-NOT-PUBLISHABLE
+          path: cycle836/ci_out/cycle836_SYNTHETIC_TECHNICAL_ONLY.mp4
+          retention-days: 1
+      - name: Approval status
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
