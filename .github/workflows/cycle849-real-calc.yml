@@ -1,0 +1,48 @@
+name: cycle849 real Calc UI review-only CI
+on:
+  pull_request:
+    paths:
+      - 'cycle849/**'
+      - '.github/workflows/cycle849-real-calc.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-purchase dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5' 'Pillow>=10,<12'
+      - name: Unit tests
+        run: |
+          python -m compileall -q cycle849
+          PYTHONPATH=cycle849 python -m unittest discover -s cycle849 -p 'test_*.py' -v
+      - name: Synthetic end-to-end H264 AAC and caption-safe composition
+        run: |
+          ffmpeg -v error -y -f lavfi -i testsrc2=s=1080x1920:r=30:d=1.5 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1.5 \
+            -c:v libx264 -preset ultrafast -crf 28 -pix_fmt yuv420p -c:a aac -shortest /tmp/c849_source.mp4
+          ffmpeg -v error -y -f lavfi -i testsrc2=s=1440x900:r=30:d=1.5 \
+            -c:v libx264 -preset ultrafast -crf 28 -pix_fmt yuv420p /tmp/c849_capture.mp4
+          PYTHONPATH=cycle849 python - <<'PY'
+          from pathlib import Path
+          from calc_inset import render,sha256,POLICY
+          s=Path('/tmp/c849_source.mp4')
+          c=Path('/tmp/c849_capture.mp4')
+          o=Path('/tmp/c849_review.mp4')
+          q=render(s,c,o,{**POLICY,'source_sha256':sha256(s),'capture_sha256':sha256(c)},'ai_work',(10,30))
+          assert q['frames']==45 and q['changed_frames']==20
+          assert q['full_av_decode'] and q['publication_approved'] is False
+          print('SYNTHETIC_REVIEW_PASS',q['output_sha256'])
+          PY
+          ffmpeg -v error -y -i /tmp/c849_source.mp4 -map 0:a:0 -c:a copy -f adts /tmp/c849_before.aac
+          ffmpeg -v error -y -i /tmp/c849_review.mp4 -map 0:a:0 -c:a copy -f adts /tmp/c849_after.aac
+          cmp /tmp/c849_before.aac /tmp/c849_after.aac
