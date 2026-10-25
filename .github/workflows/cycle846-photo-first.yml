@@ -1,0 +1,25 @@
+name: cycle846 photo-first review-only tests
+on:
+  pull_request:
+    paths:
+      - "automation/cycle846/**"
+      - ".github/workflows/cycle846-photo-first.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free local test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow numpy opencv-python-headless
+      - name: Test ten genres and fail-closed review policy
+        working-directory: automation/cycle846
+        run: python -m unittest -v test_photo_visibility
