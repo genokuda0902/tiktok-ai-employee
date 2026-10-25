@@ -1,0 +1,11 @@
+{
+  "cycle": 846,
+  "baseline_cycle": 845,
+  "baseline_pr": 178,
+  "change": "Shift each synthesized 0.19s SFX earlier by its ~64ms acoustic energy centroid to align with video cut; optional 25% duck if speech present. Previous cues started exactly at cut.",
+  "source_media": "local cycle844 review-only MP4, not GitHub",
+  "market_research": "past summaries only; full chats inaccessible",
+  "reference": "16-panel storyboard inspected; original v33 MP4 inaccessible",
+  "policy": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "next": "Independent Japanese narration-caption semantics and approved image-first media"
+}
