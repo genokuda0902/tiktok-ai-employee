@@ -1,0 +1,15 @@
+name: Cycle832 Photo Layout Tests
+on:
+  pull_request:
+    paths:
+      - 'video_quality/cycle832/**'
+      - '.github/workflows/cycle832-photo-layout.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify shared 10-genre layout (no external dependencies)
+        run: python3 -m unittest discover -s video_quality/cycle832 -p 'test_*.py' -v
