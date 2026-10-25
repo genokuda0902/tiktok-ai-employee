@@ -1,0 +1,35 @@
+name: cycle837 offline fictional prompt demo review
+on:
+  push:
+    branches:
+      - 'automation/cycle837-*'
+  pull_request:
+    paths:
+      - 'cycle837/**'
+      - '.github/workflows/cycle837-prompt-demo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free FFmpeg and fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Test ten genres and fail-closed provenance
+        run: PYTHONPATH=. python -m unittest discover -s cycle837 -p 'test_*.py' -v
+      - name: Synthetic-only audiovisual integration
+        run: bash cycle837/ci_smoke.sh
+      - name: Upload synthetic technical fixture only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle837-SYNTHETIC-NOT-JAPANESE-NOT-PUBLISHABLE
+          path: cycle837/ci_out/cycle837_SYNTHETIC_TECHNICAL_ONLY.mp4
+          retention-days: 1
+      - name: Human approval gate
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
