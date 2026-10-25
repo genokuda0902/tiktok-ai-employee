@@ -1,0 +1,30 @@
+name: cycle848 offline focus video smoke CI
+on:
+  pull_request:
+    paths:
+      - "automation/cycle848/**"
+      - ".github/workflows/cycle848-focus.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify ffmpeg and Python
+        run: |
+          ffmpeg -version | head -1
+          python --version
+      - name: Test exact production overlay code
+        working-directory: automation/cycle848
+        run: python -m unittest -v test_focus_overlay
+      - name: Render a free synthetic A/V smoke sample (not the user's video)
+        working-directory: automation/cycle848
+        run: |
+          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=0x0a2030:s=1080x1920:r=30:d=1 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 \
+            -c:v libx264 -preset ultrafast -crf 30 -pix_fmt yuv420p -c:a aac -shortest -y input.mp4
+          python focus_overlay.py --source input.mp4 --beats caption_beats.json --out smoke.mp4
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,codec_name -of csv=p=0 smoke.mp4 | grep -q '^h264,1080,1920$'
+          ffmpeg -v error -xerror -i smoke.mp4 -f null -
