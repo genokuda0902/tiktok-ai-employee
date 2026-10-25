@@ -1,0 +1,23 @@
+name: cycle841 image-focus motion review-only
+on:
+  pull_request:
+    paths:
+      - 'cycle841/**'
+      - '.github/workflows/cycle841-focus-motion.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-motion-qa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax and ten-genre safety unit tests
+        run: |
+          python3 -m compileall -q cycle841/
+          PYTHONPATH=. python3 -m unittest discover -s cycle841 -p 'test_*.py' -v
+      - name: Synthetic-only motion and audio integration
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          bash cycle841/ci_synthetic.sh
