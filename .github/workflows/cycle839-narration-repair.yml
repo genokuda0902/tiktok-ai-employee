@@ -1,0 +1,34 @@
+name: cycle839 narration repair (synthetic-only)
+on:
+  push:
+    branches:
+      - 'automation/cycle839-*'
+  pull_request:
+    paths:
+      - 'cycle839/**'
+      - '.github/workflows/cycle839-narration-repair.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Test ten-genre safe audio/video cuts
+        run: PYTHONPATH=. python3 -m unittest discover -s cycle839 -p 'test_*.py' -v
+      - name: Generate and verify synthetic-only A/V fixture
+        run: bash cycle839/ci_synthetic.sh
+      - name: Upload technical fixture ONLY (no Japanese media)
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle839-SYNTHETIC-NOT-JAPANESE-NOT-PUBLISHABLE
+          path: cycle839/ci_out/cycle839_SYNTHETIC_NOT_JAPANESE.mp4
+          retention-days: 1
+      - name: Publication gate
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
