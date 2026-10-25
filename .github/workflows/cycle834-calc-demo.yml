@@ -1,0 +1,37 @@
+name: cycle834 review-only Calc demo synthetic AV
+on:
+  push:
+    branches:
+      - 'automation/cycle834-*'
+  pull_request:
+    paths:
+      - 'cycle834/**'
+      - '.github/workflows/cycle834-calc-demo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-technical-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free local codecs and Japanese font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Offline tests for 10 genres
+        run: |
+          PYTHONPATH=cycle834 python -m unittest discover -s cycle834 -p 'test_*.py' -v
+      - name: Synthetic-only 1080x1920 audiovisual integration
+        run: bash cycle834/ci_smoke.sh
+      - name: Retain only synthetic fixture, never private Japanese footage
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle834-SYNTHETIC-TECHNICAL-NOT-PUBLISHABLE
+          path: cycle834/ci_out/cycle834_SYNTHETIC_CI_NOT_JAPANESE.mp4
+          retention-days: 1
+      - name: Human review gate
+        run: |
+          echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          echo 'No Japanese speech audit, rights approval, or reference v33 parity certified.'
