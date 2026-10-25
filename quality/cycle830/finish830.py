@@ -95,7 +95,7 @@ def audio_md5(path):return subprocess.check_output(['ffmpeg','-v','error','-i',s
 def audio_mean_db(path):
     import re
     r=subprocess.run(['ffmpeg','-hide_banner','-nostats','-i',str(path),'-map','0:a:0','-af','volumedetect','-f','null','-'],capture_output=True,text=True)
-    m=re.search(r'mean_volume:\\s*(-?[0-9.]+) dB',r.stderr)
+    m=re.search(r'mean_volume:\s*(-?[0-9.]+) dB',r.stderr)
     return float(m.group(1)) if r.returncode==0 and m else None
 
 def render(source:Path,output:Path,genre='ai_work'):
