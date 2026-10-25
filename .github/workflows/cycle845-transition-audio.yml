@@ -1,0 +1,46 @@
+name: cycle845 offline transition sound design QA
+on:
+  pull_request:
+    paths:
+      - 'cycle845/**'
+      - '.github/workflows/cycle845-transition-audio.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline dependencies
+        run: |
+          python -m pip install 'numpy>=1.26,<3'
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Run 10-genre policy and audio tests
+        run: |
+          python -m compileall -q cycle845
+          PYTHONPATH=. python -m unittest discover -s cycle845 -p 'test_*.py' -v
+      - name: Synthetic-only H264/AAC decode smoke
+        run: |
+          ffmpeg -v error -y -f lavfi -i color=c=navy:s=320x568:r=30:d=2 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 \
+            -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest /tmp/c845_synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/c845_synthetic.mp4 -f null -
+      - name: Exercise real render engine on synthetic-only media
+        run: |
+          PYTHONPATH=. python - <<'PY'
+          from pathlib import Path
+          from cycle845.transition_audio import GATE,sha256,render
+          source=Path('/tmp/c845_synthetic.mp4')
+          output=Path('/tmp/c845_rendered.mp4')
+          qa=render(source,output,{**GATE,'source_sha256':sha256(source)},
+                    cuts=(10,30),strict=False)
+          assert qa['full_av_decode'] and qa['video_stream_sha256_unchanged']
+          assert qa['cue_count']==2 and qa['voice_waveform_correlation']>.997
+          assert not qa['publication_approved']
+          print('Synthetic render PASS:',qa['output_sha256'])
+          PY
