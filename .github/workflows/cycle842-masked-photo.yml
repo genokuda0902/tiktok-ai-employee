@@ -1,0 +1,21 @@
+name: cycle842 masked photo dissolve tests
+on:
+  pull_request:
+    paths:
+      - 'cycle842/**'
+      - '.github/workflows/cycle842-masked-photo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Python source compiles
+        run: python -m py_compile cycle842/photo_dissolve.py cycle842/test_photo_dissolve.py
+      - name: Run frame-exact and review-policy tests
+        env:
+          PYTHONPATH: cycle842
+        run: python -m unittest discover -s cycle842 -p 'test_*.py' -v
