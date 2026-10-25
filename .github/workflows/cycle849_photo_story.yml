@@ -1,0 +1,26 @@
+name: cycle849 photo-story tests
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle849/**'
+      - '.github/workflows/cycle849_photo_story.yml'
+  workflow_dispatch:
+jobs:
+  photo-story-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          python -m pip install --disable-pip-version-check Pillow
+      - name: Run review-only renderer unit tests
+        working-directory: experiments/cycle849
+        run: python -m unittest -v test_photo_story.py

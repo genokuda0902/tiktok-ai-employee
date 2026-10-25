@@ -1,0 +1,26 @@
+name: cycle850 photo motion tests
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle850/**'
+      - '.github/workflows/cycle850_photo_motion.yml'
+  workflow_dispatch:
+jobs:
+  motion-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          python -m pip install --disable-pip-version-check Pillow
+      - name: Run review-only renderer unit tests
+        working-directory: experiments/cycle850
+        run: python -m unittest -v test_motion_story.py
