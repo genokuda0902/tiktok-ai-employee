@@ -1,0 +1,142 @@
+name: cycle831 repeatable-work Japanese MP4
+on:
+  push:
+    branches:
+      - 'quality/cycle831-*'
+  pull_request:
+    paths:
+      - 'quality/cycle831/**'
+      - '.github/workflows/cycle831-japanese-repetition.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline no-cost tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.24,<3'
+      - name: Test ten-genre source-proof component
+        run: python -m unittest discover -s quality/cycle827 -p 'test_*.py' -v
+      - name: Test ten-genre action-application component
+        run: python -m unittest discover -s quality/cycle828 -p 'test_*.py' -v
+      - name: Test ten-genre save/reuse component
+        run: python -m unittest discover -s quality/cycle829 -p 'test_*.py' -v
+      - name: Test evidence-safe ten-genre finale
+        run: python -m unittest discover -s quality/cycle830 -p 'test_*.py' -v
+      - name: Test ten-genre repeatable-work discovery component
+        run: python -m unittest discover -s quality/cycle831 -p 'test_*.py' -v
+      - name: Prepare original fictional AI-work scenes
+        run: python quality/cycle823/cycle823_ci.py --root _cycle830_ci --step prepare
+      - name: Generate offline Japanese voice and attribution
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle830_ci
+      - name: Render base Japanese voice and subtitles
+        run: |
+          python quality/cycle823/cycle823_ci.py --root _cycle830_ci --step render
+          python quality/cycle823/cycle823_ci.py --root _cycle830_ci --step verify
+      - name: Fail closed on script/caption mismatch
+        run: python quality/cycle825/audit825.py --root _cycle830_ci --report _cycle830_ci/output/script_caption_audit825.json
+      - name: Create review-only asset manifest
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('_cycle830_ci/review_asset.json')
+          p.write_text(json.dumps({'origin':'procedural_original','review_allowed':True,
+            'private_data':False,'publication_approved':False,
+            'notes':'Fictional scene; public release not approved'}))
+          PY
+      - name: Build image-led base
+        run: |
+          python quality/cycle825/image_scene825.py \
+            --source _cycle830_ci/output/cycle823_UI_DEMO_JAPANESE_HUMAN_REVIEW.mp4 \
+            --image _cycle830_ci/source/scene_03.png \
+            --manifest _cycle830_ci/review_asset.json \
+            --output _cycle830_ci/output/cycle825_AI_WORK_IMAGE_LED_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --start 6.47 --duration 2.98
+      - name: Build animated Japanese prompt demo
+        run: |
+          python quality/cycle826/interaction826.py \
+            --source _cycle830_ci/output/cycle825_AI_WORK_IMAGE_LED_JAPANESE_REVIEW_ONLY.mp4 \
+            --output _cycle830_ci/output/cycle826_AI_WORK_LIVE_PROMPT_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --report _cycle830_ci/output/qa826.json
+      - name: Add source-to-output proof animation
+        run: |
+          python quality/cycle827/proof827.py \
+            --source _cycle830_ci/output/cycle826_AI_WORK_LIVE_PROMPT_JAPANESE_REVIEW_ONLY.mp4 \
+            --output _cycle830_ci/output/cycle827_AI_WORK_SOURCE_PROOF_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --report _cycle830_ci/output/qa827.json
+      - name: Apply the original fictional action sequence
+        run: |
+          python quality/cycle828/apply828.py \
+            --source _cycle830_ci/output/cycle827_AI_WORK_SOURCE_PROOF_JAPANESE_REVIEW_ONLY.mp4 \
+            --output _cycle830_ci/output/cycle828_AI_WORK_APPLY_ACTIONS_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --report _cycle830_ci/output/qa828.json
+      - name: Save reusable Japanese prompt as a moving notebook scene
+        run: |
+          python quality/cycle829/save829.py \
+            --source _cycle830_ci/output/cycle828_AI_WORK_APPLY_ACTIONS_JAPANESE_REVIEW_ONLY.mp4 \
+            --output _cycle830_ci/output/cycle829_AI_WORK_SAVE_REUSE_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --report _cycle830_ci/output/qa829.json
+      - name: Replace unverified benefit chart with an original action finale
+        run: |
+          python quality/cycle830/finish830.py \
+            --source _cycle830_ci/output/cycle829_AI_WORK_SAVE_REUSE_JAPANESE_REVIEW_ONLY.mp4 \
+            --output _cycle830_ci/output/cycle830_AI_WORK_TRUTHFUL_FINALE_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --report _cycle830_ci/output/qa830.json
+      - name: Replace static work list with fictional animated desk scene
+        run: |
+          python quality/cycle831/repetition831.py \
+            --source _cycle830_ci/output/cycle830_AI_WORK_TRUTHFUL_FINALE_JAPANESE_REVIEW_ONLY.mp4 \
+            --output _cycle830_ci/output/cycle831_AI_WORK_REPETITION_DESK_JAPANESE_REVIEW_ONLY.mp4 \
+            --genre ai_work --report _cycle830_ci/output/qa831.json
+      - name: Assert Japanese captions and full MP4 technical QA
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('_cycle830_ci/output')
+          a=json.loads((p/'qa826.json').read_text())
+          b=json.loads((p/'qa827.json').read_text())
+          c=json.loads((p/'script_caption_audit825.json').read_text())
+          d=json.loads((p/'qa828.json').read_text())
+          e=json.loads((p/'qa829.json').read_text())
+          f=json.loads((p/'qa830.json').read_text())
+          g=json.loads((p/'qa831.json').read_text())
+          assert all(a['checks'].values()) and all(b['checks'].values()) and all(d['checks'].values()) and all(e['checks'].values()),e
+          assert b['fictional_math_verified']
+          assert c['source_text_parity'] and c['caption_states']==24
+          assert not b['publication_approved'] and not b['auto_post']
+          assert not d['publication_approved'] and not d['auto_post']
+          assert d['frames_changed']==97
+          assert e['frames_changed']==97 and e['audio_mean_db'] > -45
+          assert f['frames_changed']==96 and all(f['checks'].values())
+          assert g['frames_changed']==97 and all(g['checks'].values()) and not g['publication_approved'] and not g['auto_post']
+          assert f['unverified_benefit_claim_removed'] and not f['publication_approved'] and not f['auto_post']
+          assert not e['publication_approved'] and not e['auto_post']
+          print('Technical QA PASS; human review still required')
+          PY
+      - name: Upload actual Japanese narrated MP4 and evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle831-REPETITION-DESK-JAPANESE-REVIEW-ONLY
+          path: |
+            _cycle830_ci/output/cycle831_AI_WORK_REPETITION_DESK_JAPANESE_REVIEW_ONLY.mp4
+            _cycle830_ci/output/qa831.json
+            _cycle830_ci/output/qa830.json
+            _cycle830_ci/output/qa829.json
+            _cycle830_ci/output/qa828.json
+            _cycle830_ci/output/qa827.json
+            _cycle830_ci/output/script_caption_audit825.json
+            _cycle830_ci/VOICE_LICENSE_ATTRIBUTION.txt
+            _cycle830_ci/NOT_FOR_PUBLICATION.txt
+          if-no-files-found: error
+          retention-days: 7
