@@ -120,7 +120,7 @@ def render(source,capture,output,manifest,genre='ai_work',window=DEFAULT_WINDOW)
         'output_sha256':sha256(output),'frames':total,'changed_frames':changed,
         'window':list(window),'genre':genre,'resolution':'1080x1920',
         'video':'H264/30fps','audio':'AAC stream copied','full_av_decode':True,
-        'capture_origin':'local LibreOffice Calc GUI with fictional data',
+        'capture_provenance':'declared fictional local capture; not independently authenticated',
         'publication_approved':False,'automatic_posting':False,'external_upload':False}
 
 if __name__=='__main__':
