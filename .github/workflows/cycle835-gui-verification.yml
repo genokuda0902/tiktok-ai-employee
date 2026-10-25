@@ -1,0 +1,37 @@
+name: cycle835 fictional Calc verification synthetic AV
+on:
+  push:
+    branches:
+      - 'automation/cycle835-*'
+  pull_request:
+    paths:
+      - 'cycle835/**'
+      - '.github/workflows/cycle835-gui-verification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free local codecs and Japanese font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Ten-genre provenance and safe-zone tests
+        run: |
+          PYTHONPATH=cycle835 python -m unittest discover -s cycle835 -p 'test_*.py' -v
+      - name: Synthetic-only 1080x1920 audiovisual integration
+        run: bash cycle835/ci_smoke.sh
+      - name: Store synthetic fixture only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle835-SYNTHETIC-NOT-JAPANESE-NOT-PUBLISHABLE
+          path: cycle835/ci_out/cycle835_SYNTHETIC_TECHNICAL_ONLY.mp4
+          retention-days: 1
+      - name: Human approval gate
+        run: |
+          echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          echo 'Japanese pronunciation, caption semantics, public rights and v33 parity NOT certified.'
