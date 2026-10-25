@@ -1,0 +1,25 @@
+name: cycle845 semantic slide tests
+on:
+  pull_request:
+    paths:
+      - "automation/cycle845/**"
+      - ".github/workflows/cycle845-semantic.yml"
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free local test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow numpy opencv-python-headless
+      - name: Validate 10 genres and review-only safeguards
+        working-directory: automation/cycle845
+        run: python -m unittest -v test_semantic_panels
