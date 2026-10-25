@@ -19,6 +19,7 @@ jobs:
       - name: Install offline zero-purchase dependencies
         run: |
           python -m pip install 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5'
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -1
       - name: Nine unit tests
         run: |
@@ -26,7 +27,7 @@ jobs:
           PYTHONPATH=cycle847 python -m unittest discover -s cycle847 -p 'test_*.py' -v
       - name: Synthetic end-to-end H264 AAC review only
         run: |
-          ffmpeg -v error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 \
+          ffmpeg -v error -y -f lavfi -i color=c=0x06111f:s=1080x1920:r=30:d=1 \
             -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 \
             -vf "drawbox=x=350:y=1640:w=380:h=90:color=white:t=fill:enable='not(eq(n,15))'" \
             -c:v libx264 -preset ultrafast -crf 26 -pix_fmt yuv420p -c:a aac -shortest /tmp/c847_source.mp4
