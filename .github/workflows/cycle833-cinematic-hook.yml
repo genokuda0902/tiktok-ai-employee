@@ -13,11 +13,14 @@ permissions:
 jobs:
   synthetic-review-only:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Confirm free local FFmpeg
-        run: ffmpeg -version | head -n 1
+      - name: Install free local FFmpeg (not preinstalled on this runner)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
       - name: Test ten-genre safe zones and synthesize fictional AV fixture
         run: python3 -m unittest discover -s quality/cycle833 -p 'test_*.py' -v
       - name: Human-review gate
