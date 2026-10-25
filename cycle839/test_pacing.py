@@ -11,6 +11,7 @@ class SafePacingTests(unittest.TestCase):
     def test_ten_genres(self):
         self.assertEqual(len(GENRES), 10)
         self.assertEqual(len(set(GENRES)), 10)
+        self.assertIn('product_comparison_lifestyle', GENRES)
     def test_cut_within_silence(self):
         boundary = 0
         for (a, b), (s, e), n in zip(cuts_for_silences(GAPS), GAPS, SCENE_FRAMES):
