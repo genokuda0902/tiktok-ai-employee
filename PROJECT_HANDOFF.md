@@ -45,3 +45,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Locally rendered cycle843 MP4: SHA256 \`5fc045b74a2a166e9d9ad928593f5b20587af688bf3d6976cec9a03cffcfb8b0\`; source cycle842 SHA256 \`c8ba143e9b4d3c99a68c9a639863e7324a111e4a97fde10e42345db1c6737fa3\`.
 - 1080x1920, 30fps, 691 frames, 23.033s; H264/AAC 48kHz, full decode PASS, decoded PCM MD5 equal, local 8 tests PASS. CI run status must be checked independently; GitHub CI uses synthetic media only.
 - No v33 original MP4, full TikTok市場分析/動画研究 transcripts, independent Japanese ASR/word-level subtitle QA, phone playback or publication/rights approval. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No posting, purchase or merge.
+
+
+## cycle844 addendum — 2026-10-25 JST (review-only, unmerged)
+- Branch: `automation/cycle844-cinematic-question-20261025`, stacked on **unmerged** PR #174 (cycle843), not on main. Parallel PR #175 remains unmerged.
+- Reimplementation: `cycle844/cinematic_hook.py` adds an image-first Japanese question hook to frames 0–95 (0–3.2s) only, with 10-genre copy slots, subtle zoom, strong contrast and SHA-pinned review-only privacy gates. Photo extracted locally from fictional review MP4; no source media/audio uploaded.
+- Input cycle843 SHA256 `5fc045b74a2a166e9d9ad928593f5b20587af688bf3d6976cec9a03cffcfb8b0`; output cycle844 SHA256 `31b0c2ca47c08629b9873e12d707c4adc79d1d29b05dcabd246508a831746888`.
+- Local MP4: 1080x1920, 30fps, 691 frames, 23.033s, H264/AAC 48kHz; full A/V decode PASS, decoded PCM MD5 equal; 12 local tests PASS. GitHub CI synthetic only; status must be checked against final commit.
+- Original v33 MP4 and full TikTok市場分析/動画研究 transcripts not available; user 16-panel storyboard directly inspected. Independent Japanese speech/caption semantic timing, phone playback, rights, employee approval and v33 parity NOT verified.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no merge, paid service or posting. Next priority independent speech/subtitle audit, approved source assets and phone QA.
