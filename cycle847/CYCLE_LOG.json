@@ -1,0 +1,26 @@
+{
+  "cycle": 847,
+  "baseline_cycle": 846,
+  "baseline_pr": 180,
+  "source_sha256": "a4cc272f0f7ffe2d97821236d3143007274762f261d5b5ec5b42bef4b754704b",
+  "output_sha256": "800ba2fca29a2e401baee5e3d0fe98d771eb03e2c6726302f2dac8804220bf1f",
+  "change": "Repair 11 one-frame near-black burned-caption flashes with stable-scene guard; preserve exact AAC bitstream.",
+  "local_tests": 9,
+  "repaired_frames": [
+    28,
+    57,
+    119,
+    199,
+    226,
+    380,
+    463,
+    552,
+    574,
+    633,
+    660
+  ],
+  "reference": "v33 MP4 unavailable; user 16-panel storyboard directly inspected in this cycle",
+  "research": "prior task summaries only",
+  "policy": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "next": "Japanese semantic sync + approved image-first media"
+}
