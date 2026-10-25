@@ -29,3 +29,11 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+## Latest review-only cycle838 checkpoint (2026-10-25 JST)
+- Working branch: `automation/cycle838-scene-dissolves-20261025`, stacked on **unmerged** cycle837 PR #165. Do not merge automatically.
+- Reimplementation `cycle838/transition_review.py` adds seven 8-frame image-region cross-dissolves, preserves audio/subtitle area, and uses 10-genre shared scene timings. See `cycle838/HANDOFF.md` for exact commands and measured QA.
+- Local Japanese review MP4: H.264 1080×1920 30fps, 775 frames, 25.833333s; full audiovisual decode PASS; AAC stream unchanged from cycle837. SHA256 `7dcfa1a2e5d29ed700b781a96640b0f03f586a3dffe800de77feb43ae59d2fb1`. File **only in private ChatGPT conversation**, not GitHub.
+- Local tests: 18 PASS; synthetic-only AV smoke PASS. CI status must be verified separately for the PR HEAD; GitHub artifact is synthetic-only, not the Japanese MP4.
+- Objective audio gap audit found seven 0.845–0.917s pauses around scene cuts. Next prioritize independent narration/subtitle audit and pacing, not repeating visual layout adjustments.
+- Rights, speech semantics, word-level subtitle timing, phone playback, employee approval and v33 parity **NOT verified**. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, paid service, or unapproved asset upload.
