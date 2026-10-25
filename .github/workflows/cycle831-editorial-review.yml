@@ -31,7 +31,7 @@ jobs:
       - name: Generate Japanese voice offline
         run: python quality/cycle819/make_japanese_fixture819.py --root _cycle831_ci
       - name: Master voice and create original 24-state Japanese captions
-        run: python quality/cycle828/render828.py --root _cycle831_ci --step render
+        run: python quality/cycle828/cycle828.py --root _cycle831_ci --step render
       - name: Apply new editorial image-led layout (CI fallback art)
         run: python quality/cycle831/scene831.py --root _cycle831_ci --step slides
       - name: Render review-only Japanese MP4
