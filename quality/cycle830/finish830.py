@@ -98,6 +98,16 @@ def audio_mean_db(path):
     m=re.search(r'mean_volume:\s*(-?[0-9.]+) dB',r.stderr)
     return float(m.group(1)) if r.returncode==0 and m else None
 
+def frame_mae(source,output,t):
+    import numpy as np
+    def sample(path):
+        raw=subprocess.check_output(['ffmpeg','-v','error','-ss',str(t),'-i',str(path),'-frames:v','1',
+            '-vf','scale=270:480','-pix_fmt','rgb24','-f','rawvideo','-'])
+        return np.frombuffer(raw,dtype=np.uint8).astype(np.int16)
+    a,b=sample(source),sample(output)
+    if a.size!=270*480*3 or b.size!=a.size:raise ValueError('frame sample invalid')
+    return float(np.abs(a-b).mean())
+
 def render(source:Path,output:Path,genre='ai_work'):
     validate(genre)
     if not source.is_file():raise FileNotFoundError(source)
@@ -112,19 +122,23 @@ def render(source:Path,output:Path,genre='ai_work'):
         for i in range(n-first):frame(i/max(1,n-first-1),genre).save(tmp/f'frame_{i:03d}.jpg',quality=93)
         scene=tmp/'scene830.mp4'
         run(['ffmpeg','-hide_banner','-loglevel','error','-y','-framerate','30','-i',str(tmp/'frame_%03d.jpg'),'-frames:v',str(n-first),'-c:v','libx264','-preset','ultrafast','-crf','19','-threads','4','-pix_fmt','yuv420p',str(scene)])
-        filt=f"[0:v][1:v]overlay=x={X}:y={Y}:shortest=1:enable='gte(n,{first})',format=yuv420p[v]"
-        run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(source),'-stream_loop','-1','-itsoffset',f'{START:.6f}','-i',str(scene),'-filter_complex',filt,'-map','[v]','-map','0:a:0','-frames:v',str(n),'-c:v','libx264','-preset','ultrafast','-crf','22','-threads','4','-pix_fmt','yuv420p','-c:a','copy','-movflags','+faststart',str(output)])
+        filt=f"[1:v]setpts=PTS-STARTPTS+{first}/{FPS}/TB[ov];[0:v][ov]overlay=x={X}:y={Y}:eof_action=pass:enable='gte(n,{first})',format=yuv420p[v]"
+        run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(source),'-i',str(scene),'-filter_complex',filt,'-map','[v]','-map','0:a:0','-frames:v',str(n),'-c:v','libx264','-preset','ultrafast','-crf','22','-threads','4','-pix_fmt','yuv420p','-c:a','copy','-movflags','+faststart',str(output)])
     out=probe(output);vv=next(s for s in out['streams'] if s['codec_type']=='video');aa=next(s for s in out['streams'] if s['codec_type']=='audio')
     mean=audio_mean_db(output)
+    changed_mae=frame_mae(source,output,24.5)
+    unchanged_mae=frame_mae(source,output,20.5)
     checks={'vertical_1080x1920_30fps':(vv['width'],vv['height'],vv['r_frame_rate'])==(1080,1920,'30/1'),
       '775_frames':int(vv['nb_frames'])==775,
       'h264_aac_48k':vv['codec_name']=='h264' and aa['codec_name']=='aac' and aa['sample_rate']=='48000',
       'audio_packets_preserved':audio_md5(source)==audio_md5(output),
       'non_silent_audio':mean is not None and -45<mean<0,
+      'finale_visible_in_actual_mp4':changed_mae>10,
+      'unmodified_scene_stable':unchanged_mae<5,
       'full_av_decode':subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(output),'-f','null','-'],capture_output=True).returncode==0}
     return {'cycle':830,'previous':829,'genre':genre,'scene_seconds':[START,END],
        'frame_range_inclusive':[first,last],'frames_changed':n-first,'checks':checks,
-       'audio_mean_db':mean,'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
+       'audio_mean_db':mean,'changed_scene_mae':changed_mae,'unchanged_scene_mae':unchanged_mae,'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),
        'asset_provenance':'procedural_original_fictional','unverified_benefit_claim_removed':True,
        'audio_speech_semantics_verified':False,'word_level_subtitle_sync_verified':False,
        'reference_v33_compared':False,'smartphone_verified':False,
