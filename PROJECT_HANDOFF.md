@@ -54,3 +54,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local MP4: 1080x1920, 30fps, 691 frames, 23.033s, H264/AAC 48kHz; full A/V decode PASS, decoded PCM MD5 equal; 12 local tests PASS. GitHub CI synthetic only; status must be checked against final commit.
 - Original v33 MP4 and full TikTok市場分析/動画研究 transcripts not available; user 16-panel storyboard directly inspected. Independent Japanese speech/caption semantic timing, phone playback, rights, employee approval and v33 parity NOT verified.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no merge, paid service or posting. Next priority independent speech/subtitle audit, approved source assets and phone QA.
+
+
+## cycle851 addendum — 2026-10-26 JST (review-only, unmerged)
+- Draft PR #190: `automation/cycle851-real-calc-correction-20261026`, stacked on **unmerged** cycle850 PR #189; no merge to main. New code/tests: `cycle851/real_calc_correction.py`, `cycle851/test_real_calc_correction.py`, `.github/workflows/cycle851-real-calc-correction.yml`.
+- Replaces static illustrated scene 06 with **real local LibreOffice Calc GUI** correction using fictional 17→18 and actual formula-driven CHECK→OK; 85 frames (422–506) of 691; all preexisting Japanese AAC audio copied bit-identically, Japanese subtitle/header regions protected. The original v33 source is still unavailable; this is a reimplementation, not v33 recovery.
+- Local MP4 SHA256 `a7bf0264c59c00e035526d852a8ff8e613f8df9da0f9caba255a1a390cffdff0`, 1080×1920 H264 30fps 691 frames 23.033s, AAC 48kHz 22.997s; full A/V decode PASS. 10 local unit tests PASS; synthetic-only local render PASS. Source/output AAC ADTS SHA256 both `2c05bdc4811714429a8f32a40be6776e916653efdb2ebedae143dacfcd3900b9`.
+- Code checkpoint `57c22483016a591c0110f2d8609d8f099bf31f21` CI SUCCESS: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40228649198 ; verify CI again after this handoff-only commit. Japanese MP4 is a ChatGPT private review artifact, not uploaded to public GitHub.
+- Full TikTok research chats and original v33 MP4 inaccessible; user-provided 16-panel storyboard inspected. Independent Japanese ASR/semantic subtitle timing, phone playback, source media rights and employee approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No paid API, posting, public media upload or merge.
