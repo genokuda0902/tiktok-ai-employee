@@ -17,6 +17,6 @@ PYTHONPATH=cycle847 python -m unittest discover -s cycle847 -p 'test_*.py' -v
 PYTHONPATH=. python -m cycle847.subtitle_flash_guard --source /local/cycle846.mp4 --output /local/cycle847.mp4 --manifest /local/review_manifest.json --genre ai_work
 ```
 
-Dependencies: Python 3.11, numpy, opencv-python-headless, ffmpeg/ffprobe. Source material must be fictional and review-only. No public release rights implied. Prior research: TikTok市場分析 and TikTok動画研究 summaries available; full task chats and original v33 MP4 unavailable. User's 16-panel storyboard had been inspected in earlier cycles; original storyboard image not directly reopened in this cycle.
+Dependencies: Python 3.11, numpy, opencv-python-headless, ffmpeg/ffprobe. Source material must be fictional and review-only. No public release rights implied. Prior research: TikTok市場分析 and TikTok動画研究 summaries available; full task chats and original v33 MP4 unavailable. User-provided 16-panel storyboard image was directly reopened and visually inspected this cycle (AI時短ラボ 16話構成ストーリーボード.png): cinematic robot, Japanese hook, genuine-looking AI/Excel workflow, Before/After and CTA; this one-frame fix does not close those visual gaps.
 
 **Remaining:** Japanese ASR/semantic subtitle sync, naturalness, original v33 visual parity, rights clearance, smartphone playback, employee approval. No paid services, merge, auto-posting or external media upload. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**.
