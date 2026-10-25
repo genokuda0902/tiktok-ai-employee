@@ -13,7 +13,7 @@ FPS = 30
 SCENE_FRAMES = (101, 93, 91, 99, 98, 101, 89, 103)
 CUT_FRAMES = 12
 GENRES = ('ai_work', 'sales_business', 'beauty', 'romance', 'saving',
-          'career', 'wellness', 'science', 'travel_food', 'productivity')
+          'career', 'wellness', 'science', 'travel_food', 'product_comparison_lifestyle')
 
 def silences(path, threshold='-35dB', minimum=0.45):
     cmd = ['ffmpeg', '-hide_banner', '-i', str(path), '-af',
