@@ -37,3 +37,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local tests: 18 PASS; synthetic-only AV smoke PASS. CI status must be verified separately for the PR HEAD; GitHub artifact is synthetic-only, not the Japanese MP4.
 - Objective audio gap audit found seven 0.845–0.917s pauses around scene cuts. Next prioritize independent narration/subtitle audit and pacing, not repeating visual layout adjustments.
 - Rights, speech semantics, word-level subtitle timing, phone playback, employee approval and v33 parity **NOT verified**. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, paid service, or unapproved asset upload.
+
+
+## cycle843 addendum — 2026-10-25 JST (review-only; unmerged)
+- Work branch: \`automation/cycle843-mobile-calc-focus-20261025\`; Draft PR #174 targets the unmerged cycle842 PR #172 branch, not main.
+- Reimplementation adds ~2× mobile magnification of **actual fictional Calc** cells in scene 3, frames 170–248; preserves existing captions, Japanese AAC audio and other scenes.
+- Locally rendered cycle843 MP4: SHA256 \`5fc045b74a2a166e9d9ad928593f5b20587af688bf3d6976cec9a03cffcfb8b0\`; source cycle842 SHA256 \`c8ba143e9b4d3c99a68c9a639863e7324a111e4a97fde10e42345db1c6737fa3\`.
+- 1080x1920, 30fps, 691 frames, 23.033s; H264/AAC 48kHz, full decode PASS, decoded PCM MD5 equal, local 8 tests PASS. CI run status must be checked independently; GitHub CI uses synthetic media only.
+- No v33 original MP4, full TikTok市場分析/動画研究 transcripts, independent Japanese ASR/word-level subtitle QA, phone playback or publication/rights approval. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No posting, purchase or merge.
