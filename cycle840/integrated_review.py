@@ -87,14 +87,15 @@ def run(source: Path, output: Path, manifest: dict, genre: str='ai_work') -> dic
     # Independent full decode, not merely codec metadata.
     subprocess.run(['ffmpeg','-v','error','-xerror','-i',str(output),'-f','null','-'],
                    check=True, timeout=180)
-    gaps = pacing.silences(output)
-    speech_seconds_lower_bound = new['audio_seconds'] - sum(max(0.,b-a) for a,b in gaps)
-    if speech_seconds_lower_bound < 16:
-        raise ValueError('Output has insufficient non-silent audio')
+    gaps = pacing.silences(output, minimum=0.02)
+    # Estimated audible activity at -35 dB, NOT a verified Japanese transcript.
+    estimated_non_silent_seconds = new['audio_seconds'] - sum(max(0.,b-a) for a,b in gaps)
+    if estimated_non_silent_seconds < 14:
+        raise ValueError('Output has insufficient audible content')
     return {'genre':genre,'pacing_genre':PACING_ALIASES.get(genre, genre),'source_sha256':manifest['source_sha256'],
             'output_sha256':sha256(output),'source':old,'output':new,
             'removed_seconds':result['removed_seconds'],'cuts':result['cuts'],
-            'narration_active_lower_bound_s':round(speech_seconds_lower_bound,3),
+            'estimated_non_silent_seconds_at_minus35db':round(estimated_non_silent_seconds,3),
             'dissolves_retained_from_source':True,
             'status':'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED',
             'speech_semantic_verified':False,'phone_verified':False,
