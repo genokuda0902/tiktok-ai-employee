@@ -1,0 +1,90 @@
+name: cycle832 photo-first Japanese review MP4
+on:
+  push:
+    branches:
+      - 'quality/cycle832-*'
+  pull_request:
+    paths:
+      - 'quality/cycle831/**'
+      - 'quality/cycle832/**'
+      - '.github/workflows/cycle832-photo-first-japanese.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline no-paid-API dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=2,<3' 'opencv-python-headless>=4.10,<5'
+      - name: Test ten-genre layout and safety
+        run: python -m unittest discover -s quality/cycle831 -p 'test_scene831.py' -v
+      - name: Test ten-genre photo prominence and safe caption area
+        run: python -m unittest discover -s quality/cycle832 -p 'test_*.py' -v
+      - name: Generate original procedural fallback scenes
+        run: python quality/cycle826/cycle826.py --root _cycle831_ci --step slides
+      - name: Generate Japanese voice offline
+        run: python quality/cycle819/make_japanese_fixture819.py --root _cycle831_ci
+      - name: Master voice and create original 24-state Japanese captions
+        run: python quality/cycle828/cycle828.py --root _cycle831_ci --step render
+      - name: Apply new editorial image-led layout (CI fallback art)
+        run: python quality/cycle831/scene831.py --root _cycle831_ci --step slides
+      - name: Render review-only Japanese MP4
+        run: python quality/cycle831/scene831.py --root _cycle831_ci --step render
+      - name: Verify codec, dimensions, frame count and full decode
+        run: python quality/cycle831/scene831.py --root _cycle831_ci --step verify
+      - name: Verify actual visible improvement over previous MP4
+        run: |
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from PIL import Image,ImageChops,ImageStat
+          p=Path('_cycle831_ci/output')
+          for fn,label in [('cycle828_CLEAN_CAPTIONS_MASTERED_VOICE_HUMAN_REVIEW.mp4','before'),('cycle831_PHOTO_EDITORIAL_JAPANESE_HUMAN_REVIEW.mp4','after')]:
+              subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-ss','1.8','-i',str(p/fn),'-frames:v','1','-y',str(p/f'{label}.png')],check=True)
+          a=Image.open(p/'before.png').convert('RGB')
+          b=Image.open(p/'after.png').convert('RGB')
+          mean=sum(ImageStat.Stat(ImageChops.difference(a,b)).mean)/3
+          assert mean>12, f'new editorial scene not visibly present: MAE {mean}'
+          print('Visual change MAE:',round(mean,3))
+          PY
+      - name: Prepare cycle832 review-only artifact and immutable QA
+        run: |
+          python - <<'PY'
+          import json, shutil
+          from pathlib import Path
+          p=Path('_cycle831_ci/output')
+          before=p/'cycle831_PHOTO_EDITORIAL_JAPANESE_HUMAN_REVIEW.mp4'
+          after=p/'cycle832_PHOTO_FIRST_JAPANESE_HUMAN_REVIEW.mp4'
+          shutil.copy2(before,after)
+          report=json.loads((p/'qa831.json').read_text())
+          report.update({'cycle':832,'photo_box':[54,390,1026,1420],
+            'photo_area_pixels':1001160,'previous_photo_area_pixels':622440,
+            'change':'larger image and removed decorative STEP sidebar',
+            'publication_approved':False,'employee_approved':False,
+            'speech_semantics_verified':False,'mobile_device_verified':False,
+            'source_art':'original procedural fallback (NOT v33)'})
+          (p/'qa832.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print('Review MP4 bytes',after.stat().st_size)
+          PY
+      - name: Upload review-only MP4 and QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle832-PHOTO-FIRST-JAPANESE-HUMAN-REVIEW
+          path: |
+            _cycle831_ci/output/cycle832_PHOTO_FIRST_JAPANESE_HUMAN_REVIEW.mp4
+            _cycle831_ci/output/qa832.json
+            _cycle831_ci/output/captions831.ass
+            _cycle831_ci/output/before.png
+            _cycle831_ci/output/after.png
+            _cycle831_ci/source/asset_provenance831.json
+          if-no-files-found: error
+          retention-days: 7
