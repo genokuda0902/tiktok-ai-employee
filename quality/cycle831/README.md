@@ -1,0 +1,11 @@
+# cycle831 — cinematic repeatable-work discovery (review only)
+Base: unmerged Draft PR #151 cycle830, not main. Change **frames 97–193 (3.233–6.467 s)** of scene 2, from a static four-row UI into an original illustrated desk/notebook with sequential fictional tasks (daily report aggregation, templated email, minutes, calendar transfer) and a non-numeric action cue. Preserve original title, Japanese caption area and AAC packets. No real customer data, real UI screenshots, external images or unverifiable benefit claims. Palette/render tests cover 10 genres; complete MP4 generated for AI仕事術 only.
+
+Local: `python -m unittest discover -s quality/cycle831 -p 'test_*.py' -v` then `python quality/cycle831/repetition831.py --source cycle830_AI_WORK_TRUTHFUL_FINALE_JAPANESE_REVIEW_ONLY.mp4 --output cycle831_AI_WORK_REPETITION_DESK_JAPANESE_REVIEW_ONLY.mp4 --genre ai_work --report qa831.json`.
+CI rebuilds prior Japanese narration and scenes from offline code, runs cycles 825–831, verifies source/target audio bitstream, frame-level visual change and untouched-scene stability, all A/V decode, and 8-scene/24-state text parity; uploads 7-day review-only artifact.
+
+2026-10-25 research: historical summaries of TikTok市場分析 and TikTok動画研究 consulted (strong early hook, short scenes, image-led demonstration, readable safe captions); complete task/chat transcripts inaccessible. User-provided 16-panel ChatGPT×Excel storyboard directly inspected via Library this run: robot, real-looking people, cinematic lighting, task-demo cuts and before/after. v33 original MP4 inaccessible; no direct comparison. PROJECT_HANDOFF.md and recovery/v33/RECOVERY_STATUS.md checked. Do not reuse confidential v33 prototype assets.
+
+Local cycle831 preview used cycle829 MP4, not cycle830 (which adds a separate ending); the CI pipeline uses cycle830 and is the full final-stack reference. Japanese audible semantics, word-level subtitle alignment, smartphone playback, asset public-release approval, employee approval and v33 equivalence remain unverified.
+
+**HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.** No merge, posting, paid services or contracts. Manual TikTok post only after employee approval. Next: independent Japanese speech audit and real-device test, then rights-approved photo/real sanitized workflow.
