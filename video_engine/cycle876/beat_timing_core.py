@@ -39,7 +39,7 @@ def phrase_events(beats):
         phrase = beat["text"].replace("\\", "").replace("{", "").replace("}", "")
         lines.append(
             f"Dialogue: 1,{ass_time(beat['start'])},{ass_time(beat['end'])},"
-            f"BEAT,,0,0,0,,{{\\an8\\pos(540,1734)\\fad(45,45)}}{phrase}"
+            f"BEAT,,0,0,0,,{{\\an8\\pos(540,1570)\\fad(45,45)}}{phrase}"
         )
     return tuple(lines)
 
