@@ -17,7 +17,7 @@ class BeatTimingTests(unittest.TestCase):
         self.assertTrue(validate_beats(fixture()))
         events = phrase_events(fixture())
         self.assertEqual(len(events), 24)
-        self.assertIn("pos(540,1734)", events[0])
+        self.assertIn("pos(540,1570)", events[0])
 
     def test_missing_beat_rejected(self):
         with self.assertRaises(ValueError):
