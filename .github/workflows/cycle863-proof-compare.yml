@@ -16,13 +16,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install free Python dependency without apt network update
-        run: python -m pip install --disable-pip-version-check pillow
+      - name: Install free Python dependencies and bundled FFmpeg
+        run: python -m pip install --disable-pip-version-check pillow imageio-ffmpeg
       - name: Run 10-genre review-policy tests
         run: PYTHONPATH=cycle863 python -m unittest discover -s cycle863 -p 'test_*.py' -v
       - name: Smoke test synthetic H264/AAC file (not real Japanese output)
         run: |
-          command -v ffmpeg
-          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=0x10243a:s=360x640:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -shortest -c:v libx264 -pix_fmt yuv420p -c:a aac -movflags +faststart /tmp/cycle863_synthetic.mp4
-          ffmpeg -v error -i /tmp/cycle863_synthetic.mp4 -f null -
-          ffprobe -v error -show_entries stream=codec_name -of csv=p=0 /tmp/cycle863_synthetic.mp4 | grep -q h264
+          FFMPEG="$(python -c 'import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())')"
+          "$FFMPEG" -hide_banner -loglevel error -f lavfi -i color=c=0x10243a:s=360x640:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -shortest -c:v libx264 -pix_fmt yuv420p -c:a aac -movflags +faststart /tmp/cycle863_synthetic.mp4
+          "$FFMPEG" -v error -i /tmp/cycle863_synthetic.mp4 -f null -
+          "$FFMPEG" -hide_banner -i /tmp/cycle863_synthetic.mp4 2>&1 | grep -q 'Video: h264'
