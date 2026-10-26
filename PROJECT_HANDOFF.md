@@ -1,5 +1,14 @@
 # TikTok AI社員システム — authoritative handoff
 
+## 2026-10-27 — cycle877 truthful chart + acoustic audit (unmerged review-only)
+- Draft PR #237 on unmerged PR #236, working branch `automation/cycle877-truthful-reveal-20261027`; main unchanged `18e084c38db0dc55db7dfc0532b9451b1167f2aa`. Do NOT merge or publish automatically.
+- Correct scene03's **intermediate false bar ranking** (not the final chart): show each group only at full data-derived height, reveal at local frames 9/26/43, 81 changed frames 170–250. Shared `cycle874.chart_truth.GENRES` covers 10 genres.
+- Actual private review MP4 `cycle877_TRUTHFUL_CHART_JAPANESE_REVIEW_ONLY.mp4` SHA256 `510cf34d7094539ff1472142a6b48ebc7282fb198844d8a732918150e598632e`; 1080×1920 H264 30fps 691 frames/23.033s AAC48k, full A/V decode PASS, audio ADTS bit-identical, 81/81 target changed, caption/footer max mean pixel delta 0.0372, local tests 12/12 PASS. Not uploaded to GitHub.
+- New independent acoustic QA detects >-34 dBFS activity in 8/8 caption windows, but **does not verify Japanese words, speech naturalness, semantic match, or phoneme timing**. Background music may trigger it. Human/ASR verification is still needed.
+- Full TikTok research chats, v33 original MP4 and current source storyboard file not accessible; prior verified storyboard findings consulted. Original v33 generation source remains missing.
+- Inherited rights, phone playback, employee approval, v33 quality parity and actual CI charges unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No posting, paid services or external media upload.
+
+
 ## 2026-10-27 — cycle876 review-only checkpoint (NOT merged)
 - Stacked Draft PR #236 on unmerged PR #233; main remains 18e084c38db0dc55db7dfc0532b9451b1167f2aa.
 - Reimplemented scene 04 as a **clearly simulated** offline prompt-entry animation with fictional source rows and source-derived totals, 85 changed frames (8.367–11.200s), preserving the existing private Japanese AAC bitstream and subtitle/footer region. Shared source covers 10 genres; only AI-work full review MP4 rendered.
