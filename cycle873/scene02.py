@@ -10,7 +10,7 @@ from functools import lru_cache
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 W,H,FPS,FRAMES=1080,1920,30,691
-START,COUNT,TOP,BOTTOM=90,80,132,1490
+START,COUNT,TOP,BOTTOM=89,81,132,1490
 FONT='/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc'
 FONT_REG='/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
 GENRES={
