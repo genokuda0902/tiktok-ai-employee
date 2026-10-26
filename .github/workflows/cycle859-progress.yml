@@ -23,6 +23,8 @@ jobs:
         run: |
           python -m compileall -q cycle859
           python -m unittest discover -s cycle859 -p 'test_*.py' -v
+      - name: Install FFmpeg on minimal runner
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Synthetic MP4 only (never private Japanese media)
         run: |
           mkdir -p /tmp/cycle859
