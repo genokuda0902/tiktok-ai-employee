@@ -1,0 +1,37 @@
+name: cycle877 truthful reveal and acoustic QA (review only)
+on:
+  push:
+    branches: [automation/cycle877-truthful-reveal-20261027]
+    paths:
+      - 'cycle877/**'
+      - 'PROJECT_HANDOFF.md'
+      - '.github/workflows/cycle877-truthful-reveal.yml'
+  pull_request:
+    paths:
+      - 'cycle877/**'
+      - 'PROJECT_HANDOFF.md'
+      - '.github/workflows/cycle877-truthful-reveal.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ten-genre-and-synthetic-av:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow numpy imageio-ffmpeg
+      - name: Test ten genre visual truth and acoustic audit
+        run: PYTHONPATH=. python -m unittest discover -s cycle877 -p 'test_*.py' -v
+      - name: Synthetic A/V decode only (not Japanese finished MP4)
+        run: |
+          FFMPEG="$(python -c 'import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())')"
+          "$FFMPEG" -hide_banner -loglevel error -f lavfi -i color=c=0x112233:s=360x640:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -shortest -c:v libx264 -pix_fmt yuv420p -c:a aac -movflags +faststart /tmp/cycle877_synthetic.mp4
+          "$FFMPEG" -v error -xerror -i /tmp/cycle877_synthetic.mp4 -f null -
