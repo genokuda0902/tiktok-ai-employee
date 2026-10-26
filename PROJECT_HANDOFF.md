@@ -1,5 +1,14 @@
 # TikTok AI社員システム — authoritative handoff
 
+## 2026-10-27 — cycle878 mobile-safe caption typography (unmerged review-only)
+- Working branch `automation/cycle878-mobile-captions-20261027` stacked on unmerged Draft PR #237. Main verified `18e084c38db0dc55db7dfc0532b9451b1167f2aa`. Do NOT merge/post automatically.
+- Distinct change from cycle877: reformat eight inherited Japanese sentence captions as two 64px Noto Sans CJK Bold lines inside x90–865/y1450–1840 safe-area panel with contrast and stage progress. Inherited editorial caption windows and the eight scene visuals above y1450 are retained. All 10 genre configurations exercise the shared caption geometry validator; only ai_work finished MP4 was rendered.
+- Local private review MP4 `cycle878_MOBILE_SAFE_CAPTIONS_JAPANESE_REVIEW_ONLY.mp4` SHA256 `83e0c5ef4e027ced4831a7045511ea301b309f1af05b17678decd90782057d81`. 1080x1920 H.264/30fps/691 frames/23.033s, AAC 48kHz. Full A/V decode PASS; AAC elementary SHA256 unchanged `2c05bdc4811714429a8f32a40be6776e916653efdb2ebedae143dacfcd3900b9`; 691/691 caption-area frames changed; max sampled mean pixel delta outside caption panel 0.2663; 12/12 local tests PASS; synthetic captioned A/V render/decode PASS. Finished private MP4 NOT uploaded to GitHub.
+- Eight WAV excerpts plus timecoded captions prepared for employee manual speech/semantic verification, **not** automatically verified. Speech content, phoneme timing, smartphone playback, source/voice publication rights, employee signoff, v33 parity and actual Actions charges remain UNVERIFIED.
+- Research: accessible TikTok市場分析/TikTok動画研究 summaries and prior 16-panel storyboard findings consulted; full chats, current storyboard image and original v33 MP4 not accessible this run. Reimplementation, not recovered original.
+- Status: HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. CI covers code and synthetic one-second A/V, not private finished Japanese MP4. No paid services, public media upload or auto-post.
+
+
 ## 2026-10-27 — cycle877 truthful chart + acoustic audit (unmerged review-only)
 - Draft PR #237 on unmerged PR #236, working branch `automation/cycle877-truthful-reveal-20261027`; main unchanged `18e084c38db0dc55db7dfc0532b9451b1167f2aa`. Do NOT merge or publish automatically.
 - Correct scene03's **intermediate false bar ranking** (not the final chart): show each group only at full data-derived height, reveal at local frames 9/26/43, 81 changed frames 170–250. Shared `cycle874.chart_truth.GENRES` covers 10 genres.
