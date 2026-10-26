@@ -19,9 +19,9 @@ class SceneTests(unittest.TestCase):
  def test_frame_dimensions(self):self.assertEqual(make_frame(Image.new('RGB',(1080,BOTTOM-TOP)),0).size,(1080,BOTTOM-TOP))
  def test_frame_progress(self):
   bg=Image.new('RGB',(1080,BOTTOM-TOP),'#123456')
-  self.assertNotEqual(make_frame(bg,0).tobytes(),make_frame(bg,79).tobytes())
+  self.assertNotEqual(make_frame(bg,0).tobytes(),make_frame(bg,80).tobytes())
  def test_smooth(self):self.assertEqual(smooth(0),0);self.assertEqual(smooth(1),1)
- def test_frame_location(self):self.assertEqual((START,COUNT,TOP,BOTTOM),(90,80,132,1490))
+ def test_frame_location(self):self.assertEqual((START,COUNT,TOP,BOTTOM),(89,81,132,1490))
  def test_overflow_detector(self):self.assertFalse(text_fits('あ'*100,50,200))
 
 if __name__=='__main__':unittest.main()
