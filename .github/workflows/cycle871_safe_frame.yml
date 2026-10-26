@@ -1,0 +1,21 @@
+name: cycle871 safe-frame offline tests
+
+on:
+  pull_request:
+    paths:
+      - "quality_cycles/cycle871/**"
+      - ".github/workflows/cycle871_safe_frame.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  portable-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate 10-genre crop-safe core (no paid APIs)
+        working-directory: quality_cycles/cycle871
+        run: python3 -m unittest -v test_quality_core.py
