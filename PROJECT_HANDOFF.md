@@ -62,3 +62,9 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local MP4 SHA256 `a7bf0264c59c00e035526d852a8ff8e613f8df9da0f9caba255a1a390cffdff0`, 1080×1920 H264 30fps 691 frames 23.033s, AAC 48kHz 22.997s; full A/V decode PASS. 10 local unit tests PASS; synthetic-only local render PASS. Source/output AAC ADTS SHA256 both `2c05bdc4811714429a8f32a40be6776e916653efdb2ebedae143dacfcd3900b9`.
 - Code checkpoint `57c22483016a591c0110f2d8609d8f099bf31f21` CI SUCCESS: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40228649198 ; verify CI again after this handoff-only commit. Japanese MP4 is a ChatGPT private review artifact, not uploaded to public GitHub.
 - Full TikTok research chats and original v33 MP4 inaccessible; user-provided 16-panel storyboard inspected. Independent Japanese ASR/semantic subtitle timing, phone playback, source media rights and employee approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No paid API, posting, public media upload or merge.
+
+
+## cycle861 review checkpoint (2026-10-26 JST; unmerged)
+- Private review-only MP4: cycle861_REAL_UI_MONTAGE_JAPANESE_REVIEW_ONLY.mp4, SHA256 bfc5b31ab0a53eb69a57b5b90915254a409a670d6ba2445262517c52365780e3; **not uploaded to GitHub**.
+- Scene 2 frames 89–169: two sequential genuine, fictional-data Calc/Writer recorded excerpts replacing static checklist. 10/10 local tests and 12/12 local MP4 QA checks PASS, H264 1080x1920 30fps 691 frames, AAC48k ADTS bit-identical to cycle860. See cycle861/QA_REPORT.md for details.
+- Original v33 MP4 and full research chats inaccessible this cycle; user 16-panel storyboard directly inspected. Media rights, spoken Japanese/caption semantic match, mobile playback, employee approval and reference parity pending. No merge or posting.
