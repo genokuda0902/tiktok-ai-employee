@@ -87,3 +87,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Source-to-result fictional audit scene, 10 genre editorial variants; private Japanese review MP4 23.033s, 1080x1920 H264/AAC, full A/V decode, 691-frame subtitle-region protection PASS, 13 local unit tests PASS.
 - GitHub CI only unit tests + synthetic 1s A/V. Real MP4 and inherited audio are NOT uploaded. v33 original inaccessible; no quality parity, rights, smartphone, speech semantics or employee approval.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, merge or paid contract.
+
+
+## cycle868 addendum — 2026-10-26 JST (review-only; unmerged)
+- Stacked on unmerged cycle867 Draft PR #219; parallel PR #220 remains untouched. Branch `automation/cycle868-original-illustrated-closer-20261026`. No merge or publication.
+- Reimplementation `cycle868/cinematic_closer.py` creates an original procedural 2D robot illustration (NOT third-party photo or articulated robot motion) and staged CTA in closing scene 08, frames 588–690, 19.600–23.033s. Ten-genre copy/width checks; only AI-work full MP4 rendered.
+- Local MP4 output SHA256 `315b13067f0ec0518da7bb85837658be7f3b81bbbd41c12eae66d4b3f57dcee4`; input cycle867 SHA256 `1527220d5092c43d75f6aee756f4773d6618246bf5e81937865f89b52867770b`. H264 1080×1920 30fps 691 frames / 23.033s; AAC48kHz bit-identical; full A/V decode PASS; all 691 subtitle-strip frames tested (max mean delta 0.160). 18 local unit tests PASS. Private MP4 is shared only in the ChatGPT review sandbox, not uploaded to public GitHub.
+- The original v33 MP4, original v33 engine, full `TikTok市場分析` and `TikTok動画研究` chats unavailable; 16-panel user storyboard inspected directly. CI is synthetic-only and must be verified at final commit.
+- Independent Japanese ASR/semantic caption timing, original media rights, phone playback, employee signoff, and v33 visual equivalence unverified. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No paid services, auto-post, or private media upload.
