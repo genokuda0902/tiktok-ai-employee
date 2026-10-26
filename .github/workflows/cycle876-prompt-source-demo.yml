@@ -4,10 +4,12 @@ on:
     branches: [automation/cycle876-source-prompt-20261027]
     paths:
       - 'cycle876/**'
+      - 'PROJECT_HANDOFF.md'
       - '.github/workflows/cycle876-prompt-source-demo.yml'
   pull_request:
     paths:
       - 'cycle876/**'
+      - 'PROJECT_HANDOFF.md'
       - '.github/workflows/cycle876-prompt-source-demo.yml'
   workflow_dispatch:
 permissions:
