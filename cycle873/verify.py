@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse,hashlib,json,subprocess,tempfile
 from pathlib import Path
 import cv2,numpy as np
-START,COUNT,N=90,80,691
+START,COUNT,N=89,81,691
 
 def sha(p):
  h=hashlib.sha256()
