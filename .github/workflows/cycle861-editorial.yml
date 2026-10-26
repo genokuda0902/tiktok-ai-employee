@@ -1,0 +1,19 @@
+name: cycle861 editorial storyboard QA
+on:
+  pull_request:
+    paths:
+      - "cycle861/**"
+      - ".github/workflows/cycle861-editorial.yml"
+  workflow_dispatch:
+jobs:
+  storyboard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test reusable 10-genre rules and 24 subtitle beats
+        run: python -m unittest discover -s cycle861 -p "test_*.py" -v
