@@ -1,0 +1,22 @@
+name: cycle879 animated synthetic UI state tests
+on:
+  push:
+    branches:
+      - feature/cycle879-animated-ui-states
+    paths:
+      - 'video_engine/cycle879/**'
+      - '.github/workflows/cycle879-ui-state-tests.yml'
+  pull_request:
+    paths:
+      - 'video_engine/cycle879/**'
+      - '.github/workflows/cycle879-ui-state-tests.yml'
+  workflow_dispatch:
+jobs:
+  ui-state-safety:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run 17 stdlib tests (10 genres)
+        run: PYTHONPATH=video_engine/cycle879 python3 -m unittest discover -s video_engine/cycle879 -p 'test_*.py' -v
