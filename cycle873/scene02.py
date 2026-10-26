@@ -95,7 +95,7 @@ def render(old,photo,out,manifest,genre='ai_work'):
  with tempfile.TemporaryDirectory(prefix='cycle873_') as td:
   for i in range(COUNT):make_frame(base,i,genre).save(Path(td)/f'{i:03}.png')
   filt=(f'[1:v]format=yuva420p,setpts=PTS-STARTPTS+{START}/(30*TB)[overlay];'
-        f'[0:v][overlay]overlay=x=0:y={TOP}:enable=\\'between(n,{START},{START+COUNT-1})\\':'
+        f"[0:v][overlay]overlay=x=0:y={TOP}:enable='between(n,{START},{START+COUNT-1})':"
         'eof_action=pass:repeatlast=0:format=auto[v]')
   cmd=['ffmpeg','-hide_banner','-loglevel','error','-nostdin','-i',str(old),'-framerate','30','-i',str(Path(td)/'%03d.png'),'-filter_complex',filt,
        '-map','[v]','-map','0:a:0','-c:v','libx264','-preset','ultrafast','-crf','20','-pix_fmt','yuv420p','-r','30','-frames:v',str(FRAMES),'-c:a','copy','-movflags','+faststart',str(out)]
