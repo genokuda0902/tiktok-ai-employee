@@ -1,0 +1,17 @@
+name: Cycle876 Beat-Timing Core
+on:
+  pull_request:
+    paths:
+      - "video_engine/cycle876/**"
+      - ".github/workflows/cycle876-beat-timing.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-core-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run offline standard-library tests
+        run: python3 -m unittest video_engine.cycle876.test_beat_timing_core -v
