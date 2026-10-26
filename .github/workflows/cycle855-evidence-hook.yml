@@ -1,0 +1,47 @@
+name: cycle855 review-only evidence hook CI
+on:
+  push:
+    branches:
+      - 'automation/cycle855-*'
+  pull_request:
+    paths:
+      - 'cycle855/**'
+      - '.github/workflows/cycle855-evidence-hook.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5' 'Pillow>=10,<13'
+      - name: Ten genre + fail-closed policy tests
+        run: |
+          python -m compileall -q cycle855
+          PYTHONPATH=cycle855 python -m unittest discover -s cycle855 -p 'test_*.py' -v
+      - name: Synthetic 2s MP4/AAC smoke test (NOT production Japanese media)
+        run: |
+          mkdir -p /tmp/cycle855
+          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=0x273c4b:s=1080x1920:r=30 \
+            -f lavfi -i sine=frequency=500:sample_rate=48000 -t 2 \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle855/source.mp4
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cycle855.hook_evidence import POLICY,sha256
+          Path('/tmp/cycle855/manifest.json').write_text(json.dumps({**POLICY,'source_sha256':sha256('/tmp/cycle855/source.mp4')}))
+          PY
+          python cycle855/hook_evidence.py --source /tmp/cycle855/source.mp4 \
+            --output /tmp/cycle855/output.mp4 --manifest /tmp/cycle855/manifest.json \
+            --report /tmp/cycle855/qa.json --window 0 60 --desk-frame 10 --evidence-frame 35
+          python cycle855/verify_review.py /tmp/cycle855/source.mp4 /tmp/cycle855/output.mp4 /tmp/cycle855/verify.json
+          ffmpeg -v error -xerror -i /tmp/cycle855/output.mp4 -f null -
