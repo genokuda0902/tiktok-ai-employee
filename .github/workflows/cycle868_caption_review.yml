@@ -1,0 +1,22 @@
+name: cycle868 caption core (review only)
+on:
+  pull_request:
+    paths:
+      - "review_cycles/cycle868/**"
+      - ".github/workflows/cycle868_caption_review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run 12 offline unit tests
+        run: |
+          cd review_cycles/cycle868
+          python -m unittest -v test_caption_core.py
