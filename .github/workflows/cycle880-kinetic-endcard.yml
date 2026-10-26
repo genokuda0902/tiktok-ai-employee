@@ -1,0 +1,28 @@
+name: cycle880 review-only kinetic endcard CI
+on:
+  push:
+    branches:
+      - 'automation/cycle880-*'
+  pull_request:
+    paths:
+      - 'cycle880/**'
+      - '.github/workflows/cycle880-kinetic-endcard.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free bundled FFmpeg for CI only
+        run: python -m pip install imageio-ffmpeg==0.6.0
+      - name: Check bundled FFmpeg
+        run: python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())"
+      - name: Pure-Python unit tests
+        run: python -m unittest discover -s cycle880 -p 'test_*.py' -v
+      - name: Synthetic A/V smoke (no private media)
+        run: python cycle880/ci_smoke.py
