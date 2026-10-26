@@ -1,0 +1,22 @@
+name: cycle860 prompt-demo unit tests
+on:
+  pull_request:
+    paths:
+      - 'cycle860/**'
+      - '.github/workflows/cycle860-prompt-demo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests (no paid APIs or posting)
+        run: python -m unittest discover -s cycle860 -p 'test_prompt_demo_core.py' -v
