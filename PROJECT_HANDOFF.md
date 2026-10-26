@@ -1,4 +1,12 @@
 # TikTok AI社員システム — authoritative handoff
+
+## 2026-10-27 — cycle876 review-only checkpoint (NOT merged)
+- Stacked Draft PR #236 on unmerged PR #233; main remains 18e084c38db0dc55db7dfc0532b9451b1167f2aa.
+- Reimplemented scene 04 as a **clearly simulated** offline prompt-entry animation with fictional source rows and source-derived totals, 85 changed frames (8.367–11.200s), preserving the existing private Japanese AAC bitstream and subtitle/footer region. Shared source covers 10 genres; only AI-work full review MP4 rendered.
+- Local technical QA: 1080x1920 H264 30fps, 691 frames, 23.033s, AAC 48kHz; A/V decode PASS, 85/85 frames changed, caption/footer sampled max delta 0.0459, 12/12 local tests PASS. Private review MP4 SHA256 c4fd5618ca2b626e990b3f7507eb03b30d1b63611adb6ed3499d7759333845f6.
+- Source/test commit b4bee334246f709ea79034e563793f7de0be297a; initial push CI SUCCESS https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40383465668 (synthetic-only A/V, not private completed MP4).
+- User's 16-panel storyboard directly inspected; original v33 MP4 unavailable. Independent speech/caption semantic QA, smartphone playback, inherited source rights, employee approval and real billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid service or public media upload.
+
 Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end completion. At the start of each chat, read this file and `recovery/v33/RECOVERY_STATUS.md`, then verify actual code and artifacts. Update this file with verified commit SHAs and test results whenever changing implementation.
 
 ## Binding decisions (latest wins)
