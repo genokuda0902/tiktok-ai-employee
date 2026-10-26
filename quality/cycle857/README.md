@@ -1,9 +1,9 @@
-# cycle857 – eight independent high-resolution AI photos (review only)
+# cycle857 – eight independent high-resolution slides (6 AI photos + 2 original graphics)
 
-This is a stacked, unmerged quality-improvement cycle based on cycle856. The new full-size photo stage is 900×1250 pixels (previously 630×630), a 183.4% increase in displayed area. Eight independent source images meet the minimum 900×1500 dimensions, and foreground crops never upscale source pixels. Six were introduced in cycle856; the remaining two were previously generated in the user's conversation and are now integrated. **Not all eight images were newly generated in cycle857.**
+This is a stacked, unmerged quality-improvement cycle based on cycle856. The new 900×1250 image stage (previously 630×630) increases displayed area by 183.4%. Eight distinct high-resolution image files meet the minimum 900×1500 dimensions and are cropped without source-pixel upscaling. **Six images are inherited AI photos from cycle856; scenes 6 and 8 are newly drawn, original procedural vector illustrations. The goal of eight independent photographs is not yet met.**
 
-Eight scene cuts are aligned to silences between 24 Japanese narration subtitle beats; the final video has exactly 691 frames at 30 fps (23.033 seconds) and 1080×1920 pixels. The inherited Japanese AAC audio is kept bitstream-identical.
+Eight scene cuts align to silences between 24 Japanese subtitle beats; the MP4 has 691 frames at 30 fps (23.033 seconds), 1080×1920. The inherited Japanese AAC audio is unchanged.
 
-This PR contains the reusable 10-genre photo-quality/timing core, actual 24 subtitle beats, nine unit tests, and GitHub Actions CI. The complete MP4 generator, synthetic image sources, Japanese audio, final MP4, and QA evidence are provided separately in the cycle857 local review ZIP. **GitHub CI tests the shared core, not the finished Japanese MP4.**
+This PR saves the reusable 10-genre image/timing quality gate, actual 24 subtitle beats, nine unit tests, and GitHub Actions CI. The complete Python renderer (including the two new illustrations), source images, Japanese audio, final MP4, and 17-check QA report are supplied in the separate local cycle857 ZIP. **GitHub CI tests the shared core, not the finished Japanese MP4.**
 
-Synthetic people and images, inherited voice provenance, subtitle phoneme alignment, reference-video comparison, and phone playback require human review. No publishing, auto-posting, paid contracts, or merge. Status: HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+Image and inherited voice provenance, human listening and precise caption alignment, reference-video comparison, and smartphone playback require review. No publishing, auto-posting, paid contract, or merge. Status: HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
