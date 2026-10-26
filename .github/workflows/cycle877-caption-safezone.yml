@@ -1,0 +1,17 @@
+name: Cycle877 Single-Track Caption Core
+on:
+  pull_request:
+    paths:
+      - "video_engine/cycle877/**"
+      - ".github/workflows/cycle877-caption-safezone.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-caption-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test subtitle safe-zone and ten-genre core
+        run: python3 -m unittest video_engine.cycle877.test_single_track_caption_core -v
