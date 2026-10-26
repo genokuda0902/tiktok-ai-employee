@@ -1,17 +1,17 @@
-# cycle874 — chart data integrity (HUMAN_REVIEW / PUBLICATION_NOT_APPROVED)
+# cycle874 — source-visible animated chart (HUMAN_REVIEW / PUBLICATION_NOT_APPROVED)
 
-Stacked on unmerged PR #229, separate from parallel PR #230. Original v33 generator remains unrecovered; this is a reimplementation.
+Stacked on unmerged PR #229; parallel PR #230 is untouched. This is a reimplementation, not recovered v33 source.
 
-## Concrete defect fixed
-The prior scene03 bar chart showed June lower than May even though the source table says sales A: 12,16,18 and B: 8,9,12 (April, May, June). The new scene03 uses a **single tuple source** for visible labels and bar heights; June is now correctly tallest for both series. Staged bars, readable Japanese, shared 10-genre fictional sample presets. No real sales or actual AI-generated spreadsheet result is claimed.
+## Concrete improvement over cycle873
+In the *intermediate animation* at 6.9s, the June bars appeared shorter than May and June's numeric labels were not yet shown, which could be mistaken for a data mismatch. **Important correction:** the prior chart at 7.8s already displayed June as tallest with the correct final values; the old completed chart was NOT mathematically wrong. The new scene03 displays all three months' fictional source values immediately while bars animate and derives completed bar heights and labels from the same source tuples (A 12/16/18, B 8/9/12). This makes the progressive animation more interpretable, not a correction of final source arithmetic. Only frames 170–250 (5.667–8.367s) change. The Japanese narration, burned-in captions, other scenes and private source remain unchanged.
 
-## Reproduce the PRIVATE MP4
-Use the private review package supplied in the ChatGPT conversation, not GitHub. Never commit or upload inherited video, voices, source stills, or user storyboard.
+## Local reproduction (PRIVATE MP4 only)
+The ChatGPT review ZIP includes private source, manifest, output and full QA. These are not in GitHub.
 ```bash
 PYTHONPATH=cycle874 python -m unittest discover -s cycle874 -p 'test_*.py' -v
 python cycle874/chart_truth.py --source /PRIVATE/cycle873_input.mp4 --output /PRIVATE/cycle874_review.mp4 --manifest /PRIVATE/manifest.json --report /PRIVATE/render.json
 ```
-Manifest requires all keys from POLICY plus exact source_sha256; no public-use approval is implied. Requires Python/Pillow, Noto CJK, FFmpeg. CI checks 16 tests and synthetic one-second A/V only, NOT private Japanese MP4.
+The manifest must equal POLICY plus source_sha256. Requires Python/Pillow, Noto CJK and FFmpeg. CI checks 16 portable tests and synthetic one-second A/V, NOT the private Japanese MP4.
 
-## References / limitations
-Accessible summaries of TikTok市場分析 and TikTok動画研究: first 1.5s hook, purposeful short shots, UI proof, Before/After, readable Japanese captions and human approval. Full research chats unavailable. User's 16-panel storyboard directly inspected; original v33 MP4 inaccessible this run. Reference cinematic actors, real ChatGPT/Excel operation, image diversity remain unmatched. Japanese narration bitstream and subtitle pixel area preserved, but pronunciation, meaning, semantic timing, rights, phone playback and employee signoff unverified. No merge, paid services or automatic TikTok posting.
+## Research and safety
+Accessible TikTok市場分析 / TikTok動画研究 summaries: first 1.5s hook, purposeful cuts, UI proof, Before/After, legible Japanese captions and employee review. Full chats unavailable. User 16-panel storyboard directly inspected; original v33 MP4 inaccessible. Natural actors, genuine ChatGPT/Excel interaction and rich reference cinematography remain unmatched. Independent Japanese pronunciation/meaning, semantic subtitle timing, media/voice publication rights, phone playback, employee approval and actual Actions billing are unverified. No merge, paid service, public private-media upload or auto-post.
