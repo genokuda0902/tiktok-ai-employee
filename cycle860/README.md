@@ -26,6 +26,7 @@ python cycle860/chart_story.py \
 ## Research and unresolved gates
 
 - Consulted accessible summaries of `TikTok市場分析` and `TikTok動画研究`: 0–1.5 s hook, purposeful beats, real software demonstrations, Before/After, readable Japanese captions and employee-reviewed manual posting. Original research task/chat full text inaccessible.
-- Prior reviews describe user-supplied `ChatGPT×Excel時短術16コマ絵コンテ.png`; it was **not directly opened this run**. v33 original MP4 was also unavailable for direct comparison. Both are unverified as actual side-by-side references in this cycle.
+- The user-supplied `ChatGPT×Excel時短術16コマ絵コンテ.png` was **directly opened and inspected** this run. Panels 7–8 illustrate spreadsheet-to-chart storytelling. Original v33 MP4 was unavailable for direct comparison. Both are unverified as actual side-by-side references in this cycle.
 - Confirmed main `18e084c38db0dc55db7dfc0532b9451b1167f2aa`, open unmerged PRs, `PROJECT_HANDOFF.md` and `recovery/v33/RECOVERY_STATUS.md`. Original v33 generation code remains unlocated.
 - Remaining gaps: cinematic people/lighting, 16 unique reference panels, independent Japanese speech-to-caption semantic QA, inherited media/voice rights, mobile playback, employee sign-off and actual Actions billing. No claim of equivalent reference quality, retention uplift or publication readiness. No merge, paid service, confidential asset upload or auto-post.
+**Local completed MP4 SHA256:** `ae3966da37aebaa243f201bbbcdf967db1167e650fbfb3b2eac6bde704b501c0` (not uploaded to GitHub).
