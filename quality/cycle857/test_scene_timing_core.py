@@ -14,7 +14,10 @@ class TestNativeScene(unittest.TestCase):
     def test_invalid_boundaries(self):
         with self.assertRaises(ValueError):frame_counts((0,1,1,2,3,4,5,6,691))
     def test_validate_beat_grouping(self):
-        beats=json.loads((Path(__file__).parent.parent/'assets/caption_beats.json').read_text())
+        root=Path(__file__).parent
+        beats_path=root/'assets/caption_beats.json'
+        if not beats_path.exists():beats_path=root.parent/'assets/caption_beats.json'
+        beats=json.loads(beats_path.read_text())
         self.assertTrue(validate_beats(beats))
     def test_duplicate_rejected(self):
         with tempfile.TemporaryDirectory() as d:
