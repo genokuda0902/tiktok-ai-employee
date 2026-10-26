@@ -80,3 +80,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Stacked on Draft PR #214, new cycle865 branch automation/cycle865-clean-hook-20261026; source and QA in cycle865/README.md. The prior opening had overlapping text and an inherited spreadsheet warning; the first 89 frames now use a single clear question, a fictional Calc table, and staged three-step labels. Ten genre copy/layout variants; only AI-work completed as a local private Japanese MP4.
 - Verified local: 14 unit tests PASS; H264 1080x1920 30fps 691 frames / 23.033s; AAC48kHz bitstream identical; full decode PASS; subtitle safe-region delta <=0.111 on sampled frames. Output SHA256 d4080e6187cdbd6333ffcc6aea9c0b4d7d97872b438ce47a56b2800174e5e6b0.
 - Actual MP4 remains a private ChatGPT review attachment, NOT in public GitHub or Actions. CI only checks code and synthetic media. User 16-panel storyboard inspected, but v33 MP4 unavailable; speech/caption semantics, inherited rights, smartphone playback, staff approval and reference parity unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, posting or paid API.
+
+
+## cycle867 verified local checkpoint — 2026-10-26 JST (unmerged draft)
+- Draft PR #219 on unmerged cycle866 #217; commit/run details in `cycle867/RESULT.md`. Parallel #218 not merged.
+- Source-to-result fictional audit scene, 10 genre editorial variants; private Japanese review MP4 23.033s, 1080x1920 H264/AAC, full A/V decode, 691-frame subtitle-region protection PASS, 13 local unit tests PASS.
+- GitHub CI only unit tests + synthetic 1s A/V. Real MP4 and inherited audio are NOT uploaded. v33 original inaccessible; no quality parity, rights, smartphone, speech semantics or employee approval.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, merge or paid contract.
