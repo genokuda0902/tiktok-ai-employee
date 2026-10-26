@@ -1,0 +1,25 @@
+name: cycle855 photo safe-zone geometry (review only)
+on:
+  push:
+    branches:
+      - feat/cycle855-photo-tiktok-ui-safe-20261026
+  pull_request:
+    paths:
+      - 'experiments/cycle855_photo_safe/**'
+      - '.github/workflows/cycle855-photo-safe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  geometry-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run 10 safe-zone regression tests
+        run: |
+          cd experiments/cycle855_photo_safe
+          python -m unittest -v test_safe_zone_core.py
