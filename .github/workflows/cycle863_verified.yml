@@ -1,0 +1,23 @@
+name: cycle863 verified computation
+on:
+  pull_request:
+    paths:
+      - "tools/cycle863_verified_demo.py"
+      - "tests/test_cycle863_verified_demo.py"
+      - ".github/workflows/cycle863_verified.yml"
+  workflow_dispatch:
+jobs:
+  deterministic-demo-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify real calculations and ten-genre configurations
+        run: python -m unittest discover -s tests -p "test_cycle863_verified_demo.py" -v
+      - name: Emit example calculation
+        run: python tools/cycle863_verified_demo.py
+# This CI does not render or validate the finished MP4; local QA does.
