@@ -1,0 +1,19 @@
+name: cycle864 browser demo core tests
+on:
+  pull_request:
+    paths:
+      - 'automation/cycle864/**'
+      - '.github/workflows/cycle864-browser-demo.yml'
+  workflow_dispatch:
+jobs:
+  browser-core:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run 13 offline core tests
+        run: python -m unittest discover -s automation/cycle864 -p 'test_*.py' -v
