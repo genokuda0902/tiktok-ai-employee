@@ -1,0 +1,16 @@
+name: cycle875 original visual grammar tests
+on:
+  push:
+    branches:
+      - feature/cycle875-original-pictogram-visual-grammar
+  pull_request:
+    paths:
+      - 'cycle875/**'
+      - '.github/workflows/cycle875-visual-grammar.yml'
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check 10-genre scene and safe-caption invariants
+        run: python3 -m unittest discover -s cycle875 -p 'test_*.py' -v
