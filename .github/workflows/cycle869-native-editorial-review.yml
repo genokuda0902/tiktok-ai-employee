@@ -1,0 +1,18 @@
+name: cycle869-native-editorial-review
+on:
+  pull_request:
+    paths:
+      - 'automation/cycle869/**'
+      - '.github/workflows/cycle869-native-editorial-review.yml'
+  workflow_dispatch:
+jobs:
+  offline-core-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python core tests (no external media, no posting)
+        run: |
+          cd automation/cycle869
+          python3 -m unittest -v test_visual_core.py
