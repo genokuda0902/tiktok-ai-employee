@@ -1,0 +1,34 @@
+name: cycle859 review-only progress overlay tests
+on:
+  push:
+    branches:
+      - 'feat/cycle859-*'
+  pull_request:
+    paths:
+      - 'cycle859/**'
+      - '.github/workflows/cycle859-progress.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-and-synthetic-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests (10 genres, progress geometry, audio-caption coverage)
+        run: |
+          python -m compileall -q cycle859
+          python -m unittest discover -s cycle859 -p 'test_*.py' -v
+      - name: Install FFmpeg on minimal runner
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Synthetic MP4 only (never private Japanese media)
+        run: |
+          mkdir -p /tmp/cycle859
+          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=0x182b42:s=1080x1920:r=30 -f lavfi -i sine=frequency=440:sample_rate=48000 -t 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle859/synthetic.mp4
+          python cycle859/render_progress.py --source /tmp/cycle859/synthetic.mp4 --output /tmp/cycle859/overlay.mp4 --genre science
+          ffmpeg -v error -xerror -i /tmp/cycle859/overlay.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json /tmp/cycle859/overlay.mp4
