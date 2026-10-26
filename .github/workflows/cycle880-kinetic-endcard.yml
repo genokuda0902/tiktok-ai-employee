@@ -1,0 +1,26 @@
+name: cycle880 review-only kinetic endcard CI
+on:
+  push:
+    branches:
+      - 'automation/cycle880-*'
+  pull_request:
+    paths:
+      - 'cycle880/**'
+      - '.github/workflows/cycle880-kinetic-endcard.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check free FFmpeg
+        run: ffmpeg -version | head -1
+      - name: Pure-Python unit tests
+        run: python -m unittest discover -s cycle880 -p 'test_*.py' -v
+      - name: Synthetic A/V smoke (no private media)
+        run: python cycle880/ci_smoke.py
