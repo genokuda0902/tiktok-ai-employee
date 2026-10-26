@@ -1,0 +1,22 @@
+name: cycle878 original visual proof safety
+on:
+  push:
+    branches:
+      - feature/cycle878-original-ui-proof
+    paths:
+      - 'video_engine/cycle878/**'
+      - '.github/workflows/cycle878-visual-proof.yml'
+  pull_request:
+    paths:
+      - 'video_engine/cycle878/**'
+      - '.github/workflows/cycle878-visual-proof.yml'
+  workflow_dispatch:
+jobs:
+  safety-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python no-dependency safety tests
+        run: PYTHONPATH=video_engine/cycle878 python3 -m unittest discover -s video_engine/cycle878 -p 'test_*.py' -v
