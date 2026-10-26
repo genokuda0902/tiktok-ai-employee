@@ -68,3 +68,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Private review-only MP4: cycle861_REAL_UI_MONTAGE_JAPANESE_REVIEW_ONLY.mp4, SHA256 bfc5b31ab0a53eb69a57b5b90915254a409a670d6ba2445262517c52365780e3; **not uploaded to GitHub**.
 - Scene 2 frames 89–169: two sequential genuine, fictional-data Calc/Writer recorded excerpts replacing static checklist. 10/10 local tests and 12/12 local MP4 QA checks PASS, H264 1080x1920 30fps 691 frames, AAC48k ADTS bit-identical to cycle860. See cycle861/QA_REPORT.md for details.
 - Original v33 MP4 and full research chats inaccessible this cycle; user 16-panel storyboard directly inspected. Media rights, spoken Japanese/caption semantic match, mobile playback, employee approval and reference parity pending. No merge or posting.
+
+
+## cycle862 review checkpoint (2026-10-26 JST; unmerged)
+- Stacked on cycle861 PR #208; parallel PR #209 untouched. Private review MP4: `cycle862_ACTIONABLE_OUTRO_JAPANESE_REVIEW_ONLY.mp4` SHA256 `82e9f547fb28e79ea71c5021576328e91301635d6a656e7c924d033fdcb708d2` (ChatGPT sandbox only, never public GitHub).
+- Frames 631–690 (21.033–23.033s) replace passive Writer ending with progressive 3-step, actionable save-and-try CTA, using two real fictional-data Calc/Writer stills extracted from the private source. 10 genre presets tested; AI-work MP4 actually rendered. No new source recording.
+- Local 12/12 tests, 8/8 technical QA checks PASS. H264 1080x1920 30fps 691 frames, AAC48k ADTS SHA256 unchanged `2c05bdc4811714429a8f32a40be6776e916653efdb2ebedae143dacfcd3900b9`; full A/V decode PASS. CI synthetic-only; not proof of Japanese narration semantics.
+- User's 16-panel storyboard inspected directly, original v33 MP4 and full TikTok research chats unavailable. Japanese ASR/semantic caption sync, voice naturalness, publication rights, phone playback, staff approval, viewer retention and actual Actions billing unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, paid service, external upload or posting.
