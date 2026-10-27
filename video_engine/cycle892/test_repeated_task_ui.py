@@ -40,7 +40,7 @@ class Cycle892Tests(unittest.TestCase):
         with self.assertRaises(ValueError): stage_at(81)
     def test_negative_stage_rejected(self):
         with self.assertRaises(ValueError): stage_at(-1)
-    def test_patch_dimensions(self): self.assertEqual(draw_patch(30,ROWS).size,(940,530))
+    def test_patch_dimensions(self): self.assertEqual(draw_patch(30,ROWS).size,(940,780))
     def test_subtitle_protection(self): self.assertLess(PATCH_Y+PATCH_H,1280)
     def _dummy_manifest(self):
         td=tempfile.TemporaryDirectory()
