@@ -76,7 +76,7 @@ def draw_frame(local_frame,story=DEMO,font_path='/usr/share/fonts/opentype/noto/
     im=Image.new('RGBA',(W,H),(0,0,0,0))
     d=ImageDraw.Draw(im,'RGBA')
     font=lambda size: ImageFont.truetype(font_path,size,index=0)
-    d.rounded_rectangle((35,250,1045,1350),radius=45,fill=(7,20,42,255),
+    d.rounded_rectangle((35,250,1045,1430),radius=45,fill=(7,20,42,255),
                         outline=(26,126,155,240),width=3)
     d.rounded_rectangle((65,285,360,338),radius=20,fill=(13,110,139,230))
     d.text((91,290),'STEP 01 / FIND',font=font(27),fill=(227,249,255,255))
@@ -90,7 +90,7 @@ def draw_frame(local_frame,story=DEMO,font_path='/usr/share/fonts/opentype/noto/
         left=80+offset
         alpha=round(a*255)
         d.rounded_rectangle((left,top,995+offset,top+154),radius=28,
-                            fill=(17,47,73,round(245*a)),
+                            fill=(17,47,73,round(255*a)),
                             outline=(*colors[idx],round(210*a)),width=3)
         d.rounded_rectangle((left+20,top+27,left+120,top+127),radius=25,
                             fill=(*colors[idx],alpha))
