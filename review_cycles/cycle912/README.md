@@ -15,7 +15,7 @@ Requires Python, Pillow, NumPy, Noto Sans CJK JP, and FFmpeg. Input MP4 is priva
 
 ## Verified private output
 MP4: cycle912_REPETITION_CALENDAR_JP_HUMAN_REVIEW.mp4
-SHA256: d262e14dbcd4cb970b53de09f2f0aa1c385d8938a2212deac2f9f06ffb097861
+SHA256: acf735a060896d584b3b02b8a2e3c6aaa31bc22c24a415c663db730f9d829925
 
 Local QA: 1080x1920 H.264, 30fps, 691 frames, 23.033s, inherited Japanese AAC 48kHz with byte-identical ADTS audio SHA256 c2cf7807e183573d74fa7c3f1a719cfb05ccdcb0790ef8d28c2c902640bc197d. Full decode passed. Changed-scene mean image difference 72.44 at 1/4 resolution; outside-scene means 0.11/0.21; caption-band mean 0.085. Local runtime tests 8/8 and QA 17/17 passed.
 
