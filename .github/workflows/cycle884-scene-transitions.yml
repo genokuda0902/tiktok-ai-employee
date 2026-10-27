@@ -1,0 +1,22 @@
+name: cycle884 scene transition core
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle884/**'
+      - '.github/workflows/cycle884-scene-transitions.yml'
+  push:
+    branches:
+      - 'quality/cycle884-scene-ease-20261027'
+permissions:
+  contents: read
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run offline 10-genre and source safety tests
+        run: python -m unittest discover -s quality/cycle884 -p 'test_*.py' -v
