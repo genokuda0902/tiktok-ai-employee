@@ -4,6 +4,7 @@ No user data, proprietary media, network access, paid APIs, or publishing operat
 """
 from __future__ import annotations
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from typing import Sequence
 from PIL import Image, ImageDraw, ImageFont
@@ -51,7 +52,12 @@ def validate(genre: str, focus: int, checks: Sequence[Check] = CHECKS) -> None:
         raise ValueError('release gate violated')
 
 def font(size: int, bold: bool = False):
-    return ImageFont.truetype(FONT_BOLD if bold else FONT, size)
+    path = FONT_BOLD if bold else FONT
+    if not Path(path).is_file() and os.environ.get("CI"):
+        # CI validates geometry without distributing font files.
+        # Production rendering requires Noto CJK for Japanese glyph quality.
+        return ImageFont.load_default(size=size)
+    return ImageFont.truetype(path, size)
 
 def render_panel(path: Path, focus: int, genre: str = 'ai') -> Path:
     validate(genre, focus)
