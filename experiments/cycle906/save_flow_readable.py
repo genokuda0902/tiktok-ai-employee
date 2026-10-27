@@ -61,7 +61,7 @@ def draw_stage(stage: int, genre: str, audit=None):
     d = ImageDraw.Draw(im)
     rounded(d, SAFE_RECT, '#F4F8FE', 36, '#D5E5F6', 4)
     rounded(d, (94, 56, 292, 126), BLUE, 20)
-    draw_text(d, (121, 63), f'STEP {stage+1}/3', 155, 39, 36, WHITE, audit=audit)
+    draw_text(d, (121, 63), f'STEP {stage+1}/3', 155, 39, 34, WHITE, audit=audit)
     titles = ['名前をつける', '指示を整理する', '保存前に確認']
     draw_text(d, (102, 164), titles[stage], 850, 66, 48, audit=audit)
     d.line((102, 265, 974, 265), fill='#CFDDEB', width=4)
