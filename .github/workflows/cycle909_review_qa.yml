@@ -1,0 +1,32 @@
+name: cycle909 offline input-output bridge QA
+on:
+  push:
+    branches:
+      - automation/cycle909-input-output-bridge-20261028
+    paths:
+      - 'review_cycles/cycle909/**'
+      - '.github/workflows/cycle909_review_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle909/**'
+      - '.github/workflows/cycle909_review_qa.yml'
+permissions:
+  contents: read
+jobs:
+  offline-policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile renderer and test source (no package installation)
+        run: python -m py_compile review_cycles/cycle909/input_output_bridge.py
+      - name: Run 9 dependency-free tests
+        run: python -m unittest discover -s review_cycles/cycle909 -p 'test_cycle909_policy.py' -v
+      - name: Ensure private MP4 and inherited audio are not in this PR
+        run: |
+          ! find review_cycles/cycle909 -type f \( -name '*.mp4' -o -name '*.aac' -o -name '*.wav' -o -name '*.m4a' \) | grep .
+      - name: Publication blocked
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
