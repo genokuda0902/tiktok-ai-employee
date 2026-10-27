@@ -29,3 +29,8 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+## 2026-10-28 cycle906 checkpoint (draft, not merged)
+- New review-only proof chain in `review_cycles/cycle906/` (scene05: 元データ → AIの下書き → 人が照合, 81 animated frames), distinct from concurrent PR #278 cycle905.
+- Local private MP4 SHA256 `9594572d211c14d7bdcd292a251ce16c50fb9cf069b76c5286c4a4cde49b261e`, 1080x1920 H264 30fps 23.033333s, AAC 48k bitstream preserved, 13 local tests PASS; 81/81 targeted frames changed. GitHub CI tests synthetic frames only, not private MP4.
+- Original v33 MP4, full research chats, independent Japanese ASR/semantic subtitle alignment, rights approval, device playback and employee approval remain unverified. PUBLICATION_NOT_APPROVED. No merge/posting/paid API/media upload. See `review_cycles/cycle906/RESULT.md` for full evidence and reproduction instructions.

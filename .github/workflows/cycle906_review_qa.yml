@@ -1,0 +1,37 @@
+name: cycle906 proof chain QA (review only)
+on:
+  push:
+    paths:
+      - 'review_cycles/cycle906/**'
+      - '.github/workflows/cycle906_review_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle906/**'
+      - '.github/workflows/cycle906_review_qa.yml'
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Static checks and unit tests
+        run: |
+          python -m py_compile review_cycles/cycle906/proof_chain.py
+          PYTHONPATH=review_cycles/cycle906 python -m unittest discover -s review_cycles/cycle906 -p 'test_*.py' -v
+      - name: Render synthetic safe PNG proof frames (no private media)
+        run: |
+          python review_cycles/cycle906/proof_chain.py --smoke-frames 3 --workdir /tmp/cycle906-safe-smoke
+          test "$(find /tmp/cycle906-safe-smoke -name 'frame_*.png' | wc -l)" -eq 3
+      - name: Public posting remains forbidden
+        run: |
+          grep -q 'PUBLICATION_NOT_APPROVED' review_cycles/cycle906/proof_chain.py
+          grep -q 'upload_media_to_github' review_cycles/cycle906/proof_chain.py
