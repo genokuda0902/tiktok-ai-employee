@@ -4,13 +4,13 @@ Date: 2026-10-27 JST. Based on unmerged cycle891 PR #260, head 8645ab1efc911c904
 
 ## Actual change from cycle891
 - cycle891: 3-stage April→May→June chart reveal in scene03.
-- cycle892: replace the large empty area in **scene02 frames 89–169** (2.967–5.667s) with an original spreadsheet-like synthetic table showing the same manual monthly aggregation three times, each highlighted in sequence.
+- cycle892: replace the large empty area in **scene02 frames 89–169** (2.967–5.667s) with a fully masked original spreadsheet-like synthetic table showing the same manual monthly aggregation three times, each highlighted in sequence.
 - The displayed table is **NOT real Excel, a real user dataset, or a recorded commercial-service operation**. Data A=[12,16,18], B=[8,9,12] is fictional.
 - The renderer validates 10 genre identifiers, exactly three synthetic rows, no obvious URLs/private labels, source SHA, and fail-closed publication policy. One AI-productivity MP4 was rendered; ten genre videos were **not** produced.
 
 ## Locally verified private deliverable
 - Input cycle891 MP4 SHA256: `a6a1bcfc8a294448dfe64f6862f8da6c6b837a703d1ff83ed9692a8e30dc510f`
-- Output cycle892 MP4 SHA256: `00d4cfba36ca702555095b10993afce1deb603ac7a8cc121218902abc79a4545`
+- Output cycle892 MP4 SHA256: `2577cc9bf686a956b35e543002826d13031eb5e7be7cbc35439772b0bcff75af`
 - H.264 1080×1920, 30fps, 691 frames, 23.033333s; AAC 48kHz stereo.
 - Full video/audio FFmpeg decode PASS; all 81 scene02 target frames changed with region MAE >2.
 - AAC ADTS elementary-stream SHA before/after identical: `2c05bdc4811714429a8f32a40be6776e916653efdb2ebedae143dacfcd3900b9`.
