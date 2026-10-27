@@ -1,0 +1,44 @@
+name: cycle890 Japanese prompt typing QA (synthetic media only)
+on:
+  push:
+    branches:
+      - automation/cycle890-japanese-prompt-typing-20261027
+  pull_request:
+    paths:
+      - 'video_engine/cycle890/**'
+      - '.github/workflows/cycle890-qa.yml'
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free open-source test dependencies
+        run: |
+          python -m pip install 'Pillow>=10,<13'
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - name: 10-genre source and policy tests
+        env:
+          PYTHONPATH: video_engine/cycle890
+        run: python -m unittest discover -s video_engine/cycle890 -p 'test_*.py' -v
+      - name: Test real overlay renderer against synthetic H264/AAC
+        env:
+          PYTHONPATH: video_engine/cycle890
+        run: |
+          python - <<'PY'
+          from prompt_typing import draw_patch
+          draw_patch(50).save('/tmp/cycle890_patch.png')
+          PY
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -loop 1 -i /tmp/cycle890_patch.png -filter_complex "[0:v][2:v]overlay=0:940:shortest=1[v]" -map '[v]' -map 1:a -t 1 -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac /tmp/cycle890_synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle890_synthetic.mp4 -f null -
+      - name: Prevent inherited media, private manifests and approvals in PR
+        run: |
+          if find video_engine/cycle890 -type f \( -iname '*.mp4' -o -iname '*.m4a' -o -iname '*.wav' -o -iname '*.png' -o -iname '*.jpg' -o -iname '*manifest*.json' \) | grep .; then
+            echo 'Private media/manifest cannot be committed'; exit 1
+          fi
