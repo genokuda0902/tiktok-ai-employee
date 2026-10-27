@@ -15,7 +15,7 @@ Date: 2026-10-28 JST. Status: **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**.
 
 ## Local verification
 - Source cycle907 SHA256: 4a3b86f703e788cf578acc98f747a7499e83bcb769bbabf11bb5c15807bbbf70
-- Output SHA256: 6adce54e6e1455235bd6c40d8b6aa9808be0bfe9c6928259d56cda68a2f0024c
+- Output SHA256: d811aba20df5c2ef4a43742868035af60f494dc99c10651458da5ac4f5ae25ef
 - 1080×1920 H.264 30fps 691 frames / 23.033333s, AAC 48kHz. Full video/audio decode PASS, AAC ADTS bitstream unchanged. 81/691 frames materially changed (327–407). Subtitle region all frames compared at quarter resolution: max MAE 1.3967, p95 1.3652 (re-encode differences). 11 local tests PASS.
 - Independent Japanese ASR/transcription, pronunciation, caption semantic/timing alignment, smartphone playback, source rights, employee approval, actual Actions billing NOT VERIFIED. No merge, auto-post, public media upload, paid service or reference-parity claim.
 
