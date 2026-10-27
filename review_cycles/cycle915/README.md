@@ -7,7 +7,7 @@ Scene 05, 11.6–14.5s (source frames 348–434), changes from a static checklis
 Use the **private** cycle914 MP4 only after rights clearance. Locally install Pillow and Noto Sans CJK fonts, then run `python evidence_review.py --out frames`. Overlay the 87 generated 1080×1160 frames at (0,300) during 11.6–14.5s using ffmpeg, encode H.264 at 1080×1920/30fps, and stream-copy original AAC audio. **Do not commit the private MP4 or inherited assets.**
 
 ## Actual private QA (not CI)
-Output SHA256: `__SHA256__`.
+Output SHA256: `e032c748b0a02b3e5c75218809de037882929c02c1849104250aec30215e0fe0`.
 23.033333s; 691 frames; H.264 1080×1920 30fps; AAC 48kHz bitstream identical; full A/V decode pass; 87/87 edited frames visibly changed; outside scene mean pixel MAE 0.169 at quarter-resolution; subtitle band MAE 0.092; 15/15 local technical QA; 11/11 local render tests.
 
 The CI workflow tests source syntax, ten genres and review-only policies; it does **not** test the private MP4.
