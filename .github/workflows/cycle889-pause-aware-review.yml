@@ -1,0 +1,49 @@
+name: cycle889-pause-aware-review
+on:
+  pull_request:
+    paths:
+      - 'video_engine/cycle889/**'
+      - '.github/workflows/cycle889-pause-aware-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Run 12 timing, content and release-safety tests
+        working-directory: video_engine/cycle889
+        run: python -m unittest -v test_pause_aware.py
+      - name: Synthetic video and Japanese ASS render/decode (no private assets)
+        working-directory: video_engine/cycle889
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -threads 2 -pix_fmt yuv420p -c:a aac -shortest synthetic.mp4
+          cat > synthetic.ass <<'ASS'
+          [Script Info]
+          ScriptType: v4.00+
+          PlayResX: 1080
+          PlayResY: 1920
+          [V4+ Styles]
+          Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+          Style: JP,Noto Sans CJK JP,71,&H00FFFFFF,&H00FFFFFF,&H00321C13,&H90000000,-1,0,0,0,100,100,0,0,1,4,0,5,74,74,366,1
+          [Events]
+          Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+          Dialogue: 0,0:00:00.20,0:00:01.80,JP,,0,0,0,,日本語テスト
+          ASS
+          python render.py synthetic.mp4 synthetic.ass synthetic_review.mp4 ./synthetic_work
+          ffmpeg -hide_banner -loglevel error -xerror -i synthetic_review.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 synthetic_review.mp4)" = "1080,1920"
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 synthetic_review.mp4)" = "aac"
+      - name: Explicit release gate
+        run: |
+          echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          echo 'Synthetic CI only. No inherited private MP4, auto-posting, merge, billing or deployment.'
