@@ -1,0 +1,36 @@
+name: cycle897 kinetic hook synthetic QA
+on:
+  push:
+    branches:
+      - quality/cycle897-kinetic-hook-progress-20261027
+  pull_request:
+    paths:
+      - quality/cycle897/**
+      - .github/workflows/cycle897-kinetic-hook.yml
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Japanese font and Pillow
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk ffmpeg
+          python -m pip install pillow
+      - name: Run 10-genre safety and motion tests
+        run: python -m unittest discover -s quality/cycle897 -p 'test_*.py' -v
+      - name: Render synthetic hook and rail
+        run: |
+          python quality/cycle897/kinetic_hook.py --output /tmp/cycle897
+          test "$(find /tmp/cycle897/hook -name '*.png' | wc -l)" -eq 87
+          test "$(find /tmp/cycle897/rail -name '*.png' | wc -l)" -eq 691
+      - name: Synthetic 1s H264/AAC smoke test
+        run: |
+          ffmpeg -v error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -shortest -c:v libx264 -preset ultrafast -c:a aac /tmp/c897.mp4
+          ffmpeg -v error -xerror -i /tmp/c897.mp4 -f null -
