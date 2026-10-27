@@ -1,5 +1,5 @@
 import unittest
-from chart_motion import GENRES, validate, ease, chart_heights, frame, publication_gate, PANEL_Y, PANEL_H, CAPTION_TOP
+from chart_motion import GENRES, validate, ease, chart_heights, axis_max, frame, publication_gate, PANEL_Y, PANEL_H, CAPTION_TOP
 
 class ChartMotionTests(unittest.TestCase):
  def setUp(self):
@@ -26,7 +26,9 @@ class ChartMotionTests(unittest.TestCase):
  def test_chart_height_monotonic(self):
   h0=chart_heights(self.data['values'],0);h1=chart_heights(self.data['values'],1)
   self.assertTrue(all(x==0 for v in h0.values() for x in v))
-  self.assertEqual(h1['A'][-1],315);self.assertEqual(h1['B'][0],140)
+  self.assertEqual(h1['A'][-1],284);self.assertEqual(h1['B'][0],126)
+  self.assertEqual(axis_max(self.data['values']),20)
+  self.assertEqual(axis_max({'A':[30,45,55],'B':[20,20,20]}),60)
  def test_caption_safe(self):self.assertLess(PANEL_Y+PANEL_H,CAPTION_TOP)
  def test_no_posting(self):
   with self.assertRaises(PermissionError):publication_gate({})
