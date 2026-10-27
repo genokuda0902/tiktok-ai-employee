@@ -19,11 +19,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Free local dependencies
+      - name: Free Pillow dependency (no apt network stall)
         run: |
           python -m pip install Pillow
-          sudo apt-get update -qq
-          sudo apt-get install -y fonts-noto-cjk
       - name: Offline 10-genre safety and render tests
         run: python -m unittest discover -s quality/cycle900/tests -p 'test_*.py' -v
       - name: Render three synthetic Japanese overlays
