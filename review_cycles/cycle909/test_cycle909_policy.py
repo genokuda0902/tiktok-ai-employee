@@ -19,7 +19,7 @@ class TestCycle909Policy(unittest.TestCase):
  def test_87_frames(self):
   self.assertEqual(VALUES["FRAMES"],87)
   self.assertEqual(VALUES["FPS"],30)
- def test_native_panel(self): self.assertEqual(VALUES["W"],952)
+ def test_native_panel(self): self.assertIn("W,H=952,1195",TEXT)
  def test_fiction_label(self):
   self.assertIn("架空",VALUES["DISCLAIMER"])
   self.assertIn("架空の例",TEXT)
