@@ -1,0 +1,40 @@
+name: cycle906 readable save-flow (review only)
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle906/**'
+      - '.github/workflows/cycle906-readable-save-flow.yml'
+  push:
+    branches:
+      - 'automation/cycle906-readable-save-flow-20261028'
+permissions:
+  contents: read
+jobs:
+  offline-geometry-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: python -m pip install --disable-pip-version-check pillow pytest
+      - name: Ten-genre collision and safety tests
+        run: python -m pytest -q experiments/cycle906/test_save_flow_readable.py
+      - name: Render 87 synthetic frames (font fallback is NOT Japanese glyph QA)
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,'experiments/cycle906')
+          import save_flow_readable as s
+          if not Path(s.FONT).exists():
+              s.FONT=s.FONT_BOLD='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+              print('WARNING: CI fallback only; Japanese glyph QA verified locally')
+          out=Path('/tmp/cycle906-synthetic')
+          s.render_sequence(out,'ai_work')
+          assert len(list(out.glob('frame_*.png'))) == 87
+          PY
+      - name: Publication remains blocked
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED - no upload or posting'
