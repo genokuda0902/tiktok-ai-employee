@@ -1,0 +1,35 @@
+name: cycle887-audio-header-review
+on:
+  pull_request:
+    paths:
+      - 'video_engine/cycle887/**'
+      - '.github/workflows/cycle887-audio-header-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline dependencies
+        run: python -m pip install numpy scipy opencv-python-headless
+      - name: Test 10-genre reusable logic
+        working-directory: video_engine/cycle887
+        run: python -m unittest -v test_audio_reactive_header.py
+      - name: Synthetic MP4 encode/decode (no inherited user media)
+        working-directory: video_engine/cycle887
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -c:v libx264 -preset ultrafast -threads 2 -pix_fmt yuv420p -c:a aac -shortest synthetic.mp4
+          python render.py synthetic.mp4 synthetic_out.mp4
+          ffmpeg -hide_banner -loglevel error -xerror -i synthetic_out.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 synthetic_out.mp4)" = "1080,1920"
+      - name: Release gate
+        run: |
+          echo "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+          echo "No inherited audio, image assets, credentials or MP4 uploaded to CI."
+          echo "No posting, merge or deployment."
