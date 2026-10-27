@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "purpose": "offline synthetic sound cues only; not approval or publishing",
+  "genres": [
+    "AI・仕事効率化", "営業・ビジネス", "雑学", "科学", "歴史",
+    "料理", "旅行", "ライフハック", "金融教育", "健康一般"
+  ],
+  "defaults": {"sample_rate": 48000, "cue_type": "synthesized_ui", "require_human_review": true, "auto_post": false}
+}
