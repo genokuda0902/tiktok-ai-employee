@@ -21,6 +21,10 @@ jobs:
       - name: Test 10-genre reusable logic
         working-directory: video_engine/cycle887
         run: python -m unittest -v test_audio_reactive_header.py
+      - name: Install system FFmpeg (runner image does not include it)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Synthetic MP4 encode/decode (no inherited user media)
         working-directory: video_engine/cycle887
         run: |
