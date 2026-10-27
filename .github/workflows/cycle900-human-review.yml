@@ -1,0 +1,47 @@
+name: cycle900 native human-review panel (review only)
+on:
+  push:
+    paths:
+      - 'quality/cycle900/**'
+      - '.github/workflows/cycle900-human-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle900/**'
+      - '.github/workflows/cycle900-human-review.yml'
+permissions:
+  contents: read
+jobs:
+  offline-review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free local dependencies
+        run: |
+          python -m pip install Pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Offline 10-genre safety and render tests
+        run: python -m unittest discover -s quality/cycle900/tests -p 'test_*.py' -v
+      - name: Render three synthetic Japanese overlays
+        run: |
+          python quality/cycle900/src/review_panel.py /tmp/cycle900-review
+          test -s /tmp/cycle900-review/focus_0.png
+          test -s /tmp/cycle900-review/focus_1.png
+          test -s /tmp/cycle900-review/focus_2.png
+      - name: Syntax and fail-closed release gate
+        run: |
+          python -m compileall -q quality/cycle900/src quality/cycle900/tests
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'quality/cycle900/src')
+          from review_panel import GENRES, POLICY, CAPTION_Y, PANEL_Y, PANEL_H
+          assert len(GENRES)==10
+          assert PANEL_Y+PANEL_H<CAPTION_Y
+          assert POLICY['human_approval_required']
+          assert not any(POLICY[k] for k in ('automatic_posting','public_upload','paid_service','merge_without_approval'))
+          print('Review only. No private source MP4 in CI.')
+          PY
