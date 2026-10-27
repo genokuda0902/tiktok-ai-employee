@@ -1,0 +1,45 @@
+name: cycle891 chart reveal QA (synthetic media only)
+on:
+  push:
+    branches:
+      - automation/cycle891-three-stage-chart-20261027
+  pull_request:
+    paths:
+      - 'video_engine/cycle891/**'
+      - '.github/workflows/cycle891-chart-qa.yml'
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open source test dependencies
+        run: |
+          python -m pip install 'Pillow>=10,<13'
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: 17 offline data, geometry and safety tests
+        env:
+          PYTHONPATH: video_engine/cycle891
+        run: python -m unittest discover -s video_engine/cycle891 -p 'test_*.py' -v
+      - name: Render synthetic chart to H264 AAC and decode
+        env:
+          PYTHONPATH: video_engine/cycle891
+        run: |
+          python - <<'PY'
+          from chart_reveal import draw_patch
+          draw_patch(80).save('/tmp/cycle891_chart.png')
+          PY
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -loop 1 -i /tmp/cycle891_chart.png -filter_complex '[0:v][2:v]overlay=80:525:shortest=1[v]' -map '[v]' -map 1:a -t 1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac /tmp/cycle891_synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle891_synthetic.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/cycle891_synthetic.mp4)" = "1080,1920"
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 /tmp/cycle891_synthetic.mp4)" = "aac"
+      - name: Explicit non-publication gate
+        run: |
+          echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          echo 'Synthetic CI only; inherited audio and user media are never uploaded.'
