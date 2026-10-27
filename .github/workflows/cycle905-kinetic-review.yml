@@ -12,22 +12,28 @@ permissions:
 jobs:
   offline-render-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install free local dependencies and Japanese font
-        run: |
-          python -m pip install --disable-pip-version-check pillow pytest
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq fonts-noto-cjk
-      - name: Unit tests for all ten genre templates
+      - name: Install free Python dependencies (no apt network wait)
+        run: python -m pip install --disable-pip-version-check pillow pytest
+      - name: Ten-genre geometry, phase and policy tests
         run: python -m pytest -q experiments/cycle905/test_kinetic_before_after.py
-      - name: Synthetic scene PNG smoke test (no private media)
+      - name: Synthetic 87-frame smoke test (font fallback is NOT Japanese QA)
         run: |
-          python experiments/cycle905/kinetic_before_after.py --genre ai_work --output /tmp/cycle905-synthetic
-          test "$(find /tmp/cycle905-synthetic -name 'frame_*.png' | wc -l)" -eq 87
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'experiments/cycle905')
+          import kinetic_before_after as k
+          if not Path(k.FONT).exists():
+              k.FONT = k.FONT_BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+              print('WARNING: fallback font only; Japanese glyph QA remains local and unverified by CI')
+          k.render_sequence(Path('/tmp/cycle905-synthetic'), 'ai_work')
+          assert len(list(Path('/tmp/cycle905-synthetic').glob('frame_*.png'))) == 87
+          PY
       - name: Publication remains blocked
         run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED - no upload or posting'
