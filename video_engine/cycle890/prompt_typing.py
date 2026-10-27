@@ -36,7 +36,7 @@ def validate_prompt(lines):
     if not isinstance(lines,(list,tuple)) or len(lines)!=3:raise ValueError('three lines required')
     for s in lines:
         if not isinstance(s,str) or not 1<=len(s)<=32:raise ValueError('unsafe length')
-        if re.search(r'https?://|www\\.|@|[<>\\r\\n]|\\d{3}[- ]?\\d{4}|\\d{11}',s,re.I):
+        if re.search(r'https?://|www\.|@|[<>\r\n]|\d{3}[- ]?\d{4}|\d{11}',s,re.I):
             raise ValueError('possible identifier')
     return True
 
