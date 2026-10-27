@@ -1,0 +1,32 @@
+name: cycle910 proof-first hook offline QA
+on:
+  push:
+    branches:
+      - automation/cycle910-proof-first-hook-20261028
+    paths:
+      - 'review_cycles/cycle910/**'
+      - '.github/workflows/cycle910_review_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle910/**'
+      - '.github/workflows/cycle910_review_qa.yml'
+permissions:
+  contents: read
+jobs:
+  offline-policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile renderer
+        run: python -m py_compile review_cycles/cycle910/hook_comparison.py
+      - name: Run 10 dependency-free policy tests
+        run: python -m unittest discover -s review_cycles/cycle910 -p 'test_cycle910_policy.py' -v
+      - name: Confirm no private media was committed
+        run: |
+          ! find review_cycles/cycle910 -type f \( -name '*.mp4' -o -name '*.aac' -o -name '*.wav' -o -name '*.m4a' \) | grep .
+      - name: Explicitly keep publication blocked
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
