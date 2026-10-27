@@ -23,4 +23,4 @@ Manifest requires exact `POLICY`, genre ID, source SHA256, `real_service_footage
 ## Reference & restrictions
 Consulted accessible TikTok市場分析/TikTok動画研究 summaries and directly inspected user's 16-panel ChatGPT×Excel storyboard. Original reference v33 MP4 and full original research chats unavailable. This 8-scene result does not match the storyboard's cinematic people, robot, 16 independent cuts, or genuine ChatGPT/Excel demos. Independent Japanese ASR, spoken/caption meaning, pronunciation, source rights, phone playback, employee approval and actual Actions billing **UNVERIFIED**.
 
-**HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.** No merge, posting, paid services or external media upload. GitHub CI tests synthetic data, not the private finished Japanese MP4.
+**HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.** No merge, posting, paid services or external media upload. GitHub CI runs Python unit tests and static checks only (network-independent); local FFmpeg verified the private finished MP4.
