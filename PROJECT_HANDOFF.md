@@ -77,3 +77,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - GitHub workflow `.github/workflows/cycle890-qa.yml` verifies code and **synthetic** composited A/V only; private completed Japanese MP4 is shared in ChatGPT sandbox, not GitHub.
 - User 16-panel ChatGPT×Excel storyboard inspected this cycle; full research chats and original v33 MP4 unavailable. No independent Japanese ASR, pronunciation or semantic subtitle match; rights, phone playback, employee approval, TikTok metrics and actual Actions billing unverified.
 - **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No merge, auto-posting, paid service, or inherited media upload. Next priority: independent offline Japanese ASR or an auditable manual transcription gate; richer genuine UI/person visuals.
+
+## Isolated review checkpoint — cycle892 (2026-10-27 JST)
+- Draft PR #261 (base unmerged PR #260); this checkpoint is **not on main** and **not merged**.
+- Scene02's previously sparse/repeated-task area now uses an original, explicitly fictional 3-step offline spreadsheet-style UI, not actual Excel footage. Frames 89–169 modified. Shared module: `video_engine/cycle892/repeated_task_ui.py`.
+- Local review MP4 SHA256: `2577cc9bf686a956b35e543002826d13031eb5e7be7cbc35439772b0bcff75af`. H264 1080x1920 30fps 691 frames/23.033333s, AAC 48kHz stereo. Full decode PASS; AAC stream unchanged; caption-band max MAE 0.9914; 81/81 scene frames changed; 19 local tests PASS. Completed MP4 is **private sandbox only**, not a GitHub artifact.
+- Original v33/reference MP4 and original research chat text were unavailable; prior accessible summaries and storyboard descriptions consulted. Independent Japanese ASR and semantic caption matching, rights, phone playback, employee approval and actual Actions billing remain **unverified**.
+- No auto-post, merge, public-media upload, or paid service. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**.
+- Next: independent offline Japanese ASR/transcript QA, real approved operation footage, v33 direct quality comparison if available.
