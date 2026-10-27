@@ -106,3 +106,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - 8 scenes split into 16 visual emphasis phases: 6 safe focus accents and 2 central evidence reframes; not 16 distinct scenes. Local 12 unit tests PASS, 1080x1920 H264 30fps 691 frames AAC48k, full A/V decode PASS; audio ADTS identical. All 691 subtitle-protected frames compared, max sampled MAE 0.2409.
 - User 16-panel storyboard directly inspected; past market/video research summaries consulted. Original v33 MP4 and full research chats unavailable. Independent Japanese ASR/semantic captions, rights, phone playback, employee approval, actual Actions charges remain UNVERIFIED.
 - No merge, posting, external private media upload or paid service. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+
+
+## 2026-10-27 cycle898 — narration-responsive visual beat (unmerged)
+- Branch \`automation/cycle898-narration-pulse-20261027\` stacked on unmerged PR #268. Source/test/QA in \`quality/cycle898/\`; no private MP4 or voice committed.
+- Previous private cycle897 MP4 SHA256 \`d969140aae9c054f5084a0d4138fd9ff952f55babb8e9c99b6c0e134dfcf53d7\`; new private cycle898 MP4 SHA256 \`1015c17b738567d2b128c6a5517f92f0513da9952253c46d0664e553ef0d5316\`.
+- Distinct improvement: small narration-activity-responsive five-bar accent at y1405–1459, preserving subtitle region y1490–1840. 526 active frames above 0.20 RMS envelope; 14 local tests PASS; full 691-frame H.264 1080x1920 30fps / AAC48k decode PASS; original AAC ADTS SHA unchanged; subtitle-protected max MAE 1.0227 at 1/4 sample resolution.
+- Consulted prior TikTok市場分析/TikTok動画研究 summaries and directly inspected 16-panel storyboard; original v33 MP4/full research transcripts unavailable. Independent Japanese ASR/semantic alignment, rights, mobile playback, employee approval and actual Actions billing UNVERIFIED.
+- GitHub CI runs offline source/unit/static checks only; finished private Japanese MP4 delivered separately, not uploaded. No merge, auto-post, paid API or release. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
