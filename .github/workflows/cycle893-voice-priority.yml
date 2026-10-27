@@ -1,0 +1,31 @@
+name: cycle893 narration-priority audio QA
+on:
+  pull_request:
+    paths:
+      - 'cycle893/**'
+      - '.github/workflows/cycle893-voice-priority.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify narration-first cue ducking tests
+        run: python -m unittest discover -s cycle893/tests -v
+      - name: Verify synthetic 2-second MP4 if FFmpeg preinstalled (not final video)
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            echo 'SKIP: FFmpeg absent on runner; local final MP4 was verified separately'
+            exit 0
+          fi
+          ffmpeg -hide_banner -loglevel error -xerror -y -f lavfi -i color=c=0x102b4c:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle893-synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle893-synthetic.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 /tmp/cycle893-synthetic.mp4)" = "1080"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 /tmp/cycle893-synthetic.mp4)" = "1920"
+      # The local 23s MP4 is intentionally not committed to GitHub.
