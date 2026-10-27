@@ -1,6 +1,11 @@
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import kinetic_before_after as k
+# CI may lack Japanese fonts; use DejaVu only for geometry/control-flow tests.
+# Japanese glyph quality is validated on the local review MP4, NOT in CI.
+if not Path(k.FONT).exists():
+    k.FONT = k.FONT_BOLD = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 from kinetic_before_after import (
     GENRES, SCENE_TEXT, CANVAS_W, OVERLAY_H, OVERLAY_Y, FRAME_COUNT,
     phase, static_stage, render_frame
