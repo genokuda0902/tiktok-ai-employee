@@ -1,0 +1,34 @@
+name: cycle903 caption focus and pause-audit QA (review only)
+on:
+  push:
+    branches:
+      - automation/cycle903-caption-focus-pause-audit-20261027
+  pull_request:
+    paths:
+      - 'experiments/cycle903/**'
+      - '.github/workflows/cycle903-caption-focus.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Python syntax and review-only unit tests
+        run: |
+          python -m compileall -q experiments/cycle903
+          python -m unittest discover -s experiments/cycle903/tests -p 'test_*.py' -v
+      - name: Verify fail-closed gates
+        run: |
+          grep -q 'PUBLICATION_NOT_APPROVED' experiments/cycle903/caption_focus.py
+          grep -q 'independent Japanese ASR' experiments/cycle903/caption_focus.py
+          test ! -e experiments/cycle903/finished.mp4
+      - name: Synthetic codec and decode smoke test (not private Japanese video)
+        run: |
+          ffmpeg -v error -y -f lavfi -i 'color=c=0x071326:s=540x960:r=30:d=1' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=1' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle903-synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle903-synthetic.mp4 -f null -
