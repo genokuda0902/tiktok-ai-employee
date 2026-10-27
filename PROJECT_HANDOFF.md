@@ -37,3 +37,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Private preview MP4 SHA256 `595d365549373f0de96ae6e8868725bea038be903bb194a00983b432c0c7b1fc`, 1080x1920/30fps/691f/23.033s/AAC48k, full decode PASS; source AAC elementary stream unchanged. Caption-safe region checked across all 691 frames (max sampled delta 1.1074).
 - Private MP4 and inherited audio remain outside GitHub. CI tests only synthetic code/media, not private final MP4. Original v33 source/video not recovered here; reference storyboard directly inspected, research full chats inaccessible. Independent Japanese transcription, semantic subtitle sync, phone playback, rights and employee approval are still outstanding.
 - Status **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No merge, paid service or automatic TikTok posting.
+
+
+## cycle884 checkpoint (2026-10-27 JST; review-only branch)
+- Branch `automation/cycle884-row-focus-20261027`, stacked on open Draft PR #248; **not merged**. Latest verified main `18e084c38db0dc55db7dfc0532b9451b1167f2aa`.
+- New `video_engine/cycle884`: four timed focus outlines in first 2.967s of **accessible cycle883**; distinct from cycle883's seven wipes and parallel PR #247's Chromium zoom. Ten-genre geometry, safe-zone and rights/source-hash gates; 12 local tests + 45-frame synthetic H264/AAC smoke PASS.
+- Private MP4 SHA256 `1a57acc1d8151c52f53d5b104f7f913a685d07fbaee2bcc5a4cd6a0314680afb`, H264 1080×1920/30fps/691f/23.033s, AAC48k; full decode PASS. Source AAC bitstream identical. All 691 frames sampled, max subtitle-band mean difference 1.0177. This **does not prove semantic subtitle sync**.
+- Only `ai_productivity` rendered. The 16-panel storyboard was directly inspected; full research chats, original v33 MP4 and cycle882 MP4 inaccessible for direct comparison. Original v33 source not recovered. Independent ASR, phone playback, source rights and employee approval still missing.
+- Final MP4 remains in private ChatGPT sandbox, not GitHub. CI checks only synthetic media; no merge, paid service or auto posting. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**.
