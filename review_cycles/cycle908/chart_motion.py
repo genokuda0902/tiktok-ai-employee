@@ -73,8 +73,8 @@ def draw_center(d, xy, txt, f, fill):
     d.text((x-(b[2]-b[0])/2,y),txt,font=f,fill=fill)
 
 def frame(data, i):
-    from PIL import Image, ImageDraw
     if not 0<=i<FRAMES: raise ValueError('frame outside range')
+    from PIL import Image, ImageDraw
     im=Image.new('RGBA',(PANEL_W,PANEL_H),(0,0,0,0));d=ImageDraw.Draw(im)
     d.rounded_rectangle((4,4,PANEL_W-5,PANEL_H-5),radius=38,fill=(4,20,35,249),outline=(80,205,211,255),width=5)
     d.rounded_rectangle((26,26,874,164),radius=24,fill=(13,65,81,255))
