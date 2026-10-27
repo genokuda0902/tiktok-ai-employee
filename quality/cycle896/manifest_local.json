@@ -1,0 +1,34 @@
+{
+  "genre": "ai_productivity",
+  "source_sha256": "7e423364d2865d22fa0499aa8e716af35732459f142967913e36d5b085f1e0f7",
+  "review_only": true,
+  "publication_approved": false,
+  "external_upload": false,
+  "automatic_posting": false,
+  "source_rights_reviewed": false,
+  "synthetic_ui": true,
+  "real_service_demo": false,
+  "roi": [
+    505,
+    580,
+    850,
+    815
+  ],
+  "stages": [
+    {
+      "title": "指示を入力",
+      "label": "架空の売上データを照合",
+      "value": "営業A：12 / 16 / 18"
+    },
+    {
+      "title": "元データを検算",
+      "label": "合計を再計算して確認",
+      "value": "A＝46　B＝29"
+    },
+    {
+      "title": "テンプレート保存",
+      "label": "確認後に保存した状態",
+      "value": "保存済み ✓"
+    }
+  ]
+}
