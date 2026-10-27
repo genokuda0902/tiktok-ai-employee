@@ -1,0 +1,25 @@
+name: cycle910 offline evidence wipe QA
+on:
+  push:
+    branches:
+      - review/cycle910-evidence-wipe-20261028
+    paths:
+      - 'review_cycles/cycle910/**'
+      - '.github/workflows/cycle910_review_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle910/**'
+      - '.github/workflows/cycle910_review_qa.yml'
+permissions:
+  contents: read
+jobs:
+  offline-policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Static policy and source QA, no paid API or media upload
+        run: python -m unittest discover -s review_cycles/cycle910 -p 'test_cycle910_ci.py' -v
