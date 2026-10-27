@@ -1,0 +1,33 @@
+name: cycle897 editorial beat review-only QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle897/**'
+      - '.github/workflows/cycle897-editorial-beats.yml'
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Ten-genre safe-zone and fail-closed tests
+        run: python -m unittest discover -s quality/cycle897 -p 'test_*.py' -v
+      - name: Syntax and static filter contract (no media or paid downloads)
+        run: |
+          python -m compileall -q quality/cycle897
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'quality/cycle897')
+          from editorial_beats import beats,filter_graph,POLICY
+          assert len(beats())==8
+          assert len({m for _,m,_ in beats()})==8
+          assert 'drawbox' in filter_graph() and 'overlay' in filter_graph()
+          assert POLICY['publication_approved'] is False
+          assert POLICY['automatic_posting'] is False
+          print('16 editorial phases; review-only; source media absent by design')
+          PY
