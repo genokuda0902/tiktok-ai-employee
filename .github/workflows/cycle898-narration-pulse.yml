@@ -1,0 +1,36 @@
+name: cycle898 narration pulse review-only QA
+on:
+  push:
+    paths:
+      - 'quality/cycle898/**'
+      - '.github/workflows/cycle898-narration-pulse.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle898/**'
+      - '.github/workflows/cycle898-narration-pulse.yml'
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 10-genre and fail-closed unit tests
+        run: python -m unittest discover -s quality/cycle898 -p 'test_*.py' -v
+      - name: Static compile and release-policy gate
+        run: |
+          python -m compileall -q quality/cycle898
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'quality/cycle898')
+          from narration_pulse import POLICY,GENRES,Y,HEIGHT
+          assert len(GENRES)==10 and Y+HEIGHT<1490
+          assert POLICY['publication_approved'] is False
+          assert POLICY['automatic_posting'] is False
+          assert POLICY['external_upload'] is False
+          print('review-only static QA; no private MP4 or voice in CI')
+          PY
