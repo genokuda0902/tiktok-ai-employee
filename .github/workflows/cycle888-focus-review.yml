@@ -1,0 +1,41 @@
+name: cycle888-context-focus-review
+on:
+  pull_request:
+    paths:
+      - 'video_engine/cycle888/**'
+      - '.github/workflows/cycle888-focus-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Run 14 geometry, timing and release-safety tests
+        working-directory: video_engine/cycle888
+        run: python -m unittest -v test_focus_guides.py
+      - name: Synthetic ASS + H264/AAC render/decode (no inherited private media)
+        working-directory: video_engine/cycle888
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -threads 2 -pix_fmt yuv420p -c:a aac -shortest synthetic.mp4
+          python - <<'PY'
+          from focus_guides import Focus,write_ass
+          write_ass('synthetic.ass',(Focus(.2,1.2,200,600,500,150,'test'),),2)
+          PY
+          ffmpeg -hide_banner -loglevel error -y -i synthetic.mp4 -vf ass=synthetic.ass -map 0:v:0 -map 0:a:0 -c:v libx264 -preset ultrafast -threads 2 -c:a copy synthetic_focused.mp4
+          ffmpeg -hide_banner -loglevel error -xerror -i synthetic_focused.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 synthetic_focused.mp4)" = "1080,1920"
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 synthetic_focused.mp4)" = "aac"
+      - name: Release gate
+        run: |
+          echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          echo 'No private media, inherited narration, reference video, credentials, posting, merge or deployment.'
