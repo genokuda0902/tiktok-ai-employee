@@ -1,0 +1,27 @@
+name: cycle901 provisional proof QA (review only)
+on:
+  push:
+    branches: ['automation/cycle901-provisional-evidence-20261027']
+  pull_request:
+    paths:
+      - 'experiments/cycle901/**'
+      - '.github/workflows/cycle901-provisional-proof.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test ten-genre policy without media or paid dependencies
+        run: python -m unittest discover -s experiments/cycle901/tests -p 'test_*.py' -v
+      - name: Ensure review-only gates remain explicit
+        run: |
+          grep -q 'PUBLICATION_NOT_APPROVED' experiments/cycle901/provisional_proof.py
+          grep -q 'contains_private_data' experiments/cycle901/provisional_proof.py
+          test ! -f experiments/cycle901/finished.mp4
