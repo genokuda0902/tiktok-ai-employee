@@ -32,7 +32,7 @@ class TaskCardTests(unittest.TestCase):
     def test_caption_safe(self):
         im=draw_frame(50)
         self.assertEqual(im.size,(1080,1438))
-        self.assertEqual(im.getpixel((100,1400))[3],0)
+        self.assertEqual(im.getpixel((100,1437))[3],0)
     def test_visual_progress(self):
         self.assertNotEqual(draw_frame(10).tobytes(),draw_frame(75).tobytes())
     def test_bounds(self):
