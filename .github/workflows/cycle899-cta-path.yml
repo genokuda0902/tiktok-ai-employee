@@ -1,0 +1,38 @@
+name: cycle899 CTA path review-only QA
+on:
+  push:
+    paths:
+      - 'quality/cycle899/**'
+      - '.github/workflows/cycle899-cta-path.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle899/**'
+      - '.github/workflows/cycle899-cta-path.yml'
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Ten-genre safe-region and release-policy unit tests
+        run: python -m unittest discover -s quality/cycle899/tests -p 'test_*.py' -v
+      - name: Syntax and fail-closed contract
+        run: |
+          python -m compileall -q quality/cycle899/src quality/cycle899/tests
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'quality/cycle899/src')
+          from cta_path import GENRES, POLICY, overlay_bounds, CAPTION_TOP
+          assert len(GENRES) == 10
+          assert overlay_bounds()[3] < CAPTION_TOP
+          assert POLICY['publication_approved'] is False
+          assert POLICY['automatic_posting'] is False
+          assert POLICY['paid_service'] is False
+          assert POLICY['external_upload'] is False
+          print('Review only. No private media in CI.')
+          PY
