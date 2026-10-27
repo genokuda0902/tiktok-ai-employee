@@ -64,8 +64,12 @@ def ease(t):
     t=max(0.,min(1.,t))
     return t*t*(3-2*t)
 
+def axis_max(values):
+    peak=max(max(v) for v in values.values())
+    return max(20, ((peak+19)//20)*20)
+
 def chart_heights(values,progress,max_height=315):
-    m=max(max(v) for v in values.values()) or 1
+    m=axis_max(values)
     return {k:[round(n/m*max_height*ease(progress)) for n in nums] for k,nums in values.items()}
 
 def draw_center(d, xy, txt, f, fill):
@@ -87,8 +91,9 @@ def frame(data, i):
     d.text((272,199),'営業B',font=font(35,True),fill=(255,186,99))
     d.rectangle((243,207,262,231),fill=(255,186,99))
     top,base=306,698
-    for val in (0,5,10,15,20):
-        y=base-round(val/20*315)
+    for tick in range(5):
+        val=axis_max(data['values'])*tick//4
+        y=base-round(tick/4*315)
         d.line((100,y,820,y),fill=(50,78,93,255),width=2)
         d.text((48,y-17),str(val),font=font(23),fill=(156,180,195))
     p=ease((i-6)/53)
