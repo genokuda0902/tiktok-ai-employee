@@ -1,0 +1,38 @@
+name: cycle907 caption-safe scene wipes (review only)
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle907/**'
+      - '.github/workflows/cycle907-caption-safe-wipes.yml'
+  push:
+    branches:
+      - 'automation/cycle907-caption-safe-wipes-20261028'
+permissions:
+  contents: read
+jobs:
+  offline-transition-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free Python dependencies
+        run: python -m pip install --disable-pip-version-check numpy pillow pytest
+      - name: Test ten genres, caption safe area, and no publishing
+        run: python -m pytest -q experiments/cycle907/test_scene_wipe.py
+      - name: Synthetic 1080px RGBA frame test (not the private MP4)
+        run: |
+          python - <<'PY'
+          import sys
+          from PIL import Image
+          sys.path.insert(0, 'experiments/cycle907')
+          import scene_wipe as s
+          for genre in s.GENRE_COLORS:
+              img = s.make_overlay(Image.new('RGB',(1080,1920),'#193754'),3,genre)
+              assert img.size == (1080,1180)
+          print('Synthetic transitions PASS: 10 genres')
+          PY
+      - name: Publication remains blocked
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED - no posting, no merge'
