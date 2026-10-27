@@ -1,0 +1,49 @@
+name: cycle896 evidence magnifier review-only QA
+
+on:
+  push:
+    paths:
+      - 'quality/cycle896/**'
+      - '.github/workflows/cycle896-evidence-magnifier-qa.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle896/**'
+      - '.github/workflows/cycle896-evidence-magnifier-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free QA dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk ffmpeg
+          python -m pip install --disable-pip-version-check Pillow
+      - name: Test native text, ten genres, and fail-closed review policy
+        run: python -m unittest discover -s quality/cycle896 -p 'test_proof_magnifier.py' -v
+      - name: Verify synthetic 2-second H264/AAC encode and full decode
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=360x640:rate=30:duration=2 -f lavfi -i sine=frequency=500:sample_rate=48000:duration=2 -shortest -c:v libx264 -pix_fmt yuv420p -c:a aac -ar 48000 /tmp/cycle896-synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle896-synthetic.mp4 -f null -
+      - name: Ensure no publishing or external upload is enabled
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'quality/cycle896')
+          from proof_magnifier import POLICY
+          assert POLICY['review_only'] is True
+          assert POLICY['publication_approved'] is False
+          assert POLICY['automatic_posting'] is False
+          assert POLICY['external_upload'] is False
+          assert POLICY['source_rights_reviewed'] is False
+          assert POLICY['real_service_demo'] is False
+          print('HUMAN_REVIEW / PUBLICATION_NOT_APPROVED')
+          PY

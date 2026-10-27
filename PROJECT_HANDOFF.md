@@ -91,3 +91,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local private completed MP4 SHA256 `7e423364d2865d22fa0499aa8e716af35732459f142967913e36d5b085f1e0f7`, H264 1080×1920 30fps/691 frames/23.033s AAC48k, full decode PASS, source audio bitstream unchanged, caption region comparison PASS. Media not committed to GitHub.
 - Before/After is a fictional workflow illustration, **not** measured time saved or genuine ChatGPT/Excel screen recording. Ten genre IDs supported; only AI productivity video rendered.
 - Original v33 MP4, independent Japanese ASR and subtitle meaning sync, inherited rights, phone playback, employee approval, actual Actions billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no merge, automatic post or paid service.
+
+## 2026-10-27 cycle896 — offline evidence magnifier (unmerged)
+- Branch `automation/cycle896-proof-magnifier-20261027`, based on unmerged cycle894 PR #263; distinct from parallel cycle895 PR #264. Code: `quality/cycle896/`; review-only local MP4 was NOT uploaded to GitHub.
+- Locally generated actual 23.033s H264 1080x1920 30fps / AAC 48kHz video from cycle894 SHA256 `7e423364d2865d22fa0499aa8e716af35732459f142967913e36d5b085f1e0f7`. New SHA256 `8be7da9de4ad858563713342f47a6c7083810a9d98db6034083aa60c5a8b2946`.
+- Changed scene07 frames 510–587: zoomed original **synthetic offline UI** verification area and overlaid native-size Japanese step titles. 78/78 target frames changed, minimum pixel MAE 52.609. Original AAC bitstream preserved; all 691 subtitle-region frames compared (max MAE 1.125); full A/V decode PASS. 13 local tests PASS.
+- Past TikTok market/video research summaries and original user 16-panel storyboard directly consulted. Full research chats and original v33 MP4 unavailable; no equivalence claim. No independent Japanese ASR, semantic subtitle alignment, phone playback, rights or employee approval.
+- Ten genre identifiers share the renderer and safety policy, but only one AI-productivity MP4 was rendered. No merge, auto-post, private-media upload, paid contract or billing action. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+- Next priority: independent Japanese transcription and timed subtitle comparison; acquire reference v33 and rights-approved footage; verify actual CI status and phone playback.
