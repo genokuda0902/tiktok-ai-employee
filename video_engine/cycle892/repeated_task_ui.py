@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 FPS = 30
 START, END = 89, 170
 FRAMES = 691
-PATCH_X, PATCH_Y, PATCH_W, PATCH_H = 70, 650, 940, 530
+PATCH_X, PATCH_Y, PATCH_W, PATCH_H = 70, 460, 940, 780
 GENRES = ('ai_productivity', 'beauty', 'romance_psychology', 'money_saving',
           'sales_business', 'career', 'health_lifestyle', 'trivia_science',
           'travel_food', 'product_lifestyle')
@@ -75,7 +75,7 @@ def eased(t):
     t = min(1.0, max(0.0, t))
     return 1 - (1 - t) ** 3
 
-def draw_patch(local_frame, rows):
+def _draw_card(local_frame, rows):
     validate_rows(rows)
     stage = stage_at(local_frame)
     phase = (local_frame % 27) / 26
@@ -119,6 +119,14 @@ def draw_patch(local_frame, rows):
         d.rounded_rectangle((x, 479, x + 190, 487), radius=4,
                             fill=(48, 210, 224) if i <= stage else (54, 97, 113))
     return im
+
+def draw_patch(local_frame, rows):
+    # Opaque backing replaces inherited cards so the new evidence scene
+    # never overlaps old, partly visible UI elements.
+    backing = Image.new('RGBA', (PATCH_W, PATCH_H), (3, 19, 37, 255))
+    card = _draw_card(local_frame, rows)
+    backing.alpha_composite(card, (0, 190))
+    return backing
 
 def probe(path):
     return json.loads(subprocess.check_output([
