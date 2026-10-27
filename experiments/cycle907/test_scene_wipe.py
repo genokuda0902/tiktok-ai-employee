@@ -12,8 +12,8 @@ def test_ten_genres_and_no_posting_actions():
     for forbidden in ('requests.post(', 'TikTokApi', 'upload_video', 'merge_pull_request'):
         assert forbidden not in code
 
-def test_seven_boundaries_and_subtitle_safe_region():
-    assert s.CUT_FRAMES == (87,174,250,348,435,522,609)
+def test_four_hard_cuts_and_subtitle_safe_region():
+    assert s.CUT_FRAMES == (87,174,348,435)
     assert s.CONTENT_HEIGHT <= 1200
     assert s.WIDTH == 1080 and s.HEIGHT == 1920 and s.FPS == 30
 
@@ -49,6 +49,6 @@ def test_ffmpeg_filter_preserves_audio_and_avoids_caption_overlay():
     folders = [Path(f'/tmp/cut_{c}') for c in s.CUT_FRAMES]
     cmd = s.ffmpeg_command(Path('source.mp4'),folders,Path('output.mp4'))
     assert '-c:a' in cmd and cmd[cmd.index('-c:a')+1] == 'copy'
-    assert cmd.count('-i') == 8
+    assert cmd.count('-i') == 5
     assert 'overlay=x=0:y=0' in cmd[cmd.index('-filter_complex')+1]
     assert '-pix_fmt' in cmd and 'yuv420p' in cmd
