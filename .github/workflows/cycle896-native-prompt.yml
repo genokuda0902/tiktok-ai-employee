@@ -1,0 +1,31 @@
+name: cycle896 native prompt panel QA
+on:
+  push:
+    branches:
+      - quality/cycle896-native-prompt-sequence-20261027
+  pull_request:
+    paths:
+      - quality/cycle896/**
+      - .github/workflows/cycle896-native-prompt.yml
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Japanese font and Pillow
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install pillow
+      - name: Ten-genre layout and safety tests
+        run: python -m unittest discover -s quality/cycle896 -p 'test_*.py' -v
+      - name: Render synthetic transparent PNG proof
+        run: |
+          python quality/cycle896/native_prompt_sequence.py --output /tmp/cycle896
+          test "$(find /tmp/cycle896 -name 'prompt_state_*.png' | wc -l)" -eq 3
