@@ -1,0 +1,27 @@
+name: cycle908 offline data-to-chart QA
+on:
+  push:
+    paths:
+      - 'review_cycles/cycle908/**'
+      - '.github/workflows/cycle908_review_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle908/**'
+      - '.github/workflows/cycle908_review_qa.yml'
+permissions:
+  contents: read
+jobs:
+  review-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile chart renderer without downloading packages
+        run: python -m py_compile review_cycles/cycle908/chart_motion.py
+      - name: Run offline policy and math tests (image test optional)
+        run: PYTHONPATH=review_cycles/cycle908 python -m unittest discover -s review_cycles/cycle908 -p 'test_chart_motion.py' -v
+      - name: Assert no private review media was committed
+        run: |
+          ! find review_cycles/cycle908 -type f \( -name '*.mp4' -o -name '*.m4a' -o -name '*.wav' -o -name '*.png' -o -name '*.jpg' \) | grep .
