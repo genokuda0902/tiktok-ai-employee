@@ -20,6 +20,12 @@ jobs:
         run: python -m unittest discover -s cycle890/tests -v
       - name: Generate deterministic 2-second test WAV
         run: python cycle890/src/sfx_generator.py --out /tmp/cycle890.wav --duration 2 --cuts 0.7,1.4 --clicks 0.9
+      - name: Install FFmpeg and FFprobe on clean runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          command -v ffmpeg
+          command -v ffprobe
       - name: Verify audio file with ffprobe
         run: |
           ffprobe -v error -show_entries stream=codec_name,sample_rate,channels -of default=noprint_wrappers=1 /tmp/cycle890.wav
