@@ -7,6 +7,10 @@ class TestKineticHook(unittest.TestCase):
     def test_ten_genres(self):
         self.assertEqual(len(GENRES),10)
         self.assertEqual(len(set(GENRES)),10)
+    def test_all_ten_genre_variants_render(self):
+        for genre in GENRES:
+            copy=HookCopy(example='例：'+genre[:7]+'の作業')
+            self.assertEqual(stage_panel(2,copy).size,CARD_SIZE)
     def test_three_native_states(self):
         panels=[stage_panel(i,HookCopy()) for i in range(3)]
         self.assertTrue(all(p.size==CARD_SIZE for p in panels))
