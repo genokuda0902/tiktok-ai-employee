@@ -1,0 +1,36 @@
+name: cycle884 10-genre focal guidance QA (synthetic only)
+on:
+  push:
+    paths:
+      - "video_engine/cycle884/**"
+      - ".github/workflows/cycle884-focus-qa.yml"
+  pull_request:
+    paths:
+      - "video_engine/cycle884/**"
+      - ".github/workflows/cycle884-focus-qa.yml"
+permissions:
+  contents: read
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install free offline dependencies
+        run: |
+          python -m pip install --disable-pip-version-check "Pillow==11.3.0"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Test focal geometry and policy across ten genres
+        run: python -m unittest discover -s video_engine/cycle884 -p "test_*.py" -v
+      - name: Synthetic 45-frame H264/AAC smoke
+        run: python video_engine/cycle884/ci_smoke.py
+      - name: Reject media committed to repository
+        run: |
+          if git ls-files video_engine/cycle884 | grep -Ei '\.(mp4|aac|wav|png|jpg|zip)$'; then
+            echo "Private media must not be committed"
+            exit 1
+          fi
