@@ -30,7 +30,7 @@ python -m unittest discover -s video_engine/cycle892 -p 'test_*.py' -v
 ```
 
 ## Research, reference and restrictions
-Past accessible summaries of `TikTok市場分析` and `TikTok動画研究` and descriptions of the user-supplied `ChatGPT×Excel時短術` 16-panel storyboard were consulted. Original task chat text, original storyboard image, and original v33 MP4 were **not directly retrieved this cycle**. The original reference has richer live-operation shots and ~16 panels versus this 23s/8-scene review clip.
+Past accessible summaries of `TikTok市場分析` and `TikTok動画研究` were consulted (full task/chat text not retrieved). The original user-supplied `ChatGPT×Excel時短術16コマ絵コンテ.png` **was directly opened from the file Library in this cycle**: panel 2 shows a stressed office worker, panels 4–8 show ChatGPT/Excel operations, and panels 9–16 include Before/After, CTA, robot and end cards. The original v33 MP4 was not retrieved. The reference has richer human/robot photography, genuine-looking operation shots and 16 panels versus this 23s/8-scene review clip. Our scene02 is a synthetic table, not a recreation of the reference panel-2 live actor.
 
 Independent Japanese ASR, pronunciation, semantic subtitle agreement, asset rights clearance, real-device playback, employee approval and GitHub Actions actual billing remain **UNVERIFIED**. Do not equate AAC stream identity with narration correctness.
 
