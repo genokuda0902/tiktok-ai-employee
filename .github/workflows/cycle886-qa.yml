@@ -1,0 +1,36 @@
+name: cycle886 offline proof QA (synthetic only)
+on:
+  push:
+    branches:
+      - automation/cycle886-offline-save-proof-20261027
+  pull_request:
+    paths:
+      - 'video_engine/cycle886/**'
+      - '.github/workflows/cycle886-qa.yml'
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source test dependencies
+        run: |
+          python -m pip install 'Pillow>=10,<13'
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+      - name: Ten-genre unit tests (Chromium tests remain local)
+        env:
+          PYTHONPATH: video_engine/cycle886
+        run: python -m unittest discover -s video_engine/cycle886 -p 'test_*.py' -v
+      - name: Synthetic H264 AAC encode and full decode
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=540x960:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -c:v libx264 -pix_fmt yuv420p -c:a aac /tmp/cycle886_synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle886_synthetic.mp4 -f null -
+      - name: Block private or inherited media in source tree
+        run: |
+          if find video_engine/cycle886 -type f \( -iname '*.mp4' -o -iname '*.m4a' -o -iname '*.wav' -o -iname '*.png' -o -iname '*.jpg' \) | grep .; then echo 'Private media must never be committed'; exit 1; fi
