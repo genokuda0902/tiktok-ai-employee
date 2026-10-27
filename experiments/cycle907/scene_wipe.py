@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw
 
 WIDTH, HEIGHT, FPS = 1080, 1920, 30
 CONTENT_HEIGHT = 1180
-CUT_FRAMES = (87, 174, 250, 348, 435, 522, 609)
+CUT_FRAMES = (87, 174, 348, 435)
 WIPE_FRAMES = 8
 FEATHER = 58
 GENRE_COLORS = {
@@ -81,7 +81,7 @@ def render_overlays(video: Path, directory: Path, genre: str) -> list[Path]:
 
 def ffmpeg_command(video: Path, folders: list[Path], output: Path) -> list[str]:
     if len(folders) != len(CUT_FRAMES):
-        raise ValueError('exactly seven cut folders required')
+        raise ValueError('exactly four hard-cut folders required')
     cmd = ['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(video)]
     for folder in folders:
         cmd += ['-framerate',str(FPS),'-start_number','0','-i',str(folder/'frame_%03d.png')]
