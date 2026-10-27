@@ -8,9 +8,14 @@ TEXT=SOURCE.read_text(encoding='utf-8')
 TREE=ast.parse(TEXT)
 VALUES={}
 for node in TREE.body:
-    if isinstance(node,ast.Assign) and len(node.targets)==1 and isinstance(node.targets[0],ast.Name):
-        try: VALUES[node.targets[0].id]=ast.literal_eval(node.value)
-        except (ValueError,TypeError): pass
+    if not isinstance(node,ast.Assign) or len(node.targets)!=1: continue
+    try: val=ast.literal_eval(node.value)
+    except (ValueError,TypeError): continue
+    target=node.targets[0]
+    if isinstance(target,ast.Name): VALUES[target.id]=val
+    elif isinstance(target,ast.Tuple) and isinstance(val,tuple):
+        for name,item in zip(target.elts,val):
+            if isinstance(name,ast.Name): VALUES[name.id]=item
 
 class ReviewOnlyPolicy(unittest.TestCase):
     def test_ten_genres(self):
