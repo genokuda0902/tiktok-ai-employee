@@ -85,3 +85,9 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Original v33 MP4 and full research chat text were unavailable; prior research summaries consulted. Original user 16-panel storyboard image was directly opened from the file Library (human frustration, AI/Excel operation, robot, Before/After and CTA panels). Independent Japanese ASR and semantic caption matching, rights, phone playback, employee approval and actual Actions billing remain **unverified**.
 - No auto-post, merge, public-media upload, or paid service. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**.
 - Next: independent offline Japanese ASR/transcript QA, real approved operation footage, v33 direct quality comparison if available.
+
+## 2026-10-27 cycle894 — review-only Before/After comparison (unmerged)
+- Proposed in Draft PR #263 (`automation/cycle894-before-after-proof-20261027`, based on unmerged cycle892 PR #261). Renderer commit `3ad2b5ec6da4a679c6fab6809071e60ef87595d1`, 12 local tests PASS; synthetic-only CI workflow. Do not treat this as mainline production.
+- Local private completed MP4 SHA256 `7e423364d2865d22fa0499aa8e716af35732459f142967913e36d5b085f1e0f7`, H264 1080×1920 30fps/691 frames/23.033s AAC48k, full decode PASS, source audio bitstream unchanged, caption region comparison PASS. Media not committed to GitHub.
+- Before/After is a fictional workflow illustration, **not** measured time saved or genuine ChatGPT/Excel screen recording. Ten genre IDs supported; only AI productivity video rendered.
+- Original v33 MP4, independent Japanese ASR and subtitle meaning sync, inherited rights, phone playback, employee approval, actual Actions billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no merge, automatic post or paid service.
