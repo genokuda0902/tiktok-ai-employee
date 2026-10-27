@@ -1,0 +1,27 @@
+name: cycle907 offline narrative and ASR fail-closed QA
+on:
+  push:
+    paths:
+      - 'review_cycles/cycle907/**'
+      - '.github/workflows/cycle907_review_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle907/**'
+      - '.github/workflows/cycle907_review_qa.yml'
+permissions:
+  contents: read
+jobs:
+  review-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile full renderer (no external dependencies)
+        run: python -m py_compile review_cycles/cycle907/narrative_rail.py
+      - name: Test 10 genres and independent-ASR fail-closed policy offline
+        run: PYTHONPATH=review_cycles/cycle907 python -m unittest discover -s review_cycles/cycle907 -p 'test_stdlib_policy.py' -v
+      - name: Verify no private audio/video committed
+        run: |
+          ! find review_cycles/cycle907 -type f \( -name '*.mp4' -o -name '*.m4a' \) | grep .
