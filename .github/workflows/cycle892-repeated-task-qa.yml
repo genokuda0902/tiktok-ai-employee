@@ -1,0 +1,46 @@
+name: cycle892 repeated-task UI QA (synthetic only)
+on:
+  push:
+    branches:
+      - automation/cycle892-repeated-task-ui-20261027
+  pull_request:
+    paths:
+      - 'video_engine/cycle892/**'
+      - '.github/workflows/cycle892-repeated-task-qa.yml'
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source dependencies
+        run: |
+          python -m pip install 'Pillow>=10,<13'
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: 19 original scene, privacy, and release-gate tests
+        env:
+          PYTHONPATH: video_engine/cycle892
+        run: python -m unittest discover -s video_engine/cycle892 -p 'test_*.py' -v
+      - name: Synthetic 1-second H264 AAC render and full decode
+        env:
+          PYTHONPATH: video_engine/cycle892
+        run: |
+          python - <<'PY'
+          from repeated_task_ui import draw_patch
+          rows = [{'label':'4月','a':12,'b':8},{'label':'5月','a':16,'b':9},{'label':'6月','a':18,'b':12}]
+          draw_patch(40,rows).save('/tmp/cycle892_synthetic.png')
+          PY
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=navy:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -loop 1 -i /tmp/cycle892_synthetic.png -filter_complex '[0:v][2:v]overlay=70:650:shortest=1[v]' -map '[v]' -map 1:a -t 1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac /tmp/cycle892_synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle892_synthetic.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/cycle892_synthetic.mp4)" = "1080,1920"
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 /tmp/cycle892_synthetic.mp4)" = "aac"
+      - name: Fail-closed publication status
+        run: |
+          echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          echo 'No inherited Japanese audio, private screenshots or source MP4 uploaded.'
