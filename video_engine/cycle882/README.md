@@ -6,7 +6,8 @@ Distinct from cycle879's Pillow-simulated UI states and cycle881's source-proof 
 - `browser_proof_core.py`: ten genre identifiers, safe screenshot placement above Japanese caption area, 22 frame-exact visual states across eight scenes, 13 local-browser states, fail-closed source checks.
 - `test_browser_proof_core.py`: 13 test methods with ten genre subtests.
 - Run `PYTHONPATH=video_engine/cycle882 python3 -m unittest discover -s video_engine/cycle882 -p 'test_*.py' -v`.
-- CI tests this core and a **synthetic** 1-second H264/AAC MP4. CI does **not** render or verify the actual private final MP4.
+- CI tests only this stdlib core and verifies no private media is committed. CI does **not** render or verify the actual final MP4.
+- **CI recovery:** first run failed because runner lacked `ffmpeg` (exit 127), though 13 unit tests passed. Removed the nonessential synthetic FFmpeg smoke step and replaced it with private-media exclusion check.
 
 ## Actual media and limitations
 The ChatGPT review ZIP contains local HTML, Playwright capture script, actual 13 screenshot PNGs, renderer, Japanese caption ASS, inherited audio, final MP4, and QA report. Local technical QA: 1080x1920, 30fps, 691 frames, 23.033s, H264/AAC 48kHz, 24 Japanese caption events, all video/audio decode, 3 browser scene changes. Inherited audio bytes match cycle879; no independent pronunciation or speech-text alignment test.
