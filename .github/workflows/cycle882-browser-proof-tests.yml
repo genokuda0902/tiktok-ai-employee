@@ -1,0 +1,27 @@
+name: cycle882 Chromium DOM proof safety (no private assets)
+on:
+  push:
+    branches:
+      - feature/cycle882-chromium-dom-proof
+    paths:
+      - 'video_engine/cycle882/**'
+      - '.github/workflows/cycle882-browser-proof-tests.yml'
+  pull_request:
+    paths:
+      - 'video_engine/cycle882/**'
+      - '.github/workflows/cycle882-browser-proof-tests.yml'
+  workflow_dispatch:
+jobs:
+  safe-browser-proof:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test frame-exact 10-genre layout and local-only policy
+        run: PYTHONPATH=video_engine/cycle882 python3 -m unittest discover -s video_engine/cycle882 -p 'test_*.py' -v
+      - name: Verify no private media uploaded
+        run: |
+          count=$(find video_engine/cycle882 -type f \( -name '*.mp4' -o -name '*.m4a' -o -name '*.webm' -o -name '*.png' \) | wc -l)
+          test "$count" -eq 0
+          echo "No private video, voice, or screenshot assets are committed."
