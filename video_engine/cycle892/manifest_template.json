@@ -1,0 +1,27 @@
+{
+  "genre": "ai_productivity",
+  "source_sha256": "REPLACE_WITH_LOCAL_APPROVED_SOURCE_SHA256",
+  "review_only": true,
+  "publication_approved": false,
+  "external_upload": false,
+  "automatic_posting": false,
+  "source_rights_reviewed": false,
+  "synthetic_ui": true,
+  "rows": [
+    {
+      "label": "4月",
+      "a": 12,
+      "b": 8
+    },
+    {
+      "label": "5月",
+      "a": 16,
+      "b": 9
+    },
+    {
+      "label": "6月",
+      "a": 18,
+      "b": 12
+    }
+  ]
+}
