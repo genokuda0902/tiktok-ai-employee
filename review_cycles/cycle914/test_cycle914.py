@@ -33,6 +33,7 @@ class TestHook(unittest.TestCase):
   with tempfile.TemporaryDirectory() as td:
    src=Path(td)/'src_REVIEW_ONLY.mp4';src.write_bytes(b'private')
    with self.assertRaisesRegex(ValueError,'overwrite'):m.validate(src,src,m.sha256(src),'ai_work')
+ @unittest.skipUnless(importlib.util.find_spec("PIL") and Path(m.FONT).is_file(), "optional Pillow/Noto font absent")
  def test_render_one_frame(self):
   from PIL import ImageFont
   fonts=(ImageFont.truetype(m.FONT,75),ImageFont.truetype(m.FONT,72),ImageFont.truetype(m.FONT,38),ImageFont.truetype(m.REG,31))
