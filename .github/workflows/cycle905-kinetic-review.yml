@@ -1,0 +1,33 @@
+name: cycle905 kinetic before-after (review only)
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle905/**'
+      - '.github/workflows/cycle905-kinetic-review.yml'
+  push:
+    branches:
+      - 'automation/cycle905-kinetic-before-after-20261028'
+permissions:
+  contents: read
+jobs:
+  offline-render-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies and Japanese font
+        run: |
+          python -m pip install --disable-pip-version-check pillow pytest
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+      - name: Unit tests for all ten genre templates
+        run: python -m pytest -q experiments/cycle905/test_kinetic_before_after.py
+      - name: Synthetic scene PNG smoke test (no private media)
+        run: |
+          python experiments/cycle905/kinetic_before_after.py --genre ai_work --output /tmp/cycle905-synthetic
+          test "$(find /tmp/cycle905-synthetic -name 'frame_*.png' | wc -l)" -eq 87
+      - name: Publication remains blocked
+        run: echo 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED - no upload or posting'
