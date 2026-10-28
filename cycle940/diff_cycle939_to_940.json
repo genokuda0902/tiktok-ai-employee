@@ -1,0 +1,16 @@
+{
+  "cycle": 940,
+  "source_cycle": 939,
+  "previous": "Enlarged scene02 weekly-report visuals; inherited AAC audio unchanged",
+  "current": "Conservative 8-scene Japanese voice gain leveling, no video changes",
+  "quality_delta": "Decoded active-scene RMS spread 1.207 dB -> 0.260 dB (79% reduction)",
+  "video_elementary_identical": true,
+  "subtitles": "All 691 frames pixel-identical via H.264 stream copy",
+  "genre_profiles": 10,
+  "rendered_genre": "ai_productivity",
+  "independent_asr": "NOT_PERFORMED",
+  "source_sha256": "eeeb533effdb15620aceebca5b1be450065fceafa68ce1af95cabd2dc121eabd",
+  "output_sha256": "1a95ba8cb07db2552ded77ea834c1ec957b6a59ddc29a899bb1fae524c9374d0",
+  "local_tests": "14/14 PASS",
+  "publication": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
