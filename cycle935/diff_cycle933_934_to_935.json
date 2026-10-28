@@ -1,0 +1,17 @@
+{
+  "previous_cycle": 933,
+  "parallel_cycle": 934,
+  "current_cycle": 935,
+  "previous_improvement": "scene03 Japanese paper text edge clarity",
+  "parallel_improvement": "0-2.9s opening hook (not stacked)",
+  "new_improvement": "scene06 three sequential revision cues: location, instruction, visual check",
+  "scene_seconds": [
+    14.5,
+    17.4
+  ],
+  "overlay_window_frames": 87,
+  "visible_overlay_frames": 84,
+  "source_sha256": "d181a6581120bf97e97fa1cf0bdb2372ce96f410be8fda67c9889c9db216086e",
+  "output_sha256": "e066328ed65250fe4c7f1cbc2c0f6e072ba577fbc770437066a2e02b5de5d7d3",
+  "publication": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
