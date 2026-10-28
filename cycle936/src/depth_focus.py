@@ -12,7 +12,7 @@ START_FRAME = 174
 FRAME_COUNT = 87
 CANVAS = (1080, 1920)
 WORK_BAND = (0, 270, 1080, 1250)
-FOCUS_RECT = (92, 325, 874, 1150)
+FOCUS_RECT = (70, 335, 905, 1170)
 GENRES = {
     'ai_productivity': 7.0, 'business': 6.5, 'finance': 6.0,
     'education': 6.5, 'health': 5.5, 'beauty': 7.5,
@@ -46,7 +46,10 @@ def process_frame(image, frame_index, genre='ai_productivity'):
     d = ImageDraw.Draw(protect)
     left, top, right, bottom = FOCUS_RECT
     d.rectangle((left, top-WORK_BAND[1], right, bottom-WORK_BAND[1]), fill=255)
-    protect = protect.filter(ImageFilter.GaussianBlur(radius=22))
+    # Preserve existing KEY POINT badge, scene title and page footnote.
+    d.rectangle((0, 0, 1080, 105), fill=255)
+    d.rectangle((90, 1000-WORK_BAND[1], 900, 1220-WORK_BAND[1]), fill=255)
+    protect = protect.filter(ImageFilter.GaussianBlur(radius=12))
     composite = Image.composite(band, blurred, protect)
     out = image.copy()
     out.paste(composite, (WORK_BAND[0], WORK_BAND[1]))
