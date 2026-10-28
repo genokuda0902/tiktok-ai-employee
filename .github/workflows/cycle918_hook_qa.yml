@@ -1,0 +1,37 @@
+name: cycle918 review-only hook QA
+on:
+  push:
+    paths:
+      - 'review_cycles/cycle918/**'
+      - '.github/workflows/cycle918_hook_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle918/**'
+      - '.github/workflows/cycle918_hook_qa.yml'
+permissions:
+  contents: read
+jobs:
+  offline-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install offline render prerequisites
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install --user pillow numpy
+      - name: Ten-genre safety and renderer unit tests
+        run: python3 -m unittest discover -s review_cycles/cycle918 -p 'test_hook.py' -v
+      - name: Render three synthetic sample frames
+        run: |
+          python3 review_cycles/cycle918/task_focus_hook.py --genre ai_work --sample --out /tmp/cycle918-synthetic
+          test -s /tmp/cycle918-synthetic/000.png
+          test -s /tmp/cycle918-synthetic/043.png
+          test -s /tmp/cycle918-synthetic/086.png
+      - name: Reject finished media and private source material
+        run: |
+          if find review_cycles/cycle918 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.jpg' -o -iname '*.png' \) | grep -q .; then
+            echo 'Private source/media must not enter public GitHub' >&2
+            exit 1
+          fi
