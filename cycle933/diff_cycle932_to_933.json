@@ -1,0 +1,30 @@
+{
+  "previous_cycle": 932,
+  "current_cycle": 933,
+  "previous_improvement": "scene04 simulated three-step cursor and click guidance",
+  "current_improvement": "scene03 edge-aware local detail recovery for small Japanese text; no geometric zoom; ten bounded genre profiles",
+  "scope": {"start_sec": 5.8, "end_sec": 8.7, "frames": 87},
+  "local_verification": {
+    "full_decode": true,
+    "resolution": "1080x1920",
+    "fps": 30,
+    "frames": 691,
+    "duration_sec": 23.033333,
+    "audio": "AAC 48kHz; source bitstream identical",
+    "unit_tests": "11/11 PASS",
+    "scene03_laplacian_variance_ratio_at_7_25s": 1.4751
+  },
+  "failed_attempts_not_repeated": [
+    "A camera push-in caused ghosted text and was rejected.",
+    "An initial -shortest encode truncated the video to 688 frames; removed -shortest and verified 691 frames."
+  ],
+  "unverified": [
+    "Independent Japanese ASR/caption semantic and timing match",
+    "Original reference v33 direct comparison",
+    "Inherited asset commercial rights",
+    "Real smartphone playback",
+    "Employee approval",
+    "Actual GitHub Actions billing"
+  ],
+  "publication_status": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
