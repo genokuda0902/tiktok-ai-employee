@@ -4,7 +4,7 @@
   "previous": "Three sequential revision cue cards in scene06",
   "current": "Scene03 cinematic background depth of field with a 0.5-second rack focus; protected paper glyphs and burned-in subtitles",
   "source_sha256": "e066328ed65250fe4c7f1cbc2c0f6e072ba577fbc770437066a2e02b5de5d7d3",
-  "output_sha256": "4305423e9fc6253f2a67c496f8e62f6dcbf2adc93d8a68c636ee15902f825601",
+  "output_sha256": "d284c11692cde78af184c53175ac49723a2f20ef66f0a236865008f73bdfe0ad",
   "scope_frames": [174,260],
   "genre_count": 10,
   "rejected": "No camera zoom; previous zoom caused double-text artifacts in cycle933",
