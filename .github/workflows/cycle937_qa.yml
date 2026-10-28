@@ -21,7 +21,7 @@ jobs:
           sudo apt-get install -y fonts-noto-cjk
           python -m pip install 'Pillow>=10,<13' 'numpy>=1.26,<3'
       - name: Run 20 synthetic tests (no private media)
-        run: python -m unittest discover -s cycle937/tests -p 'test_*.py' -v
+        run: PYTHONPATH=cycle937/src python -m unittest discover -s cycle937/tests -p 'test_*.py' -v
       - name: Fail closed on private media and publication
         run: |
           grep -q 'PUBLICATION_NOT_APPROVED' cycle937/src/template_detail_microcuts.py
