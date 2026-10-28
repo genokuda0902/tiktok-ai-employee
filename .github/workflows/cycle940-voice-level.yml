@@ -1,0 +1,20 @@
+name: cycle940 review-only voice leveling QA
+on:
+  pull_request:
+    paths:
+      - 'cycle940/**'
+      - '.github/workflows/cycle940-voice-level.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-safety-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test scene gain bounds, 10 genres, no publishing
+        run: python -m unittest discover -s cycle940/tests -v
