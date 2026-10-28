@@ -1,6 +1,6 @@
 import sys,unittest
 from pathlib import Path
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 from cinematic_sample import *
 class RenderTests(unittest.TestCase):
  def test_genres(self):self.assertTrue(validate_genres())
