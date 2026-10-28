@@ -1,0 +1,20 @@
+name: cycle939 weekly close-up review-only QA
+on:
+  pull_request:
+    paths:
+      - 'cycle939/**'
+      - '.github/workflows/cycle939-weekly-closeup.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-safety-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test 10 genre profiles, subtitle-safe ROI, no upload/post
+        run: python -m unittest discover -s cycle939/tests -v
