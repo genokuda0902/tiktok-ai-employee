@@ -1,0 +1,24 @@
+name: cycle931 original scene SFX QA (review only)
+on:
+  pull_request:
+    paths:
+      - 'cycle931/**'
+      - '.github/workflows/cycle931_qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-sfx-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests (synthetic data only)
+        run: python -m unittest discover -s cycle931/tests -p 'test_*.py' -v
+      - name: No private MP4, approval or posting
+        run: |
+          grep -q 'PUBLICATION_NOT_APPROVED' cycle931/src/transition_sound.py
+          test ! -e cycle931/output
+          test ! -e cycle931/private
