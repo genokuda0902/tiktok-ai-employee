@@ -1,0 +1,25 @@
+name: cycle941-safe-motion-tests
+on:
+  pull_request:
+    paths:
+      - 'cycle941/**'
+      - '.github/workflows/cycle941-safe-motion.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  local-code-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source test dependencies
+        run: python -m pip install --disable-pip-version-check numpy opencv-python-headless
+      - name: Run 16 unit tests
+        run: python -m unittest discover -s cycle941/tests -v
+      - name: Verify source syntax
+        run: python -m py_compile cycle941/src/safe_motion.py
+# This CI never generates, publishes, or uploads user media.
