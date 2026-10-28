@@ -35,6 +35,10 @@ class DepthFocusTests(unittest.TestCase):
     def test_japanese_page_inner_area_unchanged(self):
         out=process_frame(self.im,30)
         self.assertIsNone(ImageChops.difference(self.im.crop((180,425,730,1000)),out.crop((180,425,730,1000))).getbbox())
+    def test_scene_badges_and_footnote_protected(self):
+        out=process_frame(self.im,30)
+        for region in [(0,270,1080,330),(100,1030,780,1120)]:
+            self.assertIsNone(ImageChops.difference(self.im.crop(region),out.crop(region)).getbbox())
     def test_background_changes(self):
         out=process_frame(self.im,30)
         self.assertIsNotNone(ImageChops.difference(self.im.crop((0,350,75,1150)),out.crop((0,350,75,1150))).getbbox())
