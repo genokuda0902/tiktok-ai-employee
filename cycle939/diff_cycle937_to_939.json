@@ -1,0 +1,17 @@
+{
+  "cycle": 939,
+  "from_cycle": 937,
+  "parallel_route_not_merged": "cycle938 evidence comparison PR #327",
+  "previous": "Audio-only conservative Japanese narration clarity EQ, video bitstream unchanged",
+  "current": "Native-resolution scene02 editorial 3-week close-up with large Japanese labels and progressive week tabs, preserving inherited narration and burned subtitles",
+  "changed_frames": [87, 173],
+  "genre_profiles": 10,
+  "rendered_genre": "ai_productivity",
+  "source_sha256": "b46dc50d7dacfe44ad7c3649c6467ea6687e989071c9e17d477e85f384e9f663",
+  "output_sha256": "eeeb533effdb15620aceebca5b1be450065fceafa68ce1af95cabd2dc121eabd",
+  "audio_elementary_stream_identical": true,
+  "full_decode": "PASS",
+  "local_tests": "14/14 PASS",
+  "not_verified": "No independent Japanese ASR, v33 original comparison, inherited media commercial rights, phone playback, employee approval or actual Actions billing",
+  "publication": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
