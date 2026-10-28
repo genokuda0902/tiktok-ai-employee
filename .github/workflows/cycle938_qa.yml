@@ -1,0 +1,36 @@
+name: cycle938 review-only synthetic QA
+on:
+  push:
+    branches:
+      - 'automation/cycle938-*'
+  pull_request:
+    branches:
+      - 'automation/cycle937-*'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free Japanese font and Python test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow pytest
+      - name: Run synthetic-only tests
+        env:
+          PYTHONPATH: cycle938/src
+        run: python -m pytest -q cycle938/tests/test_evidence_progression.py
+      - name: Fail closed on private media
+        run: |
+          if find cycle938 -type f \( -iname '*.mp4' -o -iname '*.aac' -o -iname '*.wav' -o -iname '*.png' -o -iname '*.jpg' \) | grep -q .; then
+            echo "ERROR: private media in repository"; exit 1
+          fi
+          grep -q 'PUBLICATION_NOT_APPROVED' cycle938/src/evidence_progression.py
+          echo "Synthetic QA only; employee approval and manual posting remain required."
