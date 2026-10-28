@@ -10,7 +10,7 @@ Prior cycle935 added three revision cues to scene06. This cycle adds a 0.5-secon
 - 23.033s / 691 frames / H.264 1080x1920 30fps / AAC 48kHz
 - Full A/V decode PASS; AAC ADTS bitstream identical to source
 - 87 scene03 frames processed; header and burned captions preserved except recompression noise
-- At 7.2s: background Laplacian variance 42.91 -> 1.46; report ROI 599.20 -> 581.74; report pixel MAE 1.07/255
+- At 7.2s: background Laplacian variance 42.91 -> 16.63; report ROI 599.20 -> 580.03; report pixel MAE 1.07/255
 - Local synthetic unit tests 10/10 PASS; all ten genre presets validated
 - These metrics verify a blur effect, not human preference or reference-video parity
 
