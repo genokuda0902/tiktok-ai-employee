@@ -1,0 +1,46 @@
+name: cycle923 review-only prompt scene QA
+on:
+  push:
+    branches:
+      - review/cycle923-prompt-caption-semantic-visual-20261028
+  pull_request:
+    paths:
+      - video_engine/review_quality/cycle923/**
+      - .github/workflows/cycle923_prompt_alignment_qa.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local rendering dependencies
+        run: python -m pip install --disable-pip-version-check pillow numpy opencv-python-headless
+      - name: Install free Japanese Noto fonts for rendering
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+      - name: Run 15 fail-closed and genre tests
+        run: python -m unittest discover -s video_engine/review_quality/cycle923 -p 'test_*.py' -v
+      - name: Smoke test all three visual beats and subtitle-safe region
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'video_engine/review_quality/cycle923')
+          import numpy as np
+          from prompt_alignment_cycle923 import draw_overlay,START,GENRES
+          base=np.zeros((1920,1080,3),dtype=np.uint8)
+          for genre in GENRES:
+              imgs=[draw_overlay(base.copy(),START+29*i,genre) for i in range(3)]
+              assert all(np.array_equal(x[1490:],base[1490:]) for x in imgs)
+              assert all(np.any(imgs[i]!=imgs[i+1]) for i in (0,1))
+          print('10 genres x 3 visual beats, subtitle region unchanged: PASS')
+          PY
+      - name: Block committed private media and public approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(find video_engine/review_quality/cycle923 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.png' -o -iname '*.jpg' \) -print)"
+          ! grep -R -E 'auto[_-]?post[[:space:]]*=[[:space:]]*True|PUBLICATION_APPROVED' video_engine/review_quality/cycle923
