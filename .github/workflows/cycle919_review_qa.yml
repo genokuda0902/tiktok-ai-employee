@@ -1,0 +1,37 @@
+name: cycle919 review-only layout QA
+on:
+  push:
+    paths:
+      - 'review_cycles/cycle919/**'
+      - '.github/workflows/cycle919_review_qa.yml'
+  pull_request:
+    paths:
+      - 'review_cycles/cycle919/**'
+      - '.github/workflows/cycle919_review_qa.yml'
+permissions:
+  contents: read
+jobs:
+  offline-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install --user pillow numpy pytest
+      - name: Test ten genre layouts and review-only policy
+        run: python3 -m pytest -q review_cycles/cycle919/test_review_instruction.py
+      - name: Render 3 synthetic frames (no private video)
+        run: |
+          python3 review_cycles/cycle919/review_instruction.py --preview-only --output /tmp/cycle919-preview
+          test -s /tmp/cycle919-preview/frame_0447.png
+          test -s /tmp/cycle919-preview/frame_0479.png
+          test -s /tmp/cycle919-preview/frame_0513.png
+      - name: Reject private media in public repo
+        run: |
+          if find review_cycles/cycle919 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.jpg' -o -iname '*.png' \) | grep -q .; then
+            echo 'No private media or screenshots in public GitHub' >&2
+            exit 1
+          fi
