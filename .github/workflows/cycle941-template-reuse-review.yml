@@ -1,0 +1,32 @@
+name: cycle941 template reuse review QA
+on:
+  push:
+    branches: ['automation/cycle941-*']
+  pull_request:
+    paths: ['cycle941/**', '.github/workflows/cycle941-template-reuse-review.yml']
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free font and tests
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow pytest
+      - name: Test ten genres and fail-closed policy
+        run: python -m pytest -q cycle941/tests/test_reuse_story.py
+      - name: Block private media and posting code
+        run: |
+          if find cycle941 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.png' -o -iname '*.jpg' \) | grep -q .; then
+            echo 'Private media in repository is forbidden'; exit 1
+          fi
+          if grep -R -E 'tiktok\.upload|publish_video\(' cycle941/src/; then
+            echo 'Automatic posting path is forbidden'; exit 1
+          fi
