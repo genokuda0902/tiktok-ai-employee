@@ -1,0 +1,33 @@
+name: cycle921 save-flow review-only QA
+on:
+  pull_request:
+    paths:
+      - 'review_cycles/cycle921/**'
+      - '.github/workflows/cycle921_save_flow_qa.yml'
+permissions:
+  contents: read
+jobs:
+  offline-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fonts-noto-cjk
+          python3 -m pip install --user pillow numpy
+      - name: Unit tests and 10-genre layouts
+        run: python3 -m unittest discover -s review_cycles/cycle921 -p test_save_flow.py -v
+      - name: Render three synthetic preview frames
+        run: |
+          python3 review_cycles/cycle921/save_flow.py --preview-only --out /tmp/cycle921-preview
+          test -s /tmp/cycle921-preview/frame_0531.png
+          test -s /tmp/cycle921-preview/frame_0562.png
+          test -s /tmp/cycle921-preview/frame_0595.png
+      - name: Reject private media in public repo
+        run: |
+          if find review_cycles/cycle921 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.jpg' -o -iname '*.png' \) | grep -q .; then
+            echo 'Private media must not be committed to public GitHub' >&2
+            exit 1
+          fi
