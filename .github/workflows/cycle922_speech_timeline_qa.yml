@@ -1,0 +1,42 @@
+name: cycle922 review-only speech timeline QA
+on:
+  push:
+    branches:
+      - review/cycle922-speech-timeline-vad-20261028
+  pull_request:
+    paths:
+      - video_engine/review_quality/cycle922/**
+      - .github/workflows/cycle922_speech_timeline_qa.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-and-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run 13 offline unit tests
+        run: python -m unittest discover -s video_engine/review_quality/cycle922 -p 'test_*.py' -v
+      - name: Enforce no committed media or confidential source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(find video_engine/review_quality/cycle922 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.png' -o -iname '*.jpg' \) -print)"
+          ! grep -R -E 'auto[_-]?post[[:space:]]*=[[:space:]]*True|PUBLICATION_APPROVED' video_engine/review_quality/cycle922
+      - name: Confirm review-only quality gates
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p=Path('video_engine/review_quality/cycle922/speech_timeline_cycle922.py')
+          spec=importlib.util.spec_from_file_location('s',p)
+          s=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(s)
+          assert len(s.GENRES)==10
+          assert s.REVIEW_STATUS == 'HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          assert s.render_safe_region()[0] >= 1768
+          print('10 genre configs, no auto-post, and caption-protection gate: PASS')
+          PY
