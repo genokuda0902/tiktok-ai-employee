@@ -1,0 +1,27 @@
+name: cycle927 review-only gate QA
+on:
+  pull_request:
+    paths:
+      - 'cycle927/**'
+      - '.github/workflows/cycle927_review_qa.yml'
+  workflow_dispatch:
+jobs:
+  review-only-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free renderer dependency
+        run: python -m pip install Pillow
+      - name: Install Japanese font
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+      - name: Review-only unit tests
+        run: python -m unittest discover -s cycle927/tests -p 'test_*.py' -v
+      - name: Fail-closed publication policy
+        run: |
+          grep -q 'PUBLICATION_NOT_APPROVED' cycle927/src/review_gate.py
+          test ! -e cycle927/output
