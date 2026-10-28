@@ -1,0 +1,36 @@
+name: cycle916 cinematic prompt checks
+on:
+  pull_request:
+    paths:
+      - 'cycle916/**'
+      - '.github/workflows/cycle916-check.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow
+      - name: Test 10 genres, animation and safety
+        run: python -m unittest discover -s cycle916 -p 'test_*.py' -v
+      - name: Render 3 synthetic test frames (not full MP4)
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'cycle916')
+          import cinematic_prompt as c
+          c.validate()
+          for i in (0,43,86):
+              c.render(i).save('/tmp/cycle916_'+str(i)+'.png')
+          print('3 synthetic frames PASS; private MP4 not uploaded')
+          PY
