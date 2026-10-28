@@ -1,0 +1,18 @@
+{
+  "from_cycle": 936,
+  "to_cycle": 937,
+  "previous": "Scene03 0.5s background-only optical rack focus; protected Japanese report and subtitles",
+  "current": "Audio-only Japanese narration clarity EQ: 75Hz high-pass, gentle +1.4dB presence at 2.8kHz, 14.5kHz low-pass, 0.88 peak limiter; original H.264 video and burned subtitles copied bit-for-bit",
+  "source_sha256": "d284c11692cde78af184c53175ac49723a2f20ef66f0a236865008f73bdfe0ad",
+  "output_sha256": "b46dc50d7dacfe44ad7c3649c6467ea6687e989071c9e17d477e85f384e9f663",
+  "preserved": [
+    "All 691 video frames",
+    "1080x1920",
+    "30fps",
+    "Existing baked subtitles",
+    "Audio timing (0ms RMS envelope lag)"
+  ],
+  "genre_count": 10,
+  "not_done": "No independent Japanese ASR or subjective listening approval; no direct v33 source comparison",
+  "publication": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
