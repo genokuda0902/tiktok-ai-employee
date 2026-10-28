@@ -1,0 +1,25 @@
+name: cycle945-spectral-meter-tests
+on:
+  pull_request:
+    paths:
+      - 'cycle945/**'
+      - '.github/workflows/cycle945-spectral-meter.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  code-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source dependencies
+        run: python -m pip install --disable-pip-version-check numpy opencv-python-headless
+      - name: Test 10 genre presets and eight frequency bands
+        run: python -m unittest discover -s cycle945/tests -v
+      - name: Compile source
+        run: python -m py_compile cycle945/src/spectral_voice_meter.py
+# CI uses synthetic data; no private media, posting, or production deployment.
