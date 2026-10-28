@@ -1,0 +1,33 @@
+name: cycle932 semantic cursor QA
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle932/**'
+      - '.github/workflows/cycle932-ui-cursor.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Pillow
+        run: python -m pip install pillow
+      - name: Run fail-closed unit tests
+        run: python -m unittest discover -s experiments/cycle932 -p 'test_*.py' -v
+      - name: Render three proof frames
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'experiments/cycle932')
+          from semantic_cursor import render_frame
+          for i,t in enumerate((0.74,1.53,2.44)):
+              im=render_frame(t)
+              assert im.getbbox() is not None
+              im.save(f'/tmp/cursor_{i}.png')
+          PY
