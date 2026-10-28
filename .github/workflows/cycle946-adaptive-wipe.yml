@@ -1,0 +1,24 @@
+name: cycle946 adaptive scene wipe QA
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle946/**'
+      - '.github/workflows/cycle946-adaptive-wipe.yml'
+  workflow_dispatch:
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free test dependencies
+        run: python -m pip install --disable-pip-version-check numpy opencv-python-headless pytest
+      - name: Test 10 genre profiles and safe scene transition
+        run: python -m pytest -q experiments/cycle946/test_adaptive_scene_wipe.py
+      - name: Verify no automated posting code in this experiment
+        run: |
+          ! grep -Ein 'tiktok.*(upload|publish)|auto.?post|requests\.post' experiments/cycle946/adaptive_scene_wipe.py
