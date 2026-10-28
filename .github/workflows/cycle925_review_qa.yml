@@ -1,0 +1,23 @@
+name: cycle925 review-only one-action CTA tests
+on:
+  pull_request:
+    paths:
+      - 'cycle925/**'
+      - '.github/workflows/cycle925_review_qa.yml'
+  workflow_dispatch:
+jobs:
+  review-only-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Standard-library unit tests (no private media)
+        run: python -m unittest discover -s cycle925/tests -p 'test_*.py' -v
+      - name: Fail-closed review-only policy
+        run: |
+          grep -q 'PUBLICATION_NOT_APPROVED' cycle925/src/one_action_cta.py
+          test ! -e cycle925/output
