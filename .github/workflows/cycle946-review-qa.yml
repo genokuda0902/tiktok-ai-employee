@@ -1,0 +1,31 @@
+name: cycle946 narration presence review-only QA
+on:
+  push:
+    branches: ['automation/cycle946-*']
+  pull_request:
+    paths:
+      - 'cycle946/**'
+      - '.github/workflows/cycle946-review-qa.yml'
+permissions:
+  contents: read
+jobs:
+  audio-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: python -m pip install --disable-pip-version-check numpy pytest
+      - name: Test voice-presence and 10 genre safety
+        run: python -m pytest -q cycle946/tests/test_voice_presence.py
+      - name: Block private media and posting code
+        run: |
+          if find cycle946 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.m4a' -o -iname '*.png' -o -iname '*.jpg' \) | grep -q .; then
+            echo 'Private media cannot be committed'; exit 1
+          fi
+          if grep -R -E 'tiktok\.upload|publish_video\(' cycle946/src/; then
+            echo 'Automatic posting forbidden'; exit 1
+          fi
