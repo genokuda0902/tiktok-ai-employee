@@ -1,0 +1,17 @@
+{
+  "cycle": 945,
+  "base_cycle": 944,
+  "base_improvement": "voice-active faded Japanese subtitle frame restoration (16 frames)",
+  "new_improvement": "replace generic loudness-reactive 8-bar top badge with 8 separate actual frequency-band responses",
+  "distinct_from_previous": true,
+  "source_sha256": "1ce2fe9e1a0c65230b50dcc69c3bc6bf2fd3962ca3210ef95d47db99c4c3ebae",
+  "output_sha256": "da1f21c64f7a00e7f8d612a83a18692f60c649d04205946a5fe70fbea6596d10",
+  "mean_same_band_correlation_before": 0.413,
+  "mean_same_band_correlation_after_actual_decoded_video": 0.728,
+  "unchanged": ["AAC bitstream", "burned-in Japanese captions", "scene count", "publication restriction"],
+  "10_genre_configuration_tested": true,
+  "full_video_generated_for": "ai_productivity",
+  "not_done": ["independent Japanese ASR", "reference v33 direct comparison", "commercial asset rights audit", "smartphone playback", "human publication approval", "actual GitHub Actions billing audit"],
+  "next_priority": "independent Japanese ASR and subtitle semantic/timing verification, then original v33 quality comparison",
+  "status": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
