@@ -1,0 +1,31 @@
+name: cycle945 audio-trace review-only QA
+on:
+  push:
+    branches: ['automation/cycle945-*']
+  pull_request:
+    paths:
+      - 'cycle945/**'
+      - '.github/workflows/cycle945-review-qa.yml'
+permissions:
+  contents: read
+jobs:
+  waveform-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: python -m pip install --disable-pip-version-check numpy pillow pytest
+      - name: Verify real-energy meter and ten genres
+        run: python -m pytest -q cycle945/tests/test_voice_true_meter.py
+      - name: Prevent private media and posting code
+        run: |
+          if find cycle945 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.m4a' -o -iname '*.png' -o -iname '*.jpg' \) | grep -q .; then
+            echo 'Private media cannot be committed'; exit 1
+          fi
+          if grep -R -E 'tiktok\.upload|publish_video\(' cycle945/src/; then
+            echo 'Automatic posting forbidden'; exit 1
+          fi
