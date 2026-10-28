@@ -5,13 +5,13 @@ Prior cycle935 added three revision cues to scene06. This cycle adds a 0.5-secon
 
 ## Verified local MP4 (not uploaded to public GitHub)
 - Output: cycle936_DEPTH_FOCUS_JP_HUMAN_REVIEW.mp4
-- SHA256: 4305423e9fc6253f2a67c496f8e62f6dcbf2adc93d8a68c636ee15902f825601
+- SHA256: d284c11692cde78af184c53175ac49723a2f20ef66f0a236865008f73bdfe0ad
 - Source: private cycle935 MP4, SHA256 e066328ed65250fe4c7f1cbc2c0f6e072ba577fbc770437066a2e02b5de5d7d3
 - 23.033s / 691 frames / H.264 1080x1920 30fps / AAC 48kHz
 - Full A/V decode PASS; AAC ADTS bitstream identical to source
 - 87 scene03 frames processed; header and burned captions preserved except recompression noise
 - At 7.2s: background Laplacian variance 42.91 -> 1.46; report ROI 599.20 -> 581.74; report pixel MAE 1.07/255
-- Local synthetic unit tests 9/9 PASS; all ten genre presets validated
+- Local synthetic unit tests 10/10 PASS; all ten genre presets validated
 - These metrics verify a blur effect, not human preference or reference-video parity
 
 ## Reproduce with free tools
