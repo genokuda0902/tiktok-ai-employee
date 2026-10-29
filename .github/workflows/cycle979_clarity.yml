@@ -1,0 +1,40 @@
+name: cycle979 clarity review QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle979/**'
+      - '.github/workflows/cycle979_clarity.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local ffmpeg utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+      - name: Test genre allowlist and caption protection
+        run: python -m unittest discover -s quality/cycle979 -p 'test_*.py' -v
+      - name: Generate and transform synthetic 1-second MP4
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'testsrc2=size=1080x1920:rate=30:duration=1' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=1' \
+            -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac \
+            -shortest /tmp/c979_source.mp4
+          python quality/cycle979/clarity_pass.py \
+            --source /tmp/c979_source.mp4 --output /tmp/c979_review.mp4 \
+            --genre ai_work --report /tmp/c979_report.json
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/c979_review.mp4 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate \
+            -of default=noprint_wrappers=1 /tmp/c979_review.mp4
+      - name: Publication remains blocked
+        run: |
+          grep -q 'PUBLICATION_NOT_APPROVED' /tmp/c979_report.json
+          echo 'SYNTHETIC QA ONLY; NO PRIVATE MP4, UPLOAD, MERGE OR POST'
