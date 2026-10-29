@@ -71,3 +71,9 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Accessible TikTok market/video research summaries and user's 16-panel storyboard original inspected; full original research chats and v33 original MP4 unavailable. Still 8 scenes vs reference 16, 23s vs ~36s.
 - Ten genre policies, only ai_work reviewed. Independent Japanese ASR/semantic subtitle timing, rights, smartphone playback, employee approval, and Actions actual billing unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid service or private upload.
 - Work branch automation/cycle966-real-calc-proof-20261029-2153; CI synthetic only.
+
+## Review-only cycle968 checkpoint (2026-10-29 JST)
+- Based on unmerged cycle966 PR #367 (head `5c12bc71b1d9bab302f93b0f80742af43cf59403`); parallel cycle967 PR #368 unchanged. The review-only renderer/test/CI files are in `cycle968/` and do not touch the production pipeline.
+- Private output MP4 SHA256 `a777828ff5db82ba1df8e74c4c1f1419b4c893512707435cd3e6c17922567bd4`, 1080x1920 H264 30fps 691 frames, 23.033s, inherited Japanese AAC ADTS SHA identical. Scene04 frames 261–347 replaced with readable purpose/conditions/output instruction cards. 8 local unit tests and full A/V decode passed; see `cycle968/README.md`.
+- The private MP4 is not committed. CI tests synthetic media only. Original v33 MP4, full prior research chats, independent Japanese ASR/semantic subtitle timing, smartphone playback, commercial rights, employee approval and actual Actions billing are unverified.
+- **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.** Do not merge or auto-post without review. The ten genre palettes are not ten validated outputs.
