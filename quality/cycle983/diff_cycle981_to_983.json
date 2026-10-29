@@ -1,0 +1,18 @@
+{
+  "cycle": 983,
+  "base_cycle": 981,
+  "parallel_cycle_reviewed": 982,
+  "base_change": "Cycle981 smoothed two abrupt scene cuts using feathered wipes.",
+  "parallel_change": "Cycle982 adds real LibreOffice Calc GUI formula-entry footage (PR #383); not repeated or merged.",
+  "distinct_change": "Apply bounded shadow-luminance recovery to artwork y150:1180 in all eight scenes, preserving highlights, protected subtitles, and copied AAC audio.",
+  "technical_evidence": {
+    "dark_luma_before": 51.0816,
+    "dark_luma_after": 67.1030,
+    "caption_roi_mae_max_255": 0.4787,
+    "full_av_decode": "PASS",
+    "audio_bitstream_identical": true
+  },
+  "ten_genres": "Shared engine; real video reviewed for ai_work only; other genres fail closed.",
+  "release": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED",
+  "next_priority": "Independent Japanese speech transcription and subtitle semantic/timing check; then reference-v33 and commercial rights review."
+}

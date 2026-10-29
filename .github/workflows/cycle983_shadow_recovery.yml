@@ -1,0 +1,40 @@
+name: cycle983 shadow-detail review QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle983/**'
+      - '.github/workflows/cycle983_shadow_recovery.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline rendering tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install numpy opencv-python-headless
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle983 -p 'test_*.py' -v
+      - name: Synthetic 1080x1920 H264/AAC render and decode
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'testsrc2=size=1080x1920:rate=30:duration=1' -f lavfi -i 'sine=frequency=660:sample_rate=48000:duration=1' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/c983_in.mp4
+          python quality/cycle983/shadow_recovery.py /tmp/c983_in.mp4 /tmp/c983_out.mp4 --genre science --synthetic --top 150 --bottom 1180 > /tmp/c983_render.json
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/c983_out.mp4 -f null -
+          python - <<'PY'
+          import hashlib,json,subprocess
+          r=json.load(open('/tmp/c983_render.json'))
+          assert (r['width'],r['height'],r['frames'])==(1080,1920,30)
+          assert r['status']=='HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          def audio_sha(path):
+              raw=subprocess.check_output(['ffmpeg','-v','error','-i',path,'-map','0:a:0','-c:a','copy','-f','adts','pipe:1'])
+              return hashlib.sha256(raw).hexdigest()
+          assert audio_sha('/tmp/c983_in.mp4')==audio_sha('/tmp/c983_out.mp4')
+          print('Synthetic 1080x1920 MP4: full decode and AAC bitstream PASS; no private media uploaded')
+          PY
