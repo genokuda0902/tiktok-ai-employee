@@ -24,7 +24,7 @@ jobs:
         run: python -m pytest -q cycle952/tests/test_scene_focus_lock.py
       - name: Ensure no private MP4 or confidential source committed
         run: |
-          if git ls-files cycle952 | grep -E '\\.(mp4|wav|m4a|png|jpg)$'; then
+          if git ls-files cycle952 | grep -E '\.(mp4|wav|m4a|png|jpg)$'; then
             echo 'Private media committed; refusing'; exit 1
           fi
           echo 'No media in code branch'
