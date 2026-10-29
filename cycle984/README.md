@@ -20,3 +20,8 @@ Available summaries of TikTok市場分析 and TikTok動画研究 emphasize early
 - Independent Japanese speech transcription/semantic caption sync, rights, smartphone playback, employee approval and Actions billing are **NOT verified**.
 
 HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, posting, publication, confidential source upload or paid-service purchase.
+
+## CI provenance
+- Synthetic-only push run for code/QA commit `da16cd957c07111932ae1aa9f11efb64708b33b8`: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40964229207 (SUCCESS).
+- Synthetic-only PR run for the same commit: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40964238542 (SUCCESS).
+- This does not prove original v33 parity or real private MP4 QA; those were performed locally as described above.
