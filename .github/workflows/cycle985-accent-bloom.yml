@@ -1,0 +1,29 @@
+name: cycle985-accent-bloom-review-only
+on:
+  pull_request:
+    paths:
+      - "quality/cycle985/**"
+      - ".github/workflows/cycle985-accent-bloom.yml"
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --disable-pip-version-check numpy opencv-python-headless pytest
+      - name: Unit tests
+        run: python -m pytest -q quality/cycle985/test_accent_bloom.py
+      - name: Synthetic 1080x1920 30fps A/V render and decode
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i "color=c=0x07132b:s=1080x1920:r=30:d=1" -f lavfi -i "sine=frequency=440:sample_rate=48000:duration=1" -vf "drawbox=x=150:y=300:w=700:h=100:color=cyan:t=fill" -c:v libx264 -preset ultrafast -c:a aac -shortest /tmp/cycle985_in.mp4
+          python quality/cycle985/accent_bloom.py /tmp/cycle985_in.mp4 /tmp/cycle985_out.mp4 --synthetic
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle985_out.mp4 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate,nb_frames -of default=noprint_wrappers=1 /tmp/cycle985_out.mp4
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 /tmp/cycle985_out.mp4)" = "1080"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 /tmp/cycle985_out.mp4)" = "1920"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 /tmp/cycle985_out.mp4)" = "30/1"
