@@ -1,0 +1,33 @@
+name: cycle962 audio loudness review (synthetic only)
+on:
+  pull_request:
+    paths:
+      - 'cycle962/**'
+      - '.github/workflows/cycle962-audio-loudness.yml'
+  push:
+    branches:
+      - 'feature/cycle962-audio-loudness-review'
+    paths:
+      - 'cycle962/**'
+      - '.github/workflows/cycle962-audio-loudness.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-audio-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check tools
+        run: |
+          python3 --version
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
+      - name: Unit tests (no private media)
+        run: python3 -m unittest discover -s cycle962 -p 'test_*.py' -v
+      - name: Block committed private media
+        run: |
+          if find cycle962 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.png' \) | grep .; then
+            echo 'Private media in GitHub branch is forbidden'
+            exit 1
+          fi
