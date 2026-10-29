@@ -1,0 +1,38 @@
+name: cycle980 before-after hook QA (synthetic-only)
+on:
+  push:
+    branches:
+      - automation/cycle980-before-after-hook-20261030
+    paths:
+      - 'cycle980/**'
+      - '.github/workflows/cycle980-hook-qa.yml'
+  pull_request:
+    paths:
+      - 'cycle980/**'
+      - '.github/workflows/cycle980-hook-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5'
+      - name: Unit tests
+        run: PYTHONPATH=cycle980 python -m unittest discover -s cycle980 -p 'test_*.py' -v
+      - name: Render and verify 8s synthetic audio/video
+        run: |
+          mkdir -p /tmp/cycle980
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x10263c:s=1080x1920:r=30:d=8' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=8' -vf 'drawbox=x=30:y=1510:w=900:h=110:color=cyan:t=fill' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle980/source.mp4
+          python cycle980/hook_before_after.py --source /tmp/cycle980/source.mp4 --output /tmp/cycle980/output.mp4 --work /tmp/cycle980/work --synthetic
+          python cycle980/qa_hook.py --source /tmp/cycle980/source.mp4 --output /tmp/cycle980/output.mp4 --report /tmp/cycle980/qa.json
+          ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate -of json /tmp/cycle980/output.mp4
