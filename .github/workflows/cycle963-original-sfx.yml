@@ -1,0 +1,30 @@
+name: cycle963 original UI cue sound design (review only)
+on:
+  push:
+    paths:
+      - 'cycle963/**'
+      - '.github/workflows/cycle963-original-sfx.yml'
+  pull_request:
+    paths:
+      - 'cycle963/**'
+      - '.github/workflows/cycle963-original-sfx.yml'
+  workflow_dispatch:
+jobs:
+  isolated-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free synthetic-test requirements
+        run: python -m pip install --disable-pip-version-check numpy pytest
+      - name: Reject any committed media in cycle963
+        run: |
+          if find cycle963 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.png' -o -iname '*.jpg' -o -iname '*.aac' -o -iname '*.f32' \) | grep .; then
+            echo 'Private media cannot be committed'; exit 1
+          fi
+      - name: Synthetic cue and approval tests
+        run: python -m pytest -q cycle963/test_sound_cue_engine.py
