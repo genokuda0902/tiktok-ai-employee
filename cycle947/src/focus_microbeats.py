@@ -22,7 +22,7 @@ SCENE_BOUNDARIES = (0.0, 2.9, 5.8, 8.7, 11.6, 14.5, 17.4, 20.3, 23.033333)
 SCENE_TARGETS = ((.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0))
 # Only center illustration area: top header, lower burned-in Japanese subtitles,
 # voice-reactive meter, and footer are not edited in source pixels.
-CONTENT_RECT = (20, 155, 1060, 1490)
+CONTENT_RECT = (20, 155, 1060, 1440)
 
 def smoothstep(v: float) -> float:
     v = max(0., min(1., v))
