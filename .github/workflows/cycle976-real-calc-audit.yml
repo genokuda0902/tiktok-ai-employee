@@ -1,0 +1,45 @@
+name: cycle976 real Calc audit (synthetic-only)
+on:
+  push:
+    branches:
+      - automation/cycle976-real-calc-audit-20261030
+    paths:
+      - 'cycle976/**'
+      - '.github/workflows/cycle976-real-calc-audit.yml'
+  pull_request:
+    paths:
+      - 'cycle976/**'
+      - '.github/workflows/cycle976-real-calc-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Unit tests
+        run: python -m unittest discover -s cycle976 -p 'test_*.py' -v
+      - name: Synthetic media and source image only
+        run: |
+          mkdir -p /tmp/cycle976
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x061929:s=1080x1920:r=30:d=23.033333' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=23.033333' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle976/input.mp4
+          python - <<'PY'
+          from PIL import Image,ImageDraw
+          im=Image.new('RGB',(1158,1638),'white')
+          d=ImageDraw.Draw(im);d.rectangle((80,90,860,340),fill='#d8f9f4')
+          d.text((100,140),'FICTIONAL CALC PROOF 46 / 29',fill='black')
+          im.save('/tmp/cycle976/proof.png')
+          PY
+          python cycle976/real_calc_audit.py --source /tmp/cycle976/input.mp4 --proof /tmp/cycle976/proof.png --output /tmp/cycle976/output.mp4 --frames-dir /tmp/cycle976/frames --synthetic
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle976/output.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate -of json /tmp/cycle976/output.mp4
