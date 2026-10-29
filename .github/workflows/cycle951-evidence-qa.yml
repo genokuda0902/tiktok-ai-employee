@@ -1,0 +1,35 @@
+name: cycle951 evidence consistency QA (review only)
+on:
+  push:
+    branches: ['automation/cycle951-*']
+  pull_request:
+    paths:
+      - 'cycle951/**'
+      - '.github/workflows/cycle951-evidence-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free tests
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Arithmetic, 10-genre fail-closed and semantic gate tests
+        run: python -m pytest -q cycle951/tests/test_evidence_consistency.py
+      - name: Compile source
+        run: python -m py_compile cycle951/src/evidence_consistency.py cycle951/src/verify_review.py
+      - name: Reject media, confidential assets and publishing API
+        shell: bash
+        run: |
+          if find cycle951 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.png' -o -iname '*.jpg' -o -iname '*private*' \) | grep -q .; then
+            echo 'Private media forbidden in GitHub source'; exit 1
+          fi
+          if grep -REi 'requests\.post|tiktok.*(upload|publish)|publish_video\(' cycle951/src/; then
+            echo 'Publishing code forbidden'; exit 1
+          fi

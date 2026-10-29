@@ -29,3 +29,10 @@ Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end comp
 Repo: https://github.com/genokuda0902/tiktok-ai-employee
 Checkpoint: https://github.com/genokuda0902/tiktok-ai-employee/blob/main/recovery/v33/RECOVERY_STATUS.md
 PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
+
+## 2026-10-29 cycle951 independent review-only checkpoint (PR #348)
+- This is an unmerged review branch stacked on PR #345, separate from concurrent PR #347 deghost and PR #346 chapter badge; latest main remains `18e084c38db0dc55db7dfc0532b9451b1167f2aa`.
+- Verified local code: `cycle951/src/evidence_consistency.py` blob `d33a89fc45b9d764503ac59942d75a61277f757a`; 27 pytest tests PASS; source arithmetic ledger 12+16+18=46 and 8+9+12=29.
+- Local private review MP4 SHA256 `950b8d4d336cdb5f4ba4a774348e19c4f0dfc8bff98046e2eeeed2a9d2976c2d`; H.264 1080x1920 30fps 691 frames, AAC 48kHz ADTS unchanged, full decode PASS; no private MP4 in public GitHub.
+- Reference storyboard 16 panels directly inspected; original v33 MP4, full research chat transcripts and independent Japanese ASR unavailable. Caption meaning, phone playback, rights and employee approval UNVERIFIED; PUBLICATION_NOT_APPROVED. No merge, paid service or posting.
+- Draft PR: https://github.com/genokuda0902/tiktok-ai-employee/pull/348 ; CI tests source, not full private MP4.
