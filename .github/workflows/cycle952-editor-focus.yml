@@ -1,0 +1,24 @@
+name: cycle952 editor field focus tests
+on:
+  pull_request:
+    paths:
+      - 'quality_cycles/cycle952/**'
+      - '.github/workflows/cycle952-editor-focus.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  editor-focus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free open-source test dependencies
+        run: python -m pip install --disable-pip-version-check Pillow pytest
+      - name: Run deterministic tests
+        run: python -m pytest -q quality_cycles/cycle952/tests/test_editor_focus.py
+      - name: Verify publication gate
+        run: grep -q 'PUBLICATION_NOT_APPROVED' quality_cycles/cycle952/README.md
