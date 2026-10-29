@@ -53,3 +53,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Directly inspected user Library image `ChatGPT×Excel時短術16コマ絵コンテ.png` (16 panels, ~36s) and prior research summaries. Full original research chats and original v33 MP4 inaccessible this run. Current video remains 8 scenes and 23s, **not reference-equivalent**.
 - Ten genre cue policies, only ai_work approved for private test; nine other genres fail closed. Independent Japanese ASR, caption semantic/timing match, phone playback, source rights, employee approval, and Actions actual billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
 - No auto-post, paid service, private media upload, or merge. Branch: `automation/cycle963-original-ui-sound-cues-20261029`.
+
+
+## 2026-10-29 cycle964 arithmetic-continuity private review checkpoint
+- Distinct from cycle963 original UI sound cues: replace only scene05 11.60–14.50s with three-step source row check. Fictional rows Apr (12,8), May (16,9), Jun (18,12) yield totals 46/29; explicitly not an actual app recording.
+- Source private cycle963 MP4 SHA256 5df3b08c7ec6d18d3de52616939bc5b36fd1d1f3d790b5caf0e50d5c8cf54c6f. Output private cycle964 MP4 SHA256 cb8d504b95c7e06f1b3acb216a7f283e83a2b6276b22e83fb82f5b73e2e557cc. Neither is committed.
+- H264 1080x1920 30fps 691 frames / 23.033s, AAC 48kHz stereo. Full A/V decode PASS; audio ADTS stream identical ec98a3476d25362abd58bb40d2298b3a8d2eda3cf673187e4feb78133232c20e. Subtitle ROI sampled maximum mean delta 0.5236/255; 14 local synthetic tests PASS.
+- Consulted accessible TikTok market/video-study summaries and directly inspected user's 16-panel storyboard. Full original research chats and original v33 reference MP4 unavailable. Still 8 scenes, 23s, not reference-equivalent.
+- Ten genre rules, only ai_work review-rendered. Independent Japanese ASR, caption semantic/timing match, source rights, phone playback, employee approval and actual Actions billing unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+- No merge, auto-post, paid service, or private media uploaded. Work branch automation/cycle964-arithmetic-continuity-20261029-2053.

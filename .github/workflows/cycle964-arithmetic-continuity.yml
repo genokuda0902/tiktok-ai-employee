@@ -1,0 +1,45 @@
+name: cycle964 cross-scene arithmetic continuity (synthetic only)
+on:
+  push:
+    paths:
+      - 'cycle964/**'
+      - '.github/workflows/cycle964-arithmetic-continuity.yml'
+  pull_request:
+    paths:
+      - 'cycle964/**'
+      - '.github/workflows/cycle964-arithmetic-continuity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-arithmetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free rendering prerequisites
+        run: |
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk ffmpeg
+      - name: Arithmetic, geometry, safety and synthetic frame tests
+        run: python -m unittest discover -s cycle964 -p 'test_*.py' -v
+      - name: Synthetic video encode/decode smoke (no user footage)
+        run: |
+          mkdir -p /tmp/cycle964
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'cycle964')
+          from verified_totals import frame
+          frame(70).save('/tmp/cycle964/synthetic.png')
+          PY
+          ffmpeg -hide_banner -loglevel error -y -loop 1 -framerate 30 -i /tmp/cycle964/synthetic.png -t 1 -c:v libx264 -pix_fmt yuv420p /tmp/cycle964/synthetic.mp4
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle964/synthetic.mp4 -f null -
+      - name: Block private media and publishing secrets
+        run: |
+          if find cycle964 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.jpg' -o -iname '*.png' -o -iname '*.f32' \) | grep .; then
+            echo 'Private assets must not enter public repository'; exit 1
+          fi
