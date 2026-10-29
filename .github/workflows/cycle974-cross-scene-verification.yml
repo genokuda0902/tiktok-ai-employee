@@ -1,0 +1,43 @@
+name: cycle974 cross-scene arithmetic verification (synthetic review-only CI)
+on:
+  push:
+    branches:
+      - automation/cycle974-cross-scene-verification-20261030
+    paths:
+      - 'cycle974/**'
+      - '.github/workflows/cycle974-cross-scene-verification.yml'
+  pull_request:
+    paths:
+      - 'cycle974/**'
+      - '.github/workflows/cycle974-cross-scene-verification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free renderer dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'Pillow>=10,<13' 'opencv-python-headless>=4.9,<5'
+      - name: Cross-scene consistency and 10-genre fail-closed tests
+        run: python -m unittest discover -s cycle974 -p 'test_*.py' -v
+      - name: Synthetic review sample only, no private media
+        run: |
+          mkdir -p /tmp/cycle974
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x061929:s=1080x1920:r=30:d=3' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle974/synthetic.mp4
+          python cycle974/verification_reveal.py --source /tmp/cycle974/synthetic.mp4 --output /tmp/cycle974/preview.mp4 --report /tmp/cycle974/report.json --synthetic
+          ffmpeg -v error -i /tmp/cycle974/preview.mp4 -f null -
+      - name: Upload synthetic QA JSON only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle974-synthetic-review-qa
+          path: /tmp/cycle974/report.json
+          retention-days: 7
