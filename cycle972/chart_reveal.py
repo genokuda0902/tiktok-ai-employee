@@ -50,6 +50,7 @@ def artwork(progress,genre='ai_work'):
     draw_text(d,(78,265),'4〜6月｜営業Aと営業Bの月別比較',34,'#A9D2DF')
     d.rounded_rectangle((68,332,1012,917),radius=28,fill='#102E43',outline='#36667B',width=2)
     draw_text(d,(95,349),'月ごとの違いをグラフで確認',34,'#E6F9FD',True)
+    # Small legend with distinct shape + text, not color alone.
     d.rounded_rectangle((615,402,649,430),radius=5,fill=accent)
     draw_text(d,(661,394),'営業A',30,'#E8F7FF')
     d.rounded_rectangle((795,402,829,430),radius=5,fill='#8C9CFF')
@@ -71,6 +72,7 @@ def artwork(progress,genre='ai_work'):
             if phase>.6:
                 draw_text(d,(bx+7,bottom-h-50),str(v),38,'#FFFFFF',True)
         draw_text(d,(x-24,851),month,34,'#D8EEF5',True)
+    # Totals reveal only after the three groups have had time to animate.
     reveal=1 if progress>=0.75 else 0
     d.rounded_rectangle((69,943,1011,1125),radius=25,fill='#123D4F',outline='#2B7A84',width=2)
     draw_text(d,(95,957),'3か月合計',36,'#BEE8EE',True)
