@@ -18,11 +18,11 @@ GENRE_PROFILES = {
     'career': 1.050,
 }
 SCENE_BOUNDARIES = (0.0, 2.9, 5.8, 8.7, 11.6, 14.5, 17.4, 20.3, 23.033333)
-# Camera targets are manually checked against cycle946's nonconfidential review frames.
-SCENE_TARGETS = ((.50,.50),(.50,.47),(.50,.48),(.50,.52),(.50,.51),(.50,.49),(.50,.51),(.50,.50))
+# Top-anchored targets keep headline and first data row visible during push-in.
+SCENE_TARGETS = ((.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0),(.50,.0))
 # Only center illustration area: top header, lower burned-in Japanese subtitles,
 # voice-reactive meter, and footer are not edited in source pixels.
-CONTENT_RECT = (30, 240, 1050, 1450)
+CONTENT_RECT = (20, 155, 1060, 1490)
 
 def smoothstep(v: float) -> float:
     v = max(0., min(1., v))
