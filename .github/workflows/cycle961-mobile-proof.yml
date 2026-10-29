@@ -1,0 +1,33 @@
+name: cycle961 mobile proof reveal (review only)
+on:
+  push:
+    paths:
+      - 'cycle961/**'
+      - '.github/workflows/cycle961-mobile-proof.yml'
+  pull_request:
+    paths:
+      - 'cycle961/**'
+      - '.github/workflows/cycle961-mobile-proof.yml'
+  workflow_dispatch:
+jobs:
+  isolated-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-cost test requirements
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow pytest
+      - name: Reject private media
+        run: |
+          if find cycle961 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.png' -o -iname '*.jpg' -o -iname '*.aac' \) | grep .; then
+            echo 'Private media must not be committed'; exit 1
+          fi
+      - name: Test source geometry and fail-closed approvals
+        run: python -m pytest -q cycle961/test_mobile_proof_reveal.py
