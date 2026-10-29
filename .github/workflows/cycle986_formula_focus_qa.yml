@@ -1,0 +1,38 @@
+name: cycle986 formula focus review QA (synthetic only)
+on:
+  push:
+    branches:
+      - automation/cycle986-formula-focus-20261030
+    paths:
+      - 'cycle986/**'
+      - '.github/workflows/cycle986_formula_focus_qa.yml'
+  pull_request:
+    paths:
+      - 'cycle986/**'
+      - '.github/workflows/cycle986_formula_focus_qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk fonts-dejavu-core
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Unit tests
+        run: PYTHONPATH=cycle986 python -m unittest discover -s cycle986 -p 'test_*.py' -v
+      - name: Render synthetic 2s A/V and decode
+        run: |
+          mkdir -p /tmp/cycle986
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x06303a:s=1080x1920:r=30:d=2' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle986/source.mp4
+          python cycle986/formula_focus.py --source /tmp/cycle986/source.mp4 --output /tmp/cycle986/output.mp4 --work /tmp/cycle986/work --synthetic --start 0 --end 60
+          ffmpeg -hide_banner -loglevel error -i /tmp/cycle986/output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of default=nw=1:nk=1 /tmp/cycle986/output.mp4)" = "60"
