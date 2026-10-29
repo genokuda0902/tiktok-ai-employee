@@ -1,6 +1,6 @@
 # cycle947 — review-only second-angle microbeats
 
-This experiment creates eight additional *composition beats* (one mild focus push-in in the second half of each of the eight existing scenes). It does not create eight new story scenes or reproduce the user's 16-panel cinematic storyboard. Content rectangle only (x30:1050, y240:1450); existing Japanese subtitle strip, top header, and lower meter are protected in source pixels. Ten genre-specific camera intensity presets; only AI-work MP4 generated privately.
+This experiment creates eight additional *composition beats* (one mild focus push-in in the second half of each of the eight existing scenes). It does not create eight new story scenes or reproduce the user's 16-panel cinematic storyboard. Content rectangle only (x20:1060, y155:1440); existing Japanese subtitle strip, top header, and lower meter are protected in source pixels. Ten genre-specific camera intensity presets; only AI-work MP4 generated privately.
 
 Run locally with OpenCV, numpy, ffmpeg:
 
