@@ -9,5 +9,7 @@
 - Caption y1490–1840 max mean sampled pixel difference 0.8861/255; proof ROI difference at frame33 139.5123/255; post-hook max sampled frame difference 1.5262/255.
 - User storyboard directly viewed. Original v33 MP4 and full research chats not accessible. 8 scenes vs reference 16; human/robot/actual app variety gap remains.
 - No independent ASR Japanese speech-caption meaning or timing validation; rights, mobile playback, employee approval and actual Actions billing not verified.
-- Source, tests and workflow to be saved in Draft PR, no private MP4 in public GitHub.
+- Source, tests, workflow and reproducible QA notes saved in Draft PR #360: https://github.com/genokuda0902/tiktok-ai-employee/pull/360
+- Initial final-commit CI run SUCCESS: https://github.com/genokuda0902/tiktok-ai-employee/actions/runs/40846354368 (19 isolated tests; private full MP4 not in CI).
+- Private MP4 is not uploaded to public GitHub; available through the ChatGPT review attachment.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge or automatic post.
