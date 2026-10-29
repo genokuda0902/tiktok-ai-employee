@@ -1,0 +1,64 @@
+name: cycle963 original scene earcons (synthetic only)
+on:
+  push:
+    branches:
+      - feature/cycle963-original-transition-earcons-review
+    paths:
+      - cycle963/**
+      - .github/workflows/cycle963-earcon-review.yml
+  pull_request:
+    paths:
+      - cycle963/**
+      - .github/workflows/cycle963-earcon-review.yml
+permissions:
+  contents: read
+jobs:
+  synthetic-earcon-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare free open-source dependencies
+        run: |
+          python3 -m pip install --user numpy
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
+      - name: Unit tests (no user media)
+        run: python3 -m unittest discover -s cycle963 -p 'test_*.py' -v
+      - name: Generate synthetic eight-scene video with original test audio
+        run: |
+          mkdir -p /tmp/cycle963
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=red:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'color=c=blue:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'color=c=green:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'color=c=yellow:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'color=c=magenta:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'color=c=cyan:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'color=c=white:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'color=c=black:s=270x480:r=30:d=2.9' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=23.2' \
+            -filter_complex '[0:v][1:v][2:v][3:v][4:v][5:v][6:v][7:v]concat=n=8:v=1:a=0[v]' \
+            -map '[v]' -map '8:a' -c:v libx264 -preset ultrafast \
+            -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle963/source.mp4
+          python3 cycle963/transition_earcon.py \
+            --input /tmp/cycle963/source.mp4 \
+            --output /tmp/cycle963/output.mp4 \
+            --report /tmp/cycle963/report.json
+          python3 - <<'PY'
+          import json, subprocess
+          report=json.load(open('/tmp/cycle963/report.json'))
+          assert len(report['events'])==7,report
+          assert report['publish_approved'] is False
+          subprocess.run(['ffmpeg','-v','error','-xerror','-i','/tmp/cycle963/output.mp4',
+                          '-f','null','-'],check=True)
+          print('Synthetic 8-scene MP4 and 7 original earcons PASS')
+          PY
+      - name: Prevent user/private media in repository
+        run: |
+          if find cycle963 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.jpg' -o -iname '*.png' \) | grep .; then
+            echo 'Media must stay local, not in the GitHub PR'
+            exit 1
+          fi
