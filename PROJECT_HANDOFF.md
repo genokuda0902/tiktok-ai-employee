@@ -62,3 +62,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Consulted accessible TikTok market/video-study summaries and directly inspected user's 16-panel storyboard. Full original research chats and original v33 reference MP4 unavailable. Still 8 scenes, 23s, not reference-equivalent.
 - Ten genre rules, only ai_work review-rendered. Independent Japanese ASR, caption semantic/timing match, source rights, phone playback, employee approval and actual Actions billing unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
 - No merge, auto-post, paid service, or private media uploaded. Work branch automation/cycle964-arithmetic-continuity-20261029-2053.
+
+
+## 2026-10-29 cycle966 real Calc-backed finished-sample review
+- Distinct from cycle964's source-check drawing and parallel PR #366 save CTA: scene03 (5.80–8.70s, frames 174–260) now displays an **actual LibreOffice Calc SUM-calculated CSV export**. The PDF table is real Calc output; accompanying monthly comparison bars are an illustration from the same fictional source. It is **not** an Excel/ChatGPT live operation capture.
+- Private source cycle964 SHA256 cb8d504b95c7e06f1b3acb216a7f283e83a2b6276b22e83fb82f5b73e2e557cc; private output cycle966 SHA256 afa207d9b22dc40ab4ba24c765e7b675bb7246332011cc2d91a827713931eb3c. No private media committed.
+- Real LibreOffice formula PDF text independently confirmed totals 46 and 29. MP4 1080x1920 H264 30fps 691 frames / 23.033s; AAC 48kHz stereo ADTS bitstream unchanged; full A/V decode PASS. Caption protected region max sampled mean delta 0.6694/255; outside-scene max 1.0532/255. Local synthetic tests 9/9 PASS.
+- Accessible TikTok market/video research summaries and user's 16-panel storyboard original inspected; full original research chats and v33 original MP4 unavailable. Still 8 scenes vs reference 16, 23s vs ~36s.
+- Ten genre policies, only ai_work reviewed. Independent Japanese ASR/semantic subtitle timing, rights, smartphone playback, employee approval, and Actions actual billing unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid service or private upload.
+- Work branch automation/cycle966-real-calc-proof-20261029-2153; CI synthetic only.
