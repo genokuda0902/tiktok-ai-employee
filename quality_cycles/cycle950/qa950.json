@@ -1,0 +1,22 @@
+{
+  "cycle": 950,
+  "baseline": "cycle948 local MP4",
+  "also_reviewed": "PR #345 cycle949 action-following spreadsheet focus",
+  "change": "larger animated top-right STEP 01 / 08 badge; 10 genre accents",
+  "file_sha256": "5c87ee465b19c7aa09cc34b6b69ca261de37f87f61cf68983bde11182f366b92",
+  "format": "H.264 1080x1920 30fps 691 frames 23.033333s AAC 48kHz",
+  "full_decode": "PASS",
+  "audio_elementary_stream_equal": true,
+  "local_tests": "31/31 PASS",
+  "mean_abs_pixel_diff": {
+    "badge": 23.938,
+    "unchanged_content": 1.0837,
+    "subtitle": 0.1776
+  },
+  "japanese_asr": "NOT_RUN",
+  "reference_v33": "NOT_AVAILABLE",
+  "inherited_media_rights": "NOT_VERIFIED",
+  "smartphone": "NOT_VERIFIED",
+  "human_approval": false,
+  "publication": "NOT_APPROVED"
+}
