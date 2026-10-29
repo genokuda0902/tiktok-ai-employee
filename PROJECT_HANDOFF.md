@@ -45,3 +45,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Source provenance: accessible market/video research summaries and prior 16-panel storyboard description; full research chats, original storyboard image this run, original v33 MP4 not directly available.
 - Outstanding: independent Japanese ASR and subtitle meaning/timing alignment, source publication rights, phone playback, employee approval, actual Actions billing. Ten genre policies, only ai_work verified; other nine fail closed. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
 - Draft PR: https://github.com/genokuda0902/tiktok-ai-employee/pull/361 . No merge, auto-post, private media upload or paid contract.
+
+## 2026-10-29 cycle963 private review-only checkpoint
+- Distinct from cycle961 mobile proof zoom and parallel cycle962 loudness normalization: add five quiet **original synthesized UI sound cues** at 1.39, 8.02, 11.05, 16.25, 21.15 seconds, synchronized to existing evidence, report, prompt, verification and closing beats.
+- Source: cycle961 private review MP4 SHA256 `4257fccc11a1e8880eb208a5a50f53a9fb815c35f53069048409da021084344d`. Output SHA256 `5df3b08c7ec6d18d3de52616939bc5b36fd1d1f3d790b5caf0e50d5c8cf54c6f`. MP4 remains in ChatGPT private attachment, **not in public GitHub**.
+- H.264 video stream SHA256 unchanged `d3bdf1fa0448fcdf99f3e04df24620a828b57edcacae900ab3aa8daf5297dc72`; burned captions identical. 1080x1920, 30fps, 691 frames, 23.033333s, AAC stereo 48kHz Japanese-tagged. Full A/V decode PASS, source/output PCM correlation 0.998844, peak <0.9; all five cue windows have measurable extra audio versus non-cue window. 19/19 local synthetic tests PASS.
+- Directly inspected user Library image `ChatGPT×Excel時短術16コマ絵コンテ.png` (16 panels, ~36s) and prior research summaries. Full original research chats and original v33 MP4 inaccessible this run. Current video remains 8 scenes and 23s, **not reference-equivalent**.
+- Ten genre cue policies, only ai_work approved for private test; nine other genres fail closed. Independent Japanese ASR, caption semantic/timing match, phone playback, source rights, employee approval, and Actions actual billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+- No auto-post, paid service, private media upload, or merge. Branch: `automation/cycle963-original-ui-sound-cues-20261029`.
