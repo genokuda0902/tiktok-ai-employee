@@ -1,0 +1,38 @@
+name: cycle982 real-Calc-GUI review QA (synthetic-only)
+on:
+  push:
+    branches:
+      - automation/cycle982-real-calc-gui-20261030
+    paths:
+      - 'cycle982/**'
+      - '.github/workflows/cycle982_calc_gui_qa.yml'
+  pull_request:
+    paths:
+      - 'cycle982/**'
+      - '.github/workflows/cycle982_calc_gui_qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5'
+      - name: Unit tests
+        run: PYTHONPATH=cycle982 python -m unittest discover -s cycle982 -p 'test_*.py' -v
+      - name: Synthetic-only 10s render and technical QA
+        run: |
+          mkdir -p /tmp/cycle982
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x0b233c:s=1080x1920:r=30:d=10' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=10' -vf 'drawbox=x=30:y=1500:w=900:h=100:color=cyan:t=fill' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle982/source.mp4
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'testsrc2=size=1280x800:rate=30:duration=5.5' -c:v libx264 -preset ultrafast -pix_fmt yuv420p /tmp/cycle982/screen.mp4
+          python cycle982/calc_gui_scene.py --source /tmp/cycle982/source.mp4 --screen /tmp/cycle982/screen.mp4 --output /tmp/cycle982/output.mp4 --work /tmp/cycle982/work --synthetic
+          python cycle982/qa_calc_gui_scene.py --source /tmp/cycle982/source.mp4 --output /tmp/cycle982/output.mp4 --report /tmp/cycle982/qa.json
