@@ -1,0 +1,24 @@
+name: cycle954 depth focus synthetic QA
+on:
+  pull_request:
+    paths:
+      - "review_cycles/cycle954/**"
+      - ".github/workflows/cycle954-depth-focus-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install offline-test dependencies
+        run: python -m pip install --disable-pip-version-check "numpy<3" opencv-python-headless pytest
+      - name: Run 13 tests without any private media
+        run: python -m pytest -q review_cycles/cycle954/tests/test_scene_depth_focus.py
