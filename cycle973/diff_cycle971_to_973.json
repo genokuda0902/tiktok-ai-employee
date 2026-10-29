@@ -1,0 +1,26 @@
+{
+  "cycle": 973,
+  "source_cycle": 971,
+  "parallel_cycle_972": "animated monthly source-data comparison in scene05; not repeated",
+  "previous_change": "cycle971 filled fictional Japanese weekly report sample in scene03",
+  "new_change": "scene03 three-stage animated reading focus: 成果 → 気づき → 次の行動",
+  "edited_time_range_seconds": [
+    5.82,
+    8.66
+  ],
+  "caption_safe_top_pixel": 1320,
+  "audio": "AAC bitstream identical to source",
+  "genres_configured": 10,
+  "genres_rendered": [
+    "ai_work"
+  ],
+  "source_sha256": "c92551e8312a5f8d719d330f56a4bf767a929cf965d2a6362b17abcf49eae509",
+  "output_sha256": "7d69d3222aa8184a956ac0eb7cb5794f6e23aef12f92febe663af41e5b8150d9",
+  "local_unit_tests": "9/9 PASS",
+  "local_full_decode": "PASS",
+  "max_caption_sample_mae_255": 1.002,
+  "independent_asr": "UNAVAILABLE",
+  "v33_original": "UNAVAILABLE",
+  "publication_approved": false,
+  "no_merge_or_auto_post": true
+}
