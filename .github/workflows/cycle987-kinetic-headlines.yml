@@ -1,0 +1,32 @@
+name: cycle987-kinetic-headlines-review-only
+on:
+  pull_request:
+    paths:
+      - "quality/cycle987/**"
+      - ".github/workflows/cycle987-kinetic-headlines.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install offline open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check numpy opencv-python-headless Pillow pytest
+      - name: Run isolated unit tests
+        run: python -m pytest -q quality/cycle987/tests/test_kinetic_headlines.py
+      - name: Synthetic 1080x1920 H.264/AAC review render
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x061b31:s=1080x1920:r=30:d=1' -f lavfi -i 'sine=frequency=550:sample_rate=48000:duration=1' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle987_in.mp4
+          python quality/cycle987/code/kinetic_headlines.py /tmp/cycle987_in.mp4 /tmp/cycle987_out.mp4 --synthetic
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle987_out.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 /tmp/cycle987_out.mp4)" = "1080"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 /tmp/cycle987_out.mp4)" = "1920"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=r_frame_rate -of csv=p=0 /tmp/cycle987_out.mp4)" = "30/1"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 /tmp/cycle987_out.mp4)" = "30"
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 /tmp/cycle987_out.mp4)" = "aac"
