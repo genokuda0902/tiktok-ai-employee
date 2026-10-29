@@ -1,0 +1,27 @@
+name: cycle971 filled Japanese report example (review only)
+on:
+  push:
+    branches: [feature/cycle971-filled-report-example-review]
+    paths:
+      - 'cycle971/**'
+      - '.github/workflows/cycle971-filled-report.yml'
+  pull_request:
+    paths:
+      - 'cycle971/**'
+      - '.github/workflows/cycle971-filled-report.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y python3-pil fonts-noto-cjk ffmpeg
+      - name: Unit tests and Japanese layout safety
+        run: /usr/bin/python3 -m unittest discover -s cycle971/tests -v
+      - name: Create synthetic overlay preview only
+        run: |
+          /usr/bin/python3 -c "import sys;sys.path.insert(0,'cycle971/code');from filled_example import overlay;overlay(1).save('/tmp/cycle971_overlay.png')"
+          file /tmp/cycle971_overlay.png
