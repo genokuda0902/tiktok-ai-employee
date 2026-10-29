@@ -36,3 +36,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local private review MP4 SHA256 `950b8d4d336cdb5f4ba4a774348e19c4f0dfc8bff98046e2eeeed2a9d2976c2d`; H.264 1080x1920 30fps 691 frames, AAC 48kHz ADTS unchanged, full decode PASS; no private MP4 in public GitHub.
 - Reference storyboard 16 panels directly inspected; original v33 MP4, full research chat transcripts and independent Japanese ASR unavailable. Caption meaning, phone playback, rights and employee approval UNVERIFIED; PUBLICATION_NOT_APPROVED. No merge, paid service or posting.
 - Draft PR: https://github.com/genokuda0902/tiktok-ai-employee/pull/348 ; CI tests source, not full private MP4.
+
+## 2026-10-29 cycle961 review-only checkpoint (Draft PR #361)
+- Unmerged independent review branch stacked on cycle960 PR #360; main was 18e084c38db0dc55db7dfc0532b9451b1167f2aa at inspection.
+- Previous cycle960 410x310 proof card -> 770x630 two-beat source-backed fictional Calc proof, 0.35-2.34s, verified A=46/B=29. No fabricated real Excel UI.
+- Local private MP4 SHA256 4257fccc11a1e8880eb208a5a50f53a9fb815c35f53069048409da021084344d; 1080x1920 30fps 691 frames, 23.033333s, H.264/AAC 48kHz stereo. Full A/V decode PASS; original AAC ADTS bitstream identical; caption area sampled max mean delta 0.4861/255.
+- 21 local synthetic tests PASS; CI checks code/safety only, not full private media. Private MP4 shared in ChatGPT, NOT committed to public GitHub.
+- Source provenance: accessible market/video research summaries and prior 16-panel storyboard description; full research chats, original storyboard image this run, original v33 MP4 not directly available.
+- Outstanding: independent Japanese ASR and subtitle meaning/timing alignment, source publication rights, phone playback, employee approval, actual Actions billing. Ten genre policies, only ai_work verified; other nine fail closed. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+- Draft PR: https://github.com/genokuda0902/tiktok-ai-employee/pull/361 . No merge, auto-post, private media upload or paid contract.
