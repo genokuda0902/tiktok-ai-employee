@@ -1,0 +1,60 @@
+name: cycle970 Japanese typed prompt (synthetic review QA only)
+on:
+  push:
+    branches:
+      - automation/cycle970-typed-prompt-20261029-2355
+    paths:
+      - 'cycle970/**'
+      - '.github/workflows/cycle970-typed-prompt.yml'
+  pull_request:
+    paths:
+      - 'cycle970/**'
+      - '.github/workflows/cycle970-typed-prompt.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies and Japanese font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'Pillow>=10,<13' 'opencv-python-headless>=4.9,<5'
+      - name: Unit tests and fail-closed 10-genre policy
+        run: python -m unittest discover -s cycle970 -p 'test_*.py' -v
+      - name: Render and decode synthetic 1080x1920 Japanese-tagged AAC sample
+        run: |
+          mkdir -p /tmp/cycle970
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x0b2135:s=1080x1920:r=30:d=3' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' \
+            -map 0:v -map 1:a -c:v libx264 -preset ultrafast -crf 32 \
+            -pix_fmt yuv420p -c:a aac -ar 48000 \
+            -metadata:s:a:0 language=jpn /tmp/cycle970/synthetic_source.mp4
+          python cycle970/typed_prompt.py \
+            --source /tmp/cycle970/synthetic_source.mp4 \
+            --output /tmp/cycle970/synthetic_output.mp4 \
+            --report /tmp/cycle970/report.json --synthetic
+          ffmpeg -v error -xerror -i /tmp/cycle970/synthetic_output.mp4 -f null -
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/cycle970/report.json'))
+          assert d['frames']==90 and d['changed_frames']==[30,90]
+          assert d['publication_approved'] is False
+          assert d['independent_japanese_asr']=='UNVERIFIED'
+          assert d['audio_energy']['status']=='ENERGY_ONLY'
+          print('Synthetic QA PASS; private full MP4 NOT tested by CI')
+          PY
+      - name: Block accidental private media commits
+        run: |
+          if find cycle970 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.jpg' -o -iname '*.png' \) | grep -q .; then
+            echo 'Unapproved media in public source directory' >&2
+            exit 1
+          fi
