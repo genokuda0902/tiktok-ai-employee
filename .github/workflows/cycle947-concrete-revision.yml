@@ -1,0 +1,27 @@
+name: cycle947 concrete revision QA
+on:
+  pull_request:
+    paths:
+      - 'quality_cycles/cycle947/**'
+      - '.github/workflows/cycle947-concrete-revision.yml'
+  workflow_dispatch:
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Japanese font and free test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow pytest
+      - name: Test ten genre palettes and progressive revision card
+        run: python -m pytest -q quality_cycles/cycle947/tests/test_concrete_revision_example.py
+      - name: Check experiment does not publish
+        run: |
+          ! grep -Ein 'tiktok.*(upload|publish)|auto.?post|requests\.post' quality_cycles/cycle947/concrete_revision_example.py
