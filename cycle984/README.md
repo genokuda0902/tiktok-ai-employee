@@ -13,10 +13,10 @@ Available summaries of TikTok市場分析 and TikTok動画研究 emphasize early
 
 ## Local validation (2026-10-30 JST)
 - Input cycle982 SHA256: 0f643009e525bb4e5d775b1f20cc6c0a937c4fe650dcba17cbc7e9ff6bb240eb
-- Output cycle984 SHA256: b7c55085b83cc281e51cde68503e2b2606acab55042947216f8bca0aa938752f (verify current file again after any regeneration).
+- Output cycle984 SHA256: 1e03d7274d2d11c5c2ed80ebd4254bd972cc5acfb251abfa76aec06f5207c63e (verify current file again after any regeneration).
 - 1080x1920 H.264 30fps, 691 frames / 23.033s; AAC 48kHz stereo; full A/V decode PASS.
 - AAC ADTS SHA256 source/output: ec98a3476d25362abd58bb40d2298b3a8d2eda3cf673187e4feb78133232c20e, identical.
-- 9 local unit tests PASS. Lower caption region max sampled frame MAE and other scene delta to be measured after final output.
+- 9 local unit tests PASS. All 691 frames compared at quarter resolution: protected caption y>=1440 max mean pixel difference 0.28175/255; outside CTA max 0.61856/255; CTA card ROI mean 0.63813/255. Technical pixel metrics are not a viewer-quality score.
 - Independent Japanese speech transcription/semantic caption sync, rights, smartphone playback, employee approval and Actions billing are **NOT verified**.
 
 HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, posting, publication, confidential source upload or paid-service purchase.
