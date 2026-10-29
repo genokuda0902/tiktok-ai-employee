@@ -1,0 +1,59 @@
+name: cycle968 mobile prompt clarity (synthetic QA only)
+on:
+  push:
+    branches:
+      - automation/cycle968-prompt-clarity-20261029-2252
+    paths:
+      - 'cycle968/**'
+      - '.github/workflows/cycle968-prompt-clarity.yml'
+  pull_request:
+    paths:
+      - 'cycle968/**'
+      - '.github/workflows/cycle968-prompt-clarity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-prompt-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local tools and Japanese fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'numpy>=1.26,<3' 'Pillow>=10,<13' 'opencv-python-headless>=4.9,<5'
+      - name: Run unit tests and 10-genre fail-closed gates
+        run: python -m unittest discover -s cycle968 -p 'test_*.py' -v
+      - name: Render and decode synthetic 1080x1920 video with AAC
+        run: |
+          mkdir -p /tmp/cycle968
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x0b2135:s=1080x1920:r=30:d=3' \
+            -f lavfi -i 'sine=frequency=330:sample_rate=48000:duration=3' \
+            -map 0:v -map 1:a -c:v libx264 -preset ultrafast -crf 32 \
+            -pix_fmt yuv420p -c:a aac -ar 48000 \
+            -metadata:s:a:0 language=jpn /tmp/cycle968/synthetic_source.mp4
+          python cycle968/prompt_clarity.py \
+            --source /tmp/cycle968/synthetic_source.mp4 \
+            --output /tmp/cycle968/synthetic_output.mp4 \
+            --report /tmp/cycle968/report.json --synthetic-test
+          ffmpeg -v error -xerror -i /tmp/cycle968/synthetic_output.mp4 -f null -
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/cycle968/report.json'))
+          assert d['frames']==90 and d['scene_frames']==[30,90]
+          assert d['publication_approved'] is False
+          assert d['independent_japanese_asr']=='UNVERIFIED'
+          print('Synthetic video smoke PASS; NOT a private full-MP4 test')
+          PY
+      - name: Prevent accidental publication of private media
+        run: |
+          if find cycle968 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.jpg' -o -iname '*.png' \) | grep -q .; then
+            echo 'Private media found in source directory' >&2
+            exit 1
+          fi
