@@ -1,0 +1,44 @@
+name: cycle973 guided reading (synthetic review-only)
+on:
+  push:
+    branches:
+      - automation/cycle973-guided-reading-20261030
+    paths:
+      - 'cycle973/**'
+      - '.github/workflows/cycle973-guided-reading.yml'
+  pull_request:
+    paths:
+      - 'cycle973/**'
+      - '.github/workflows/cycle973-guided-reading.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Validate ten-genre fail-closed overlays
+        run: python -m unittest discover -s cycle973 -p 'test_*.py' -v
+      - name: Render and fully decode synthetic review-only MP4
+        run: |
+          mkdir -p /tmp/cycle973
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x061929:s=1080x1920:r=30:d=3' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle973/source.mp4
+          python cycle973/guided_read.py --source /tmp/cycle973/source.mp4 --output /tmp/cycle973/preview.mp4 --report /tmp/cycle973/report.json --synthetic
+          ffmpeg -v error -xerror -i /tmp/cycle973/preview.mp4 -f null -
+          test "$(ffprobe -v error -count_frames -select_streams v:0 -show_entries stream=nb_read_frames -of csv=p=0 /tmp/cycle973/preview.mp4)" = "90"
+      - name: Upload synthetic QA report only
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle973-synthetic-qa
+          path: /tmp/cycle973/report.json
+          retention-days: 7
