@@ -1,0 +1,58 @@
+name: cycle965 original bookmark CTA (synthetic only)
+on:
+  push:
+    branches:
+      - feature/cycle965-save-cta-review
+    paths:
+      - cycle965/**
+      - .github/workflows/cycle965-save-cta-review.yml
+  pull_request:
+    paths:
+      - cycle965/**
+      - .github/workflows/cycle965-save-cta-review.yml
+permissions:
+  contents: read
+jobs:
+  synthetic-cta-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python3 -m pip install --user Pillow
+      - name: Unit tests without user media
+        run: python3 -m unittest discover -s cycle965/tests -p 'test_*.py' -v
+      - name: Synthetic vertical MP4 end-to-end test
+        run: |
+          mkdir -p /tmp/cycle965
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x092040:s=1080x1920:r=30:d=23.033333' \
+            -f lavfi -i 'sine=frequency=330:sample_rate=48000:duration=23.033333' \
+            -map 0:v:0 -map 1:a:0 -c:v libx264 -preset ultrafast -crf 36 \
+            -pix_fmt yuv420p -c:a aac -ar 48000 -metadata:s:a:0 language=jpn \
+            -t 23.033333 /tmp/cycle965/synthetic.mp4
+          python3 cycle965/code/review_cta.py \
+            --input /tmp/cycle965/synthetic.mp4 \
+            --output /tmp/cycle965/review.mp4 \
+            --report /tmp/cycle965/report.json
+          ffmpeg -v error -xerror -i /tmp/cycle965/review.mp4 -f null -
+          python3 - <<'PY'
+          import json, subprocess
+          p=json.load(open('/tmp/cycle965/report.json'))
+          assert p['publish_approved'] is False
+          assert p['cta_bbox']==[79,1430,147,1542]
+          j=json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames','-show_streams','-of','json','/tmp/cycle965/review.mp4']))
+          v=next(x for x in j['streams'] if x['codec_type']=='video')
+          assert (v['width'],v['height'],v['r_frame_rate'])==(1080,1920,'30/1')
+          assert int(v['nb_read_frames'])==691
+          print('Synthetic MP4 CTA render + full decode PASS')
+          PY
+      - name: Block private media from public PR
+        run: |
+          if find cycle965 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.jpg' -o -iname '*.png' \) | grep .; then
+            echo 'Private and generated media must stay outside GitHub'
+            exit 1
+          fi
