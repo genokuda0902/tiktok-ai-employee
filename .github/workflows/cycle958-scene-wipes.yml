@@ -1,0 +1,31 @@
+name: cycle958 synthetic scene wipe QA
+on:
+  push:
+    paths:
+      - 'cycle958/**'
+      - '.github/workflows/cycle958-scene-wipes.yml'
+  pull_request:
+    paths:
+      - 'cycle958/**'
+      - '.github/workflows/cycle958-scene-wipes.yml'
+permissions:
+  contents: read
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test dependencies
+        run: python -m pip install --disable-pip-version-check 'numpy<3' opencv-python-headless pytest
+      - name: Run 19 synthetic tests
+        run: python -m pytest -q cycle958/test_scene_wipe.py
+      - name: Reject private media in public repository
+        run: |
+          if git ls-files cycle958 | grep -E '\.(mp4|m4a|wav|png|jpg|jpeg)$|private_manifest'; then
+            echo 'Private media in repository: rejected'; exit 1
+          fi
+          echo 'Only source, tests and documentation'
