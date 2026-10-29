@@ -1,0 +1,23 @@
+name: cycle956 review-only playback metadata QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle956/**'
+      - '.github/workflows/cycle956-playback-metadata-qa.yml'
+  push:
+    paths:
+      - 'quality/cycle956/**'
+      - '.github/workflows/cycle956-playback-metadata-qa.yml'
+jobs:
+  synthetic-metadata-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python -m pip install pytest
+      - run: PYTHONPATH=quality/cycle956 pytest -q quality/cycle956/tests/test_playback_metadata.py
