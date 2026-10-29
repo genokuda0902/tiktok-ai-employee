@@ -1,0 +1,50 @@
+name: cycle966 Calc-backed visual proof (synthetic only)
+on:
+  push:
+    branches:
+      - automation/cycle966-real-calc-proof-20261029-2153
+    paths:
+      - 'cycle966/**'
+      - '.github/workflows/cycle966-calc-proof.yml'
+  pull_request:
+    paths:
+      - 'cycle966/**'
+      - '.github/workflows/cycle966-calc-proof.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-calc-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free local software dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libreoffice-calc poppler-utils fonts-noto-cjk ffmpeg
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Calc formula recalc, scene geometry and fail-closed genre tests
+        run: python -m unittest discover -s cycle966 -p 'test_*.py' -v
+      - name: Synthetic stills and video encode/decode smoke
+        run: |
+          python cycle966/calc_proof.py --workdir /tmp/cycle966-synthetic --report /tmp/cycle966-synthetic-report.json
+          ffmpeg -hide_banner -loglevel error -y -loop 1 -framerate 30 -i /tmp/cycle966-synthetic/stage_3.png -t 1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p /tmp/cycle966-synthetic.mp4
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle966-synthetic.mp4 -f null -
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/cycle966-synthetic-report.json'))
+          assert r['calc_verified_totals']==[46,29]
+          assert r['publication_approved'] is False
+          assert r['asr_semantic_verified'] is False
+          print('Synthetic Calc-backed proof + video smoke PASS')
+          PY
+      - name: Reject private audio, video, and image artifacts
+        run: |
+          if find cycle966 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.png' -o -iname '*.jpg' -o -iname '*.pdf' -o -iname '*.csv' \) | grep .; then
+            echo 'No private or generated media may enter public GitHub'
+            exit 1
+          fi
