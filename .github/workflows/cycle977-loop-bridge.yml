@@ -1,0 +1,43 @@
+name: cycle977-loop-bridge-qa
+on:
+  pull_request:
+    paths:
+      - 'cycle977/**'
+      - '.github/workflows/cycle977-loop-bridge.yml'
+  workflow_dispatch:
+
+jobs:
+  synthetic-review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local free render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install pillow
+      - name: Unit tests
+        run: python -m unittest discover -s cycle977/tests -p 'test_*.py' -v
+      - name: Generate synthetic video (no private assets)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x0a1b2e:s=1080x1920:r=30:d=3' -f lavfi -i 'sine=frequency=400:sample_rate=48000:duration=3' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle977_src.mp4
+      - name: Render and fully decode synthetic MP4
+        run: |
+          python cycle977/code/loop_bridge.py --source /tmp/cycle977_src.mp4 --output /tmp/cycle977_out.mp4 --synthetic
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle977_out.mp4 -f null -
+          python - <<'PY'
+          import json,subprocess
+          x=json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames','-show_streams','-of','json','/tmp/cycle977_out.mp4']))
+          v=next(s for s in x['streams'] if s['codec_type']=='video')
+          a=next(s for s in x['streams'] if s['codec_type']=='audio')
+          assert v['codec_name']=='h264' and (v['width'],v['height'])==(1080,1920)
+          assert v['r_frame_rate']=='30/1' and int(v['nb_read_frames'])==90
+          assert a['codec_name']=='aac'
+          print('Synthetic full decode PASS')
+          PY
