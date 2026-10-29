@@ -85,7 +85,7 @@ def render(source,dest,genre="ai_work",synthetic=False):
   "-loop","1","-framerate","30","-i",str(img),
   "-filter_complex",f"[0:v][1:v]overlay=x={SAFE[0]}:y={SAFE[1]}:format=auto:enable='gte(t,{START})*lt(t,{END})'[v]",
   "-map","[v]","-map","0:a:0","-c:v","libx264","-preset","ultrafast",
-  "-crf","18","-pix_fmt","yuv420p","-c:a","copy","-movflags","+faststart",str(dest)]
+  "-crf","18","-pix_fmt","yuv420p","-c:a","copy","-movflags","+faststart","-t",str(float(probe(source)["format"]["duration"])),str(dest)]
  subprocess.run(cmd,check=True,timeout=900)
  subprocess.run(["ffmpeg","-v","error","-i",str(dest),"-f","null","-"],check=True,timeout=900)
  validate(probe(dest),synthetic)
