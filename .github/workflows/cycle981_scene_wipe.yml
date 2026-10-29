@@ -1,0 +1,41 @@
+name: cycle981 scene-wipe review QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle981/**'
+      - '.github/workflows/cycle981_scene_wipe.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free offline video tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install numpy opencv-python-headless
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle981 -p 'test_*.py' -v
+      - name: Generate and transform synthetic video
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'testsrc2=size=360x640:rate=30:duration=3' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' -c:v libx264 -preset veryfast -pix_fmt yuv420p -c:a aac -shortest /tmp/c981_in.mp4
+          python quality/cycle981/scene_wipe.py /tmp/c981_in.mp4 /tmp/c981_out.mp4 --cuts 30,60 --top 20 --bottom 400 --radius 3 > /tmp/c981_report.json
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/c981_out.mp4 -f null -
+          python - <<'PY'
+          import json,subprocess
+          r=json.load(open('/tmp/c981_report.json'))
+          assert r['frames']==90 and r['size']==[360,640]
+          assert r['approval']=='HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          def sha(p):
+              import hashlib
+              b=subprocess.check_output(['ffmpeg','-v','error','-i',p,'-map','0:a:0','-c:a','copy','-f','adts','pipe:1'])
+              return hashlib.sha256(b).hexdigest()
+          assert sha('/tmp/c981_in.mp4')==sha('/tmp/c981_out.mp4')
+          print('Synthetic MP4 full decode and AAC bitstream PASS; no private media uploaded')
+          PY
