@@ -1,0 +1,22 @@
+name: cycle957 artwork midtone QA (review only)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle957/**'
+      - '.github/workflows/cycle957-artwork-midtone-qa.yml'
+  push:
+    paths:
+      - 'quality/cycle957/**'
+      - '.github/workflows/cycle957-artwork-midtone-qa.yml'
+permissions:
+  contents: read
+jobs:
+  mask-and-genre-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy pillow pytest
+      - run: python -m pytest -q quality/cycle957/tests/test_midtone_lift.py
