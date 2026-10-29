@@ -1,0 +1,21 @@
+{
+  "cycle": 951,
+  "baseline": 950,
+  "prior": "STEP 01/08 badge and progress",
+  "new": "Remove double exposure of Japanese scene titles/artwork at seven scene cuts using fade-through-solid (single clean snapshot, no overlapping text)",
+  "cut_times": [
+    2.8,
+    5.8,
+    8.7,
+    11.6,
+    14.5,
+    17.4,
+    20.3
+  ],
+  "frames_changed": 77,
+  "genre_presets": 10,
+  "unit_tests": "26/26 PASS",
+  "sha256": "d64f8795fc54c1cebdb9f70824a35195761b5d5f69c94b8f804f8605b98f62a2",
+  "source": "cycle950",
+  "publication": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
