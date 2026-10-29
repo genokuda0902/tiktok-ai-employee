@@ -1,0 +1,10 @@
+{
+  "cycle": 950,
+  "local_source_cycle": 948,
+  "prior_change": "document ROI sharpness",
+  "new_change": "animated top-right 8-scene chapter badge; improved step legibility; 10 genre color presets",
+  "recent_parallel_pr": "PR #345 cycle949: action-following spreadsheet cues; unrelated",
+  "protected_regions": "all below y=250; captions, audio and footer unchanged except re-encoding",
+  "next_priority": "independent Japanese ASR caption alignment, rights and reference v33 comparison",
+  "publication": "HUMAN_REVIEW / PUBLICATION_NOT_APPROVED"
+}
