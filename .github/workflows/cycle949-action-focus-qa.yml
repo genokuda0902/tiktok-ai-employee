@@ -1,0 +1,31 @@
+name: cycle949 action focus QA (review only)
+on:
+  push:
+    branches: ['automation/cycle949-*']
+  pull_request:
+    paths:
+      - 'cycle949/**'
+      - '.github/workflows/cycle949-action-focus-qa.yml'
+permissions:
+  contents: read
+jobs:
+  action-focus-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free test dependencies
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Test 10 genres, source-hash and subtitle safety
+        run: python -m pytest -q cycle949/tests/test_action_focus.py
+      - name: Block private assets and posting logic
+        run: |
+          if find cycle949 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*.aac' -o -iname '*.png' -o -iname '*.jpg' -o -iname '*private*' \) | grep -q .; then
+            echo 'Private media cannot be committed'; exit 1
+          fi
+          if grep -R -Ei 'tiktok.*(upload|publish)|publish_video\(' cycle949/src/; then
+            echo 'Posting code forbidden'; exit 1
+          fi
