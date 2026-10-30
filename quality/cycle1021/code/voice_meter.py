@@ -13,11 +13,16 @@ import subprocess
 import sys
 
 GENRE_COLORS = {
-    'ai_work': (31, 218, 202), 'money': (234, 194, 83),
-    'health': (88, 215, 147), 'psychology': (178, 146, 244),
-    'relationships': (246, 137, 172), 'career': (91, 183, 255),
-    'study': (99, 214, 223), 'life_hacks': (245, 164, 85),
-    'tech': (85, 194, 245), 'trivia': (223, 166, 255),
+    'ai_work': (31, 218, 202),                # AI・仕事効率化
+    'beauty': (246, 137, 172),                # 美容・身だしなみ
+    'romance_psychology': (178, 146, 244),    # 恋愛・心理
+    'money_saving': (234, 194, 83),           # お金・節約
+    'sales_business': (91, 183, 255),         # 営業・ビジネス
+    'career': (99, 214, 223),                 # 転職・キャリア
+    'health_lifestyle': (88, 215, 147),       # 健康・生活改善
+    'science_trivia': (223, 166, 255),        # 雑学・科学
+    'travel_food': (245, 164, 85),            # 旅行・グルメ
+    'product_comparison_lifestyle': (85, 194, 245), # 商品比較・暮らし
 }
 PATCH_X, PATCH_Y, PATCH_W, PATCH_H = 574, 73, 145, 36
 BAR_COUNT, FPS = 8, 30
