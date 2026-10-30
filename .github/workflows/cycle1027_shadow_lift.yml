@@ -1,0 +1,32 @@
+name: cycle1027 shadow-detail lift (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1027/**'
+      - '.github/workflows/cycle1027_shadow_lift.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1027/**'
+      - '.github/workflows/cycle1027_shadow_lift.yml'
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests (ten genres + safe zones)
+        run: python -m unittest discover -s quality/cycle1027/tests -v
+      - name: Generate synthetic 1080x1920 Japanese-workflow placeholder
+        run: |
+          ffmpeg -v error -y -f lavfi -i 'color=c=0x101a2c:s=1080x1920:r=30:d=2' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1027_in.mp4
+      - name: Apply safe-zone shadow lift to synthetic video
+        run: python quality/cycle1027/code/shadow_lift.py /tmp/cycle1027_in.mp4 /tmp/cycle1027_out.mp4 --genre ai_work --preset ultrafast
+      - name: Verify full video and audio decode
+        run: |
+          ffmpeg -v error -xerror -i /tmp/cycle1027_out.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0 /tmp/cycle1027_out.mp4 | grep -q '1080,1920,30/1'
