@@ -1,0 +1,58 @@
+name: cycle1023-clean-japanese-hook
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1023/**'
+      - '.github/workflows/cycle1023-clean-hook.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline tools and Japanese fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install Pillow
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1023/tests -p 'test_*.py' -v
+      - name: Synthetic four-second MP4, no user media
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle1023
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x09152b:s=1080x1920:r=30:d=4' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=4' \
+            -c:v libx264 -preset ultrafast -threads 2 -pix_fmt yuv420p \
+            -c:a aac -t 4 /tmp/cycle1023/base.mp4
+          cat > /tmp/cycle1023/chapters.txt <<'EOF'
+          ;FFMETADATA1
+          [CHAPTER]
+          TIMEBASE=1/1000
+          START=0
+          END=2633
+          title=01
+          [CHAPTER]
+          TIMEBASE=1/1000
+          START=2633
+          END=4000
+          title=02
+          EOF
+          ffmpeg -hide_banner -loglevel error -y -i /tmp/cycle1023/base.mp4 \
+            -i /tmp/cycle1023/chapters.txt -map 0 -map_metadata 1 -map_chapters 1 \
+            -c copy /tmp/cycle1023/input.mp4
+          python quality/cycle1023/code/clean_hook.py \
+            /tmp/cycle1023/input.mp4 /tmp/cycle1023/output.mp4 --genre ai_work
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle1023/output.mp4 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,nb_frames \
+            -of csv=p=0 /tmp/cycle1023/output.mp4 | grep -Fx '1080,1920,120'
+          test "$(ffmpeg -v error -i /tmp/cycle1023/input.mp4 -map 0:a:0 -c copy -f hash -hash sha256 -)" = "$(ffmpeg -v error -i /tmp/cycle1023/output.mp4 -map 0:a:0 -c copy -f hash -hash sha256 -)"
+          echo SYNTHETIC_VIDEO_AUDIO_PASS
