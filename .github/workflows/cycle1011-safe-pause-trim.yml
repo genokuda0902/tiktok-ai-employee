@@ -1,0 +1,46 @@
+name: cycle1011-safe-pause-trim-synthetic
+on:
+  push:
+    branches:
+      - 'quality/cycle1011-safe-pause-trim-*'
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1011_silence_safe_trim.py'
+      - 'tests/test_cycle1011_silence_safe_trim.py'
+      - '.github/workflows/cycle1011-safe-pause-trim.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-pause-trim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check FFmpeg
+        run: command -v ffmpeg && command -v ffprobe
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tests -p 'test_cycle1011_silence_safe_trim.py' -v
+      - name: Create synthetic narration with quiet pause
+        run: |
+          python3 - <<'PY'
+          import wave,math,struct
+          with wave.open('/tmp/c1011.wav','wb') as w:
+              w.setnchannels(1);w.setsampwidth(2);w.setframerate(48000)
+              for n in range(48000*3):
+                  t=n/48000
+                  x=0 if 1.1<t<1.8 else int(5000*math.sin(2*math.pi*440*t))
+                  w.writeframesraw(struct.pack('<h',x))
+          PY
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x071021:s=1080x1920:r=30:d=3 -i /tmp/c1011.wav -map 0:v:0 -map 1:a:0 -c:v libx264 -preset ultrafast -crf 35 -pix_fmt yuv420p -c:a aac -ar 48000 -metadata:s:a:0 language=jpn -shortest /tmp/c1011_in.mp4
+      - name: Trim, verify 1080x1920 and decode
+        run: |
+          python3 tools/quality/cycle1011_silence_safe_trim.py --source /tmp/c1011_in.mp4 --output /tmp/c1011_out.mp4 --synthetic > /tmp/c1011_qa.json
+          python3 - <<'PY'
+          import json
+          q=json.load(open('/tmp/c1011_qa.json'))
+          assert q['full_decode']=='PASS'
+          assert q['size']==[1080,1920] and q['fps']=='30/1'
+          assert q['duration_after'] < q['duration_before']
+          assert q['audio']=='aac' and q['audio_rate']=='48000'
+          assert q['embedded_subtitles']==0 and q['publication']=='NOT_APPROVED'
+          print('SYNTHETIC PASS',q['cuts'],q['duration_after'])
+          PY
