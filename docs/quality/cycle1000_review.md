@@ -12,7 +12,7 @@ Date: 2026-10-30 JST. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.**
 - SHA256: 5adb0d36b1a74a7e4c1b7f3a186444c4fa5cc01d4da364034e1a6e64d15cb412
 - Source cycle998 SHA256: 4f62c4856de8dac0d643449098a5db26b9dc725d594bd1dd1b43990c9fe7fbf6
 - 1080×1920 H264/30fps, 691 frames, 23.033s; AAC 48kHz language tag jpn, selectable mov_text Japanese subtitle 8 cues.
-- Full video and audio decode PASS; source/output AAC ADTS SHA256 identical (ec98a3476d25362abd58bb40d2298b3a8d2eda143dacfcd3900b9); selectable SRT extraction identical.
+- Full video and audio decode PASS; source/output AAC ADTS SHA256 identical (ec98a3476d25362abd58bb40d2298b3a8d2eda3cf673187e4feb78133232c20e); selectable SRT extraction identical.
 - Every 10th frame sampled: changed Calc artwork ROI mean pixel delta 28.084/255; protected subtitle region maximum mean 0.484/255; other scenes max 2.653/255 (reencode).
 - 9 local tests PASS. Smartphone playback and independent Japanese ASR / semantic subtitle sync NOT tested.
 
