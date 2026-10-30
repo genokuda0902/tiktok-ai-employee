@@ -206,3 +206,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Eight-step caption-timed visual rail and **mixed-audio signal RMS boundary report**, not independent Japanese ASR. Ten genre palettes; only AI-work real MP4 tested.
 - Private full MP4 SHA256 `e734bccfc0152c22a11f1f600008067e414bca08d59227c12d29cce3d2437099`, 1080x1920/30fps, 23.033s/691 frames, AAC 48kHz preserved, full decode PASS, 7 local unit tests PASS. Private MP4 NOT in public GitHub.
 - CI uses synthetic 2-second video only; confirm final run status on PR #423. Reference v33 original, Japanese semantic sync, asset rights, smartphone QA, staff approval and actual Actions billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, merge or paid service.
+
+
+## 2026-10-31 review-only checkpoint: cycle1032 (unmerged)
+- Draft PR #433, base unmerged PR #431; parallel PR #432 untouched. Source/test/workflow commit: c5f2f68248fa2405fc1be55d607402675983ce78. No merge or posting.
+- Fixed missing June values in scene05 fictional 4–6月 evidence chart: A=12+16+18=46, B=8+9+12=29. 10-genre reusable, fail-closed provenance checks; full video rendered for ai_work only.
+- Private local MP4 SHA256 7dee8f6b1955ae3bc4039590a8bab7e57ed5dc36325886a4fddb7f289b80942b; 1080x1920 H.264 30fps 23.033s, AAC 48kHz unchanged, full A/V decode PASS. 19 local unit tests PASS, synthetic 2s render PASS. Private MP4 never committed.
+- Directly inspected user 16-panel storyboard; original v33 MP4 and complete research chats inaccessible. Japanese speech semantic sync, rights, smartphone playback, employee approval, actual Actions billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+- See cycle1032/REVIEW_HANDOFF.md. This checkpoint does not supersede the earlier v33 recovery restrictions.
