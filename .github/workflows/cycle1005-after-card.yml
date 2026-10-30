@@ -1,0 +1,48 @@
+name: cycle1005 Japanese AFTER-card readability
+on:
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1005_after_card.py'
+      - 'tests/test_cycle1005_after_card.py'
+      - '.github/workflows/cycle1005-after-card.yml'
+  workflow_dispatch:
+jobs:
+  offline-synthetic-smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline renderer dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install pillow
+      - name: Unit tests
+        run: python -m unittest discover -s tests -p 'test_cycle1005_after_card.py' -v
+      - name: Synthetic one-second H264/AAC render and full decode
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x061a2a:s=1080x1920:r=30:d=1.2 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1.2 \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac \
+            -shortest /tmp/cycle1005_source.mp4
+          python tools/quality/cycle1005_after_card.py \
+            --source /tmp/cycle1005_source.mp4 \
+            --output /tmp/cycle1005_output.mp4 --start .1 --end .8
+          ffmpeg -hide_banner -loglevel error -xerror \
+            -i /tmp/cycle1005_output.mp4 -f null -
+          python - <<'PY'
+          import json,subprocess
+          p=json.loads(subprocess.check_output(['ffprobe','-v','error',
+            '-show_entries','stream=codec_name,width,height,r_frame_rate',
+            '-of','json','/tmp/cycle1005_output.mp4']))
+          s=p['streams']
+          assert s[0]['codec_name']=='h264'
+          assert (s[0]['width'],s[0]['height'],s[0]['r_frame_rate'])==(1080,1920,'30/1')
+          assert s[1]['codec_name']=='aac'
+          print('Synthetic A/V PASS; private Japanese MP4 not present in CI')
+          PY
