@@ -80,7 +80,6 @@ jobs:
                   '-i',p+name,'-frames:v','1','-vf','crop=240:260:0:0',
                   '-f','rawvideo','-pix_fmt','rgb24','-'])
           assert frame('base.mp4',0.4)!=frame('focus.mp4',0.4)
-          assert frame('base.mp4',2.5)==frame('focus.mp4',2.5) or True
           print('PASS: synthetic 3s render, changed visual focus, preserved AAC/subtitle, full decode')
           PY
       - uses: actions/upload-artifact@v4
