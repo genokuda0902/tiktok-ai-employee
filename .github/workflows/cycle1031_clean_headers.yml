@@ -1,0 +1,32 @@
+name: cycle1031 CJK headline cleanup (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1031/**'
+      - '.github/workflows/cycle1031_clean_headers.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1031/**'
+      - '.github/workflows/cycle1031_clean_headers.yml'
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free FFmpeg and CJK font
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Unit tests (10 genres, chapter timing, subtitle-safe layout)
+        run: python -m unittest discover -s quality/cycle1031/tests -v
+      - name: Generate synthetic 1080x1920 AV input
+        run: |
+          ffmpeg -v error -y -f lavfi -i 'color=c=0x101a2c:s=1080x1920:r=30:d=4' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=4' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1031_in.mp4
+      - name: Apply CJK headline cleanup (synthetic only)
+        run: python quality/cycle1031/code/clean_headers.py /tmp/cycle1031_in.mp4 /tmp/cycle1031_out.mp4 --preset ultrafast
+      - name: Verify full AV decode, 1080x1920 and 30fps
+        run: |
+          ffmpeg -v error -xerror -i /tmp/cycle1031_out.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0 /tmp/cycle1031_out.mp4 | grep -q '1080,1920,30/1'
