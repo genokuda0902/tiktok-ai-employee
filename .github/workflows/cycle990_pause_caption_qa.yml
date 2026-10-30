@@ -1,0 +1,92 @@
+name: cycle990 pause-aware Japanese captions QA
+on:
+  push:
+    branches:
+      - 'automation/cycle990-*'
+    paths:
+      - 'cycle990/**'
+      - '.github/workflows/cycle990_pause_caption_qa.yml'
+  pull_request:
+    paths:
+      - 'cycle990/**'
+      - '.github/workflows/cycle990_pause_caption_qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-pause-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests (no third-party Python dependencies)
+        run: PYTHONPATH=cycle990:. python -m unittest discover -s cycle990 -p 'test_*.py' -v
+      - name: Synthetic-only audio and video (never upload real user media)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle990
+          python - <<'PY'
+          import wave,math,struct,json
+          with wave.open('/tmp/cycle990/voice.wav','wb') as f:
+              f.setnchannels(1);f.setsampwidth(2);f.setframerate(48000)
+              for i in range(3*48000):
+                  t=i/48000
+                  amp=0 if 1.62<=t<=1.85 else 0.30
+                  f.writeframesraw(struct.pack('<h',int(amp*32767*math.sin(2*math.pi*440*t))))
+          with open('/tmp/cycle990/manifest.json','w',encoding='utf-8') as f:
+              json.dump({'language':'ja','review_only':True,'cues':[
+                  {'start':0,'end':1.5,'text':'合成テスト字幕'},
+                  {'start':1.5,'end':3,'text':'二つ目の字幕'}]},f,ensure_ascii=False)
+          PY
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=navy:s=1080x1920:r=30:d=3' \
+            -i /tmp/cycle990/voice.wav -t 3 \
+            -c:v libx264 -preset ultrafast -crf 38 -pix_fmt yuv420p \
+            -c:a aac /tmp/cycle990/base.mp4
+          python cycle988/caption_mux.py \
+            --source /tmp/cycle990/base.mp4 \
+            --output /tmp/cycle990/input.mp4 \
+            --manifest /tmp/cycle990/manifest.json \
+            --work /tmp/cycle990/old --synthetic
+          python cycle990/pause_align.py \
+            --source /tmp/cycle990/input.mp4 \
+            --output /tmp/cycle990/output.mp4 \
+            --manifest /tmp/cycle990/manifest.json \
+            --work /tmp/cycle990/new --synthetic
+      - name: Assert changed cue, stream copy, full decode and safe subtitle state
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          p='/tmp/cycle990/'
+          report=json.load(open(p+'new/qa_pause.json'))
+          assert report['boundaries_changed']==1,report
+          assert report['independent_asr'] is False
+          assert report['publication_approved'] is False
+          probe=json.loads(subprocess.check_output([
+              'ffprobe','-v','error','-show_streams','-of','json',p+'output.mp4']))
+          assert [s['codec_name'] for s in probe['streams']]==['h264','aac','mov_text']
+          assert probe['streams'][2]['disposition']['default']==0
+          assert probe['streams'][2]['tags']['language']=='jpn'
+          for stream in ('v:0','a:0'):
+              def h(name):
+                  return subprocess.check_output(['ffmpeg','-v','error','-i',p+name,
+                      '-map','0:'+stream,'-c','copy','-f','hash','-hash','SHA256','-'])
+              assert h('input.mp4')==h('output.mp4'),stream
+          for stream in ('v:0','a:0'):
+              subprocess.run(['ffmpeg','-v','error','-xerror','-i',p+'output.mp4',
+                  '-map','0:'+stream,'-f','null','-'],check=True)
+          print('PASS: synthetic caption shift, lossless A/V, decode, review gate')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle990-synthetic-qa-only
+          path: |
+            /tmp/cycle990/new/qa_pause.json
+            /tmp/cycle990/new/aligned_manifest.json
+          retention-days: 7
