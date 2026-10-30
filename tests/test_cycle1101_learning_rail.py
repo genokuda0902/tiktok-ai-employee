@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import unittest
-sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'quality'/'cycle1101'))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'quality'/'cycle1101'))
 from step_spotlight import STAGES,CHAPTERS,GENRE_ACCENTS,Stage,RAIL,filtergraph,validate
 
 class RailTests(unittest.TestCase):
