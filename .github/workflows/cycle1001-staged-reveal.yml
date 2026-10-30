@@ -1,0 +1,35 @@
+name: cycle1001 staged AFTER reveal QA
+on:
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1001_staged_reveal.py'
+      - 'tests/test_cycle1001_staged_reveal.py'
+      - '.github/workflows/cycle1001-staged-reveal.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-media-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install Pillow
+      - name: Run eight deterministic template and subtitle-safe-area tests
+        run: python -m unittest discover -s tests -p 'test_cycle1001_staged_reveal.py' -v
+      - name: Render and decode synthetic one-second vertical H264/AAC
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x112233:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/source.mp4
+          python -c "from pathlib import Path; from tools.quality.cycle1001_staged_reveal import render; render(Path('/tmp/source.mp4'),Path('/tmp/output.mp4'),start=.1,hold=.25,fade=.25)"
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/output.mp4)" = '1080,1920'
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 /tmp/output.mp4)" = '30'
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 /tmp/output.mp4)" = 'aac'
+          ffmpeg -hide_banner -loglevel error -ss 0.2 -i /tmp/output.mp4 -frames:v 1 /tmp/reveal.png
+          python -c "from PIL import Image; im=Image.open('/tmp/reveal.png'); assert im.size==(1080,1920); assert max(im.getpixel((540,1100))) < 100"
