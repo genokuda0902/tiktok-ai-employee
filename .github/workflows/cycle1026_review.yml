@@ -1,0 +1,46 @@
+name: cycle1026 review-only spreadsheet proof focus
+on:
+  push:
+    branches:
+      - 'automation/cycle1026-spreadsheet-proof-*'
+  pull_request:
+    paths:
+      - 'cycle1026/**'
+      - '.github/workflows/cycle1026_review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-proof-focus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free FFmpeg and Noto CJK fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Run 10-genre and safety tests
+        run: python -m unittest discover -s cycle1026/tests -v
+      - name: Create synthetic two-second audio/video only
+        run: |
+          mkdir -p cycle1026/tmp
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x101a25:s=1080x1920:r=30:d=2' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' \
+            -map 0:v -map 1:a -c:v libx264 -preset ultrafast -threads 2 \
+            -pix_fmt yuv420p -c:a aac -b:a 96k \
+            -metadata:s:a:0 language=jpn -t 2 cycle1026/tmp/input.mp4
+      - name: Render and fully decode synthetic output
+        run: |
+          HASH=$(sha256sum cycle1026/tmp/input.mp4 | cut -d' ' -f1)
+          python cycle1026/source/proof_focus.py \
+            --source cycle1026/tmp/input.mp4 \
+            --output cycle1026/tmp/output.mp4 \
+            --report cycle1026/tmp/qa.json \
+            --genre ai_work --expected-source-sha "$HASH" \
+            --review-only --synthetic-ci
+          ffmpeg -v error -xerror -i cycle1026/tmp/output.mp4 -f null -
+          python -c "import json; d=json.load(open('cycle1026/tmp/qa.json')); assert d['full_av_decode']=='PASS' and d['audio_bitstream_unchanged'] and d['frames']==60 and d['publication']=='NOT_APPROVED'"
