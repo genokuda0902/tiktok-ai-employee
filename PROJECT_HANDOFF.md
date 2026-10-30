@@ -165,3 +165,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Verified local MP4 SHA256 3e09995a7e72d80c099e5c0ddc051ffbd66d20cf2e39d009ecda113aeb0a4b6a, 1080x1920 30fps 691 frames 23.033s, AAC Japanese-tagged 48kHz and 8 subtitle cues. A/V full decode PASS; audio elementary stream and extracted SRT hashes unchanged vs cycle1000. 11 local tests PASS.
 - New first-1.5s synthetic example badge shows arithmetic 46-29=17 with evidence reconciliation and no fabricated real-world results. Private 8 WAV cue review pack created, no ASR or semantic caption verification claimed.
 - CI synthetic only. Original v33 MP4, original research chats, source rights, employee approval, phone playback, actual Actions billing unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge/posting/payment.
+
+
+## 2026-10-30 cycle1004 caption-safe focus checkpoint (unmerged)
+- Based on unmerged cycle1002 PR #404, separate from parallel cycle1003 PR #403. Main remains 18e084c38db0dc55db7dfc0532b9451b1167f2aa at inspection.
+- Four focus-bracket cues over task/prompt/chart/template (3.78–4.62, 9.35–10.38, 12.28–13.40, 18.24–19.42s). No zoom/crop or external assets; source video still 8 scenes, 23.033s.
+- Private review MP4 SHA256 eafad7ae3e054351846857b87253cad97aff2805ce0e3468ba5dc2aeed5eab0d; H264 1080x1920 30fps 691 frames, AAC 48kHz and Japanese mov_text 8 cues. Full A/V decode PASS; audio elementary stream and SRT data unchanged from cycle1002. 8 local tests PASS.
+- See cycle1004/REVIEW_HANDOFF.md for details. Synthetic CI does not verify the private full MP4. Original v33 MP4, complete research chats, independent Japanese speech-caption matching, rights, smartphone playback, employee approval and actual billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no merge or posting.
