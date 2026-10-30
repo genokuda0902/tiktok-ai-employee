@@ -20,7 +20,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install free local test dependency
+      - name: Install free FFmpeg, ffprobe and Japanese font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Install free local Python dependency
         run: python -m pip install 'Pillow==11.3.0'
       - name: Run ten-genre review-gate unit tests
         run: python -m unittest discover -s cycle1012/tests -p 'test_*.py' -v
