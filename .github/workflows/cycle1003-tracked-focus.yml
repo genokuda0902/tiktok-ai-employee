@@ -1,0 +1,44 @@
+name: cycle1003 tracked focus QA
+on:
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1003_tracked_focus.py'
+      - 'tests/test_cycle1003_tracked_focus.py'
+      - '.github/workflows/cycle1003-tracked-focus.yml'
+  workflow_dispatch:
+jobs:
+  offline-synthetic-smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline-compatible free tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install numpy opencv-python-headless
+      - name: Run deterministic tests
+        run: python -m unittest discover -s tests -p 'test_cycle1003_tracked_focus.py' -v
+      - name: Render synthetic 1080x1920 H264/AAC and verify
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x061a2a:s=1080x1920:r=30:d=1 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 \
+            -filter_complex "[0:v]drawbox=x=348:y=577:w=234:h=44:color=0x23d7dc:t=fill[v]" \
+            -map "[v]" -map 1:a -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -shortest /tmp/cycle1003_input.mp4
+          python - <<'PY'
+          from tools.quality.cycle1003_tracked_focus import render
+          result=render('/tmp/cycle1003_input.mp4','/tmp/cycle1003_output.mp4',start=.1,end=.8)
+          print(result)
+          assert result['frames']==30
+          assert result['tracked_frames']>=10
+          PY
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle1003_output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/cycle1003_output.mp4)" = '1080,1920'
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 /tmp/cycle1003_output.mp4)" = '30'
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 /tmp/cycle1003_output.mp4)" = 'aac'
