@@ -1,0 +1,32 @@
+name: cycle1007-accessible-review-synthetic
+on:
+  push:
+    branches:
+      - 'quality/cycle1007-accessible-jp-chapters-*'
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1007_accessible_review.py'
+      - 'tests/test_cycle1007_accessible_review.py'
+      - '.github/workflows/cycle1007-accessible-review.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s tests -p 'test_cycle1007_accessible_review.py' -v
+      - name: Synthetic-only 1080x1920 H264 AAC smoke test
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x071021:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=400:sample_rate=48000:duration=2 -shortest -c:v libx264 -preset ultrafast -crf 32 -pix_fmt yuv420p -c:a aac -metadata:s:a:0 language=jpn /tmp/cycle1007_in.mp4
+          python tools/quality/cycle1007_accessible_review.py --source /tmp/cycle1007_in.mp4 --output /tmp/cycle1007_out.mp4 --synthetic-test
+          ffmpeg -v error -xerror -i /tmp/cycle1007_out.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffprobe -v error -show_chapters -of json /tmp/cycle1007_out.mp4 | grep '合成検証'
+          ffmpeg -v error -i /tmp/cycle1007_out.mp4 -map 0:s:0 -f srt - | grep '合成テスト字幕'
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,avg_frame_rate -of csv=p=0 /tmp/cycle1007_out.mp4 | grep '1080,1920,30/1'
