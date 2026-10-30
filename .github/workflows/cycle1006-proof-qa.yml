@@ -1,0 +1,45 @@
+name: cycle1006 arithmetic proof (synthetic QA only)
+on:
+  push:
+    branches:
+      - automation/cycle1006-source-proof-20261030
+    paths:
+      - 'cycle1006/**'
+      - '.github/workflows/cycle1006-proof-qa.yml'
+  pull_request:
+    paths:
+      - 'cycle1006/**'
+      - '.github/workflows/cycle1006-proof-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow
+      - name: Arithmetic, privacy and safe-area tests
+        run: python -m unittest discover -s cycle1006/tests -p 'test_*.py' -v
+      - name: Synthetic 3-second 1080x1920 H264 AAC Japanese subtitle smoke
+        run: |
+          printf '1\n00:00:00,000 --> 00:00:02,800\n合成字幕\n' > /tmp/synthetic.srt
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x122e40:s=1080x1920:r=30:d=3 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=3 \
+            -i /tmp/synthetic.srt -map 0:v -map 1:a -map 2:s -t 3 \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -c:s mov_text \
+            -metadata:s:a:0 language=jpn -metadata:s:s:0 language=jpn /tmp/synthetic.mp4
+          python -c "import sys;sys.path.insert(0,'cycle1006/source');import arithmetic_proof as p;p.render('/tmp/synthetic.mp4','/tmp/synthetic_proof.mp4','/tmp/proof.png','/tmp/qa.json',p.sha256('/tmp/synthetic.mp4'),review_only=True,window=(0.8,2.4))"
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/synthetic_proof.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/synthetic_proof.mp4)" = '1080,1920'
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of csv=p=0 /tmp/synthetic_proof.mp4)" = '48000'

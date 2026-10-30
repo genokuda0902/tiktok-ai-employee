@@ -172,3 +172,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Four focus-bracket cues over task/prompt/chart/template (3.78–4.62, 9.35–10.38, 12.28–13.40, 18.24–19.42s). No zoom/crop or external assets; source video still 8 scenes, 23.033s.
 - Private review MP4 SHA256 eafad7ae3e054351846857b87253cad97aff2805ce0e3468ba5dc2aeed5eab0d; H264 1080x1920 30fps 691 frames, AAC 48kHz and Japanese mov_text 8 cues. Full A/V decode PASS; audio elementary stream and SRT data unchanged from cycle1002. 8 local tests PASS.
 - See cycle1004/REVIEW_HANDOFF.md for details. Synthetic CI does not verify the private full MP4. Original v33 MP4, complete research chats, independent Japanese speech-caption matching, rights, smartphone playback, employee approval and actual billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no merge or posting.
+
+
+## 2026-10-30 cycle1006 arithmetic provenance (private review only)
+- Independent improvement after cycle1004 focus cues: source-verified 4–6月 fictional arithmetic proof A=12+16+18=46, B=8+9+12=29 in chart scene 12.95–14.45s, without replacing Japanese narration or selectable subtitles.
+- Private 23.033s MP4 SHA256 cbe0d3e32ca90cb0c3d1cae1d78bfc898bde8a4e0bb47842e4aa6e4e1f446d8e; 1080x1920 H264 30fps 691 frames, AAC 48kHz Japanese-tagged and 8 Japanese subtitles; full A/V decode PASS; audio ADTS and SRT unchanged. 14 local unit tests PASS. Public GitHub CI uses synthetic-only media, not private MP4.
+- Original 16-panel storyboard directly viewed; original v33 MP4 and full market research chat transcripts unavailable. Independent ASR/semantic subtitle sync, rights, phone playback, employee approval and Actions actual charges NOT VERIFIED. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid service or private-media upload.
+- Code/tests/workflow/QA instructions: cycle1006/REVIEW_HANDOFF.md and cycle1006/source/. Based on unmerged cycle1004 PR #405; parallel PR #406 untouched. Other nine genres fail closed.
