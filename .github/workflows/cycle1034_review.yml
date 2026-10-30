@@ -1,0 +1,26 @@
+name: cycle1034 review-only scene transition
+on:
+  push:
+    paths: ['cycle1034/**', '.github/workflows/cycle1034_review.yml']
+  pull_request:
+    paths: ['cycle1034/**', '.github/workflows/cycle1034_review.yml']
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg python3-pytest
+      - name: Run unit tests
+        run: python3 -m pytest -q cycle1034/tests
+      - name: Generate 2-second synthetic H264/AAC input (no user assets)
+        run: |
+          mkdir -p /tmp/cycle1034
+          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=0x103349:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -threads 2 -pix_fmt yuv420p -c:a aac -ar 48000 -shortest -y /tmp/cycle1034/in.mp4
+          sha256sum /tmp/cycle1034/in.mp4 | awk '{print $1}' > /tmp/cycle1034/sha.txt
+      - name: Render synthetic transition and decode
+        run: |
+          python3 cycle1034/source/scene_wipe.py --source /tmp/cycle1034/in.mp4 --output /tmp/cycle1034/out.mp4 --report /tmp/cycle1034/qa.json --expected-source-sha "$(cat /tmp/cycle1034/sha.txt)" --genre ai_work --review-only --cut-frame 15 --synthetic-ci
+          ffmpeg -v error -xerror -i /tmp/cycle1034/out.mp4 -f null -
+          python3 -c "import json; q=json.load(open('/tmp/cycle1034/qa.json')); assert q['frames']==60 and q['audio_bitstream_unchanged'] and q['full_av_decode']=='PASS' and q['publication']=='NOT_APPROVED'"
