@@ -153,3 +153,9 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Private review MP4 SHA256 \`4f62c4856de8dac0d643449098a5db26b9dc725d594bd1dd1b43990c9fe7fbf6\`, H264 1080×1920/30fps 691 frames/23.033s, Japanese-tagged AAC 48kHz + mov_text. Full A/V decode PASS; A/V subtitle elementary stream hashes preserved. Luma cut jumps 127.501→16.444, 115.408→17.099, 84.562→12.867; cycle996 was 36.732, 36.101, 24.653. Caption area all-frame max mean delta 1.1827/255.
 - User 16-panel/32s storyboard directly viewed, prior TikTok research summaries consulted; full research transcripts and original v33 MP4 inaccessible. Independent Japanese ASR, smartphone playback, rights and staff approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
 - Full report: \`cycle998/RESULT.md\`. Private MP4 attached to conversation, not public repository.
+
+
+## 2026-10-30 cycle1000 review-only checkpoint (unmerged)
+- Two-beat guided Calc camera source/tests/CI in tools/quality/cycle1000_calc_focus_camera.py and tests/cycle1000; see docs/quality/cycle1000_review.md.
+- Real local MP4 SHA256 5adb0d36b1a74a7e4c1b7f3a186444c4fa5cc01d4da364034e1a6e64d15cb412; kept private, never uploaded to public repo. Independent ASR, rights, mobile playback and employee approval pending.
+- Branch stacked on PR #399, parallel PR #400 untouched. No merge or posting.
