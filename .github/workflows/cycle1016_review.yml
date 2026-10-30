@@ -1,0 +1,53 @@
+name: cycle1016 review-only storyboard insert QA
+on:
+  push:
+    branches:
+      - 'automation/cycle1016-storyboard-inserts-*'
+  pull_request:
+    paths:
+      - 'cycle1016/**'
+      - '.github/workflows/cycle1016_review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-storyboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow==11.3.0'
+      - name: Run fail-closed unit tests
+        run: python -m unittest discover -s cycle1016/tests -p 'test_*.py' -v
+      - name: Generate synthetic 2-second A/V fixture
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'testsrc2=size=1080x1920:rate=30:duration=2' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' \
+            -map 0:v -map 1:a -t 2 -c:v libx264 -preset ultrafast -crf 37 \
+            -pix_fmt yuv420p -c:a aac -ar 48000 \
+            -metadata:s:a:0 language=jpn -movflags +faststart /tmp/synthetic_input.mp4
+      - name: Render and decode synthetic insert
+        run: |
+          python cycle1016/source/insert_storyboard.py \
+            --source /tmp/synthetic_input.mp4 --output /tmp/synthetic_output.mp4 \
+            --report /tmp/cycle1016_qa.json --review-only --synthetic-ci
+          python - <<'PY'
+          import json
+          q=json.load(open('/tmp/cycle1016_qa.json'))
+          assert q['resolution']==[1080,1920] and q['frames']==60
+          assert q['full_decode']=='PASS'
+          assert q['publication']=='NOT_APPROVED'
+          assert q['japanese_asr']=='NOT_VERIFIED'
+          print('SYNTHETIC CI PASS. Private full video NOT in GitHub Actions.')
+          PY
+      - name: Ensure private media not committed
+        run: |
+          test ! -e cycle1016/output/cycle1016_TWO_STORYBOARD_INSERTS_JP_REVIEW_ONLY.mp4
+          echo 'No confidential media, source soundtrack or full MP4 uploaded.'
