@@ -44,6 +44,7 @@ jobs:
           assert q['resolution']==[1080,1920] and q['frames']==60
           assert q['full_decode']=='PASS' and q['audio_unchanged']
           assert q['publication']=='NOT_APPROVED' and q['japanese_asr']=='NOT_VERIFIED'
+          assert q['subtitle']=='synthetic fixture has no subtitles'
           print('SYNTHETIC QA PASS; real Japanese video is NOT in CI.')
           PY
       - name: Assert no private media committed
