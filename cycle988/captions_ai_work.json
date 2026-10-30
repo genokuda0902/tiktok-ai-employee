@@ -1,0 +1,47 @@
+{
+  "language": "ja",
+  "review_only": true,
+  "provenance": "Manual transcription of visible burned caption frames from cycle986 at 18 sampled timestamps. NOT an independent audio transcription.",
+  "cues": [
+    {
+      "start": 0,
+      "end": 2.9,
+      "text": "AIで仕事を早くするなら、\n最初の一歩が大事。"
+    },
+    {
+      "start": 2.9,
+      "end": 5.8,
+      "text": "まず、繰り返している\n作業を書き出そう。"
+    },
+    {
+      "start": 5.8,
+      "end": 8.7,
+      "text": "次に、完成形の見本を\n用意する。"
+    },
+    {
+      "start": 8.7,
+      "end": 11.6,
+      "text": "指示は、目的と条件を\n具体的に伝える。"
+    },
+    {
+      "start": 11.6,
+      "end": 14.5,
+      "text": "最初の出力は、\n必ず自分で確かめる。"
+    },
+    {
+      "start": 14.5,
+      "end": 17.4,
+      "text": "違いがあれば、修正点を\n一つずつ伝える。"
+    },
+    {
+      "start": 17.4,
+      "end": 20.3,
+      "text": "使える指示は、\nテンプレートに残す。"
+    },
+    {
+      "start": 20.3,
+      "end": 23.033333,
+      "text": "小さな時短を、\n毎日の習慣にしよう。"
+    }
+  ]
+}
