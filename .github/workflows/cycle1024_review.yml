@@ -1,0 +1,46 @@
+name: cycle1024 review-only scene02 clarity
+on:
+  push:
+    branches:
+      - 'automation/cycle1024-scene02-clarity-*'
+  pull_request:
+    paths:
+      - 'cycle1024/**'
+      - '.github/workflows/cycle1024_review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-scene02:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local FFmpeg and Japanese fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Run ten-genre and safety tests
+        run: python -m unittest discover -s cycle1024/tests -v
+      - name: Generate only synthetic two-second AV
+        run: |
+          mkdir -p cycle1024/tmp
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x101a25:s=1080x1920:r=30:d=2' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' \
+            -map 0:v -map 1:a -c:v libx264 -preset ultrafast -threads 2 \
+            -pix_fmt yuv420p -c:a aac -b:a 96k \
+            -metadata:s:a:0 language=jpn -t 2 cycle1024/tmp/input.mp4
+      - name: Render synthetic scene and decode all frames
+        run: |
+          HASH=$(sha256sum cycle1024/tmp/input.mp4 | cut -d' ' -f1)
+          python cycle1024/source/scene2_clarity.py \
+            --source cycle1024/tmp/input.mp4 \
+            --output cycle1024/tmp/output.mp4 \
+            --report cycle1024/tmp/qa.json \
+            --genre ai_work --expected-source-sha "$HASH" \
+            --review-only --synthetic-ci
+          ffmpeg -v error -xerror -i cycle1024/tmp/output.mp4 -f null -
+          python -c "import json; x=json.load(open('cycle1024/tmp/qa.json')); assert x['full_av_decode']=='PASS' and x['audio_bitstream_unchanged'] and x['frames']==60 and x['publication']=='NOT_APPROVED'"
