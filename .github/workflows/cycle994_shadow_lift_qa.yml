@@ -1,0 +1,75 @@
+name: cycle994 shadow-lift synthetic QA
+on:
+  push:
+    branches:
+      - 'automation/cycle994-*'
+    paths:
+      - 'cycle994/**'
+      - '.github/workflows/cycle994_shadow_lift_qa.yml'
+  pull_request:
+    paths:
+      - 'cycle994/**'
+      - '.github/workflows/cycle994_shadow_lift_qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install Pillow
+      - name: Test shared ten-genre settings and publication gate
+        run: python -m unittest discover -s cycle994 -p 'test_*.py' -v
+      - name: Generate synthetic-only Japanese-captioned video and run tone pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle994
+          printf '1\n00:00:00,000 --> 00:00:02,000\n合成字幕\n' > /tmp/cycle994/synthetic.srt
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x192939:s=1080x1920:r=30:d=2' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' \
+            -i /tmp/cycle994/synthetic.srt -t 2 \
+            -map 0:v -map 1:a -map 2:s \
+            -c:v libx264 -preset ultrafast -crf 35 -pix_fmt yuv420p \
+            -c:a aac -c:s mov_text -metadata:s:a:0 language=jpn \
+            -metadata:s:s:0 language=jpn /tmp/cycle994/base.mp4
+          python cycle994/tone_pass.py --input /tmp/cycle994/base.mp4 \
+            --output /tmp/cycle994/graded.mp4 --genre ai_work --review-only \
+            --report /tmp/cycle994/report.json
+          python - <<'PY'
+          import json,subprocess
+          p='/tmp/cycle994/'
+          report=json.load(open(p+'report.json'))
+          assert report['publication_approved'] is False
+          assert report['independent_japanese_asr'] is False
+          def probe(name):
+              return json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-of','json',p+name]))['streams']
+          a,b=probe('base.mp4'),probe('graded.mp4')
+          assert [s['codec_name'] for s in b]==['h264','aac','mov_text']
+          assert b[0]['nb_frames']==a[0]['nb_frames']=='60'
+          assert (b[0]['width'],b[0]['height'])==(1080,1920)
+          for stream in ('a:0','s:0'):
+              def h(name):
+                  return subprocess.check_output(['ffmpeg','-v','error','-i',p+name,
+                      '-map','0:'+stream,'-c','copy','-f','hash','-hash','SHA256','-'])
+              assert h('base.mp4')==h('graded.mp4'),stream
+          for stream in ('v:0','a:0'):
+              subprocess.run(['ffmpeg','-v','error','-xerror','-i',p+'graded.mp4',
+                  '-map','0:'+stream,'-f','null','-'],check=True)
+          print('PASS: synthetic MP4, A/V decode, captions, 10 genre gate')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle994-synthetic-qa-report-only
+          path: /tmp/cycle994/report.json
+          retention-days: 7
