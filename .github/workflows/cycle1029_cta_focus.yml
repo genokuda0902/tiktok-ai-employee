@@ -1,0 +1,32 @@
+name: cycle1029 three-stage CTA focus (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1029/**'
+      - '.github/workflows/cycle1029_cta_focus.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1029/**'
+      - '.github/workflows/cycle1029_cta_focus.yml'
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests (ten genre presets and safe zones)
+        run: python -m unittest discover -s quality/cycle1029/tests -v
+      - name: Generate synthetic 1080x1920 AV media
+        run: |
+          ffmpeg -v error -y -f lavfi -i 'color=c=0x101a2c:s=1080x1920:r=30:d=3.5' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3.5' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1029_in.mp4
+      - name: Apply sequential CTA focus (synthetic only)
+        run: python quality/cycle1029/code/focus_3steps.py /tmp/cycle1029_in.mp4 /tmp/cycle1029_out.mp4 --start 0.3 --end 3.3 --preset ultrafast
+      - name: Verify full AV decode and output size
+        run: |
+          ffmpeg -v error -xerror -i /tmp/cycle1029_out.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0 /tmp/cycle1029_out.mp4 | grep -q '1080,1920,30/1'
