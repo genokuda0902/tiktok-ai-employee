@@ -1,0 +1,46 @@
+name: cycle989 original transition audio (synthetic QA)
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle989/**'
+      - '.github/workflows/cycle989-transition-audio.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg (runner image does not include it)
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s experiments/cycle989/tests -v
+      - name: Generate private synthetic 1080x1920 test input
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x0b1830:s=1080x1920:r=30 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000 \
+            -t 23.033333 -map 0:v -map 1:a \
+            -c:v libx264 -preset ultrafast -crf 34 -pix_fmt yuv420p \
+            -c:a aac -b:a 96k synthetic.mp4
+      - name: Apply original transition sound cues
+        run: python experiments/cycle989/transition_audio.py synthetic.mp4 synthetic_out.mp4 --report synthetic_report.json
+      - name: Decode and assert video packets unchanged
+        run: |
+          ffmpeg -v error -i synthetic_out.mp4 -f null -
+          BEFORE=$(ffmpeg -v error -i synthetic.mp4 -map 0:v:0 -c:v copy -f hash -hash SHA256 -)
+          AFTER=$(ffmpeg -v error -i synthetic_out.mp4 -map 0:v:0 -c:v copy -f hash -hash SHA256 -)
+          test "$BEFORE" = "$AFTER"
+          python - <<'PY'
+          import json,subprocess
+          p=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','stream=codec_name,codec_type,width,height,r_frame_rate,sample_rate','-of','json','synthetic_out.mp4']))
+          streams=p['streams']; v=next(s for s in streams if s['codec_type']=='video'); a=next(s for s in streams if s['codec_type']=='audio')
+          assert (v['width'],v['height'],v['r_frame_rate'],v['codec_name'])==(1080,1920,'30/1','h264'),v
+          assert (a['codec_name'],a['sample_rate'])==('aac','48000'),a
+          report=json.load(open('synthetic_report.json'))
+          assert len(report['events'])==7
+          assert report['human_review_only'] is True
+          print('Synthetic video, audio, packets and scene cues: PASS')
+          PY
