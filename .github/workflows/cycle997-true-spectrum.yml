@@ -1,0 +1,33 @@
+name: cycle997 true spectral meter QA
+on:
+  pull_request:
+    paths:
+      - 'tools/quality/cycle997_true_spectrum.py'
+      - 'tests/test_cycle997_true_spectrum.py'
+      - '.github/workflows/cycle997-true-spectrum.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-media-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install numpy Pillow
+      - name: Run 10 deterministic audio-spectrum tests
+        run: python -m unittest discover -s tests -p 'test_cycle997_true_spectrum.py' -v
+      - name: Render and decode synthetic 1080x1920 H264/AAC
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x14283b:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=430:sample_rate=48000:duration=1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/source.mp4
+          python tools/quality/cycle997_true_spectrum.py --input /tmp/source.mp4 --output /tmp/output.mp4 --seconds 1
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/output.mp4)" = '1080,1920'
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 /tmp/output.mp4)" = '30'
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=codec_name -of csv=p=0 /tmp/output.mp4)" = 'aac'
