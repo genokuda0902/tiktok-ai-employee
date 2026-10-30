@@ -1,0 +1,42 @@
+name: cycle1103 offline Japanese caption QA
+on:
+  push:
+    branches:
+      - quality/cycle1103-jp-caption-accessibility-20261031
+  pull_request:
+    paths:
+      - 'cycle1103/**'
+      - '.github/workflows/cycle1103-caption-smoke.yml'
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install offline font and FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Python environment
+        run: python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Test ten genres and caption safe-area
+        run: python -m unittest discover -s cycle1103/tests -p 'test_*.py' -v
+      - name: Synthetic two-second H264 AAC smoke (not user video)
+        shell: bash
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0,'cycle1103')
+          from caption_accessibility import render_plate
+          render_plate(0,'ai_work').save('/tmp/caption.png')
+          PY
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=navy:s=1080x1920:r=30:d=2 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 \
+            -loop 1 -framerate 30 -i /tmp/caption.png \
+            -filter_complex '[0:v][2:v]overlay=0:0:shortest=1[v]' \
+            -map '[v]' -map 1:a -t 2 -c:v libx264 -preset ultrafast \
+            -crf 28 -pix_fmt yuv420p -c:a aac /tmp/caption_smoke.mp4
+          ffmpeg -v error -xerror -i /tmp/caption_smoke.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height \
+            -show_entries format=duration -of json /tmp/caption_smoke.mp4
