@@ -1,0 +1,17 @@
+{
+  "genre": "ai_work",
+  "classification": "synthetic_example",
+  "left_series": [
+    12,
+    16,
+    18
+  ],
+  "right_series": [
+    8,
+    9,
+    12
+  ],
+  "expected_left": 46,
+  "expected_right": 29,
+  "expected_difference": 17
+}

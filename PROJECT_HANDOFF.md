@@ -159,3 +159,9 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Two-beat guided Calc camera source/tests/CI in tools/quality/cycle1000_calc_focus_camera.py and tests/cycle1000; see docs/quality/cycle1000_review.md.
 - Real local MP4 SHA256 5adb0d36b1a74a7e4c1b7f3a186444c4fa5cc01d4da364034e1a6e64d15cb412; kept private, never uploaded to public repo. Independent ASR, rights, mobile playback and employee approval pending.
 - Branch stacked on PR #399, parallel PR #400 untouched. No merge or posting.
+
+## cycle1002 — 2026-10-30 JST (review only)
+- Branch automation/cycle1002-evidence-verified-hook-20261030 based on unmerged PR #401; parallel PR #402 unchanged. Source and tests: tools/quality/cycle1002_evidence_hook.py, tests/cycle1002/. See docs/quality/cycle1002_review.md.
+- Verified local MP4 SHA256 3e09995a7e72d80c099e5c0ddc051ffbd66d20cf2e39d009ecda113aeb0a4b6a, 1080x1920 30fps 691 frames 23.033s, AAC Japanese-tagged 48kHz and 8 subtitle cues. A/V full decode PASS; audio elementary stream and extracted SRT hashes unchanged vs cycle1000. 11 local tests PASS.
+- New first-1.5s synthetic example badge shows arithmetic 46-29=17 with evidence reconciliation and no fabricated real-world results. Private 8 WAV cue review pack created, no ASR or semantic caption verification claimed.
+- CI synthetic only. Original v33 MP4, original research chats, source rights, employee approval, phone playback, actual Actions billing unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge/posting/payment.
