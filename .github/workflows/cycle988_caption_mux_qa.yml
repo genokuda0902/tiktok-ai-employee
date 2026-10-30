@@ -1,0 +1,63 @@
+name: cycle988 Japanese caption mux QA
+on:
+  push:
+    branches:
+      - 'automation/cycle988-*'
+    paths:
+      - 'cycle988/**'
+      - '.github/workflows/cycle988_caption_mux_qa.yml'
+  pull_request:
+    paths:
+      - 'cycle988/**'
+      - '.github/workflows/cycle988_caption_mux_qa.yml'
+  workflow_dispatch:
+jobs:
+  caption-mux-qa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests
+        run: python -m unittest discover -s cycle988 -p 'test_*.py' -v
+      - name: Synthetic-only MP4 integration (no private assets)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle988
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=navy:s=1080x1920:r=30:d=3' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p -r 30 \
+            -c:a aac -shortest /tmp/cycle988/source.mp4
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          Path('/tmp/cycle988/manifest.json').write_text(
+            json.dumps({'language':'ja','review_only':True,'cues':[
+              {'start':0.0,'end':3.0,'text':'合成テスト字幕'}]},ensure_ascii=False),
+            encoding='utf-8')
+          PY
+          python cycle988/caption_mux.py \
+            --source /tmp/cycle988/source.mp4 \
+            --output /tmp/cycle988/output.mp4 \
+            --manifest /tmp/cycle988/manifest.json \
+            --work /tmp/cycle988/work --synthetic
+          python - <<'PY'
+          import json,subprocess
+          f='/tmp/cycle988/output.mp4'
+          x=json.loads(subprocess.check_output(
+            ['ffprobe','-v','error','-show_streams','-of','json',f]))
+          assert [s['codec_name'] for s in x['streams']]==['h264','aac','mov_text']
+          sub=x['streams'][2]
+          assert sub['tags']['language']=='jpn'
+          assert sub['disposition']['default']==0
+          subprocess.run(['ffmpeg','-hide_banner','-loglevel','error',
+            '-xerror','-i',f,'-map','0:v:0','-f','null','-'],check=True)
+          subprocess.run(['ffmpeg','-hide_banner','-loglevel','error',
+            '-xerror','-i',f,'-map','0:a:0','-f','null','-'],check=True)
+          print('synthetic MP4 integration PASS; not a private-video QA')
+          PY
