@@ -1,0 +1,26 @@
+name: cycle1030 review-only synthetic smoke
+on:
+  push:
+    paths: ['cycle1030/**', '.github/workflows/cycle1030_review.yml']
+  pull_request:
+    paths: ['cycle1030/**', '.github/workflows/cycle1030_review.yml']
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free system dependencies
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk python3-pil python3-pytest
+      - name: Unit tests
+        run: python3 -m pytest -q cycle1030/tests
+      - name: Generate synthetic input (no user assets)
+        run: |
+          mkdir -p /tmp/cycle1030
+          ffmpeg -hide_banner -loglevel error -f lavfi -i color=c=0x102a38:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=660:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -threads 2 -pix_fmt yuv420p -c:a aac -ar 48000 -shortest -y /tmp/cycle1030/input.mp4
+          sha256sum /tmp/cycle1030/input.mp4 | awk '{print $1}' > /tmp/cycle1030/sha.txt
+      - name: Render and decode synthetic output
+        run: |
+          python3 cycle1030/source/correction_proof.py --source /tmp/cycle1030/input.mp4 --output /tmp/cycle1030/output.mp4 --report /tmp/cycle1030/qa.json --expected-source-sha "$(cat /tmp/cycle1030/sha.txt)" --genre ai_work --review-only --synthetic-ci
+          ffmpeg -v error -xerror -i /tmp/cycle1030/output.mp4 -f null -
+          python3 -c "import json; d=json.load(open('/tmp/cycle1030/qa.json')); assert d['audio_bitstream_unchanged'] and d['full_av_decode']=='PASS'"
