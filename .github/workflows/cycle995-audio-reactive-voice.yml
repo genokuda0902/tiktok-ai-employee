@@ -1,0 +1,32 @@
+name: cycle995 audio reactive voice QA
+on:
+  pull_request:
+    paths:
+      - 'tools/quality/cycle995_audio_reactive_voice.py'
+      - 'tests/test_cycle995_audio_reactive_voice.py'
+      - '.github/workflows/cycle995-audio-reactive-voice.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-media-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install Pillow
+      - name: Run meter and ten-genre tests
+        run: python -m unittest discover -s tests -p 'test_cycle995_audio_reactive_voice.py' -v
+      - name: Render and fully decode synthetic 1080x1920 MP4
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x14283b:s=1080x1920:r=30:d=1 -f lavfi -i sine=frequency=330:sample_rate=48000:duration=1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/source.mp4
+          python tools/quality/cycle995_audio_reactive_voice.py --input /tmp/source.mp4 --output /tmp/output.mp4 --seconds 1
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/output.mp4)" = '1080,1920'
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 /tmp/output.mp4)" = '30'
