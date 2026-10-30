@@ -1,0 +1,45 @@
+name: cycle1015-selective-detail-synthetic
+on:
+  push:
+    branches:
+      - 'quality/cycle1015-selective-slide-detail-*'
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1015_selective_detail.py'
+      - 'tests/test_cycle1015_selective_detail.py'
+      - '.github/workflows/cycle1015-selective-detail.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-detail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure FFmpeg
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          fi
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -p 'test_cycle1015_selective_detail.py' -v
+      - name: Generate synthetic 2s portrait source
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -map 0:v -map 1:a -t 2 -c:v libx264 -preset ultrafast -crf 36 -pix_fmt yuv420p -c:a aac -ar 48000 -metadata:s:a:0 language=jpn /tmp/c1015_in.mp4
+      - name: Render and decode
+        run: |
+          python3 tools/quality/cycle1015_selective_detail.py /tmp/c1015_in.mp4 /tmp/c1015_out.mp4
+          ffmpeg -v error -xerror -i /tmp/c1015_out.mp4 -f null -
+          python3 - <<'PY'
+          import subprocess,json
+          def probe(path):
+              return json.loads(subprocess.check_output(['ffprobe','-v','error','-count_frames','-show_streams','-of','json',path]))
+          p=probe('/tmp/c1015_out.mp4')
+          v=next(s for s in p['streams'] if s['codec_type']=='video')
+          a=next(s for s in p['streams'] if s['codec_type']=='audio')
+          assert (v['width'],v['height'],v['nb_read_frames'])==(1080,1920,'60')
+          assert a['codec_name']=='aac' and int(a['sample_rate'])==48000
+          def ahash(path):
+              return subprocess.check_output(['ffmpeg','-v','error','-i',path,'-map','0:a:0','-c','copy','-f','hash','-hash','sha256','-']).strip()
+          assert ahash('/tmp/c1015_in.mp4')==ahash('/tmp/c1015_out.mp4')
+          print('PASS: synthetic 2s portrait, full decode, 60 frames, AAC bitstream preserved')
+          PY
