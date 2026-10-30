@@ -1,0 +1,39 @@
+name: cycle1009-caption-compat-synthetic
+on:
+  push:
+    branches:
+      - 'quality/cycle1009-caption-compat-*'
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1009_caption_compat.py'
+      - 'tests/test_cycle1009_caption_compat.py'
+      - '.github/workflows/cycle1009-caption-compat.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-compat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -p 'test_cycle1009_caption_compat.py' -v
+      - name: Generate synthetic 1080x1920 H264/AAC/soft-subtitle/chapters
+        run: |
+          printf '1\n00:00:00,100 --> 00:00:01,800\n合成テスト字幕\n' > /tmp/c1009.srt
+          printf ';FFMETADATA1\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=0\nEND=2000\ntitle=合成検証\n' > /tmp/c1009.meta
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x071021:s=1080x1920:r=30:d=2 -f lavfi -i sine=frequency=420:sample_rate=48000:duration=2 -f srt -i /tmp/c1009.srt -f ffmetadata -i /tmp/c1009.meta -map 0:v:0 -map 1:a:0 -map 2:s:0 -map_metadata 3 -map_chapters 3 -c:v libx264 -preset ultrafast -crf 34 -pix_fmt yuv420p -c:a aac -c:s mov_text -metadata:s:a:0 language=jpn -shortest /tmp/c1009_in.mp4
+      - name: Stream-copy repair and full decode
+        run: |
+          python3 tools/quality/cycle1009_caption_compat.py --source /tmp/c1009_in.mp4 --output /tmp/c1009_out.mp4 --srt /tmp/c1009.srt --synthetic > /tmp/c1009_qa.json
+          python3 - <<'PY'
+          import json
+          q=json.load(open('/tmp/c1009_qa.json'))
+          assert q['embedded_subtitles']==0 and q['chapters']==1
+          assert q['video_packets_identical'] and q['audio_packets_identical']
+          assert q['size']==[1080,1920] and q['fps']=='30/1'
+          assert q['full_decode']=='PASS'
+          assert 'WEBVTT' in open('/tmp/c1009_out.vtt').read()
+          print('Synthetic QA PASS')
+          PY
