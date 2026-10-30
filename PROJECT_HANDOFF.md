@@ -145,3 +145,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - User's 16-panel storyboard original directly inspected; TikTok市場分析/TikTok動画研究 accessible summaries consulted. Original v33 MP4 and full research transcripts unavailable. Current 8 scenes/23s not v33-equivalent.
 - Independent Japanese ASR/semantic caption timing, phone playback, rights, employee approval and actual GitHub Actions billing not verified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No private media upload, auto-post, paid service, or merge.
 - See `cycle996/README.md` and `cycle996/RESULT.md`; CI uses synthetic media, not the private full video.
+
+
+## 2026-10-30 cycle998 ghost-free flash guard (review only)
+- Based on unmerged cycle996 PR #397; parallel cycle997 PR #398 untouched; main inspected \`18e084c\`. No merge or posting.
+- Fixed cross-dissolve double-exposure at three hard cuts using 6-frame single-source luma compensation on each side; source is local pre-dissolve cycle994 MP4. Source code and 7 unit tests in \`cycle998/\`, synthetic-only CI workflow.
+- Private review MP4 SHA256 \`4f62c4856de8dac0d643449098a5db26b9dc725d594bd1dd1b43990c9fe7fbf6\`, H264 1080×1920/30fps 691 frames/23.033s, Japanese-tagged AAC 48kHz + mov_text. Full A/V decode PASS; A/V subtitle elementary stream hashes preserved. Luma cut jumps 127.501→16.444, 115.408→17.099, 84.562→12.867; cycle996 was 36.732, 36.101, 24.653. Caption area all-frame max mean delta 1.1827/255.
+- User 16-panel/32s storyboard directly viewed, prior TikTok research summaries consulted; full research transcripts and original v33 MP4 inaccessible. Independent Japanese ASR, smartphone playback, rights and staff approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+- Full report: \`cycle998/RESULT.md\`. Private MP4 attached to conversation, not public repository.
