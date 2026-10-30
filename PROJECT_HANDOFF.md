@@ -1,3 +1,11 @@
+## 2026-10-30 — cycle1008 private review-only caption packaging checkpoint
+- Based on unmerged cycle1006 PR #407; parallel #408 untouched. **No merge or publication**.
+- Found real issue: cycle1006 MP4 has both burned-in Japanese captions and a default=1 mov_text track, risking duplicate captions. FFmpeg `-disposition:s:0 0` did NOT clear default on a synthetic MP4. Changed strategy to safe playback MP4 with burned captions only + optional separate 8-cue SRT.
+- Private 23.033333s H264 1080x1920/30fps AAC/jpn video verified locally, SHA256 `25c38de04d557190dd93ca44211e88364e7629511548dc5ae2ae331ca7981d06`; encoded video/audio elementary hashes match cycle1006. **Not uploaded to GitHub**.
+- Source/tests/synthetic CI: `cycle1008/source/caption_default_guard.py`, `cycle1008/tests/`, `.github/workflows/cycle1008-caption-safe-qa.yml`; details `cycle1008/REVIEW_HANDOFF.md`.
+- Reference 16-panel storyboard viewed; full original research chats and v33 MP4 unavailable. 8 scenes/23s still below reference visual variety. Independent ASR, caption semantic sync, media rights, phone playback, employee sign-off, billing unverified. 10 genre IDs; only ai_work privately tested, others fail closed.
+- Next: independent Japanese narration transcription and cue timing verification, then approved visual diversity. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**.
+
 # TikTok AI社員システム — authoritative handoff
 Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end completion. At the start of each chat, read this file and `recovery/v33/RECOVERY_STATUS.md`, then verify actual code and artifacts. Update this file with verified commit SHAs and test results whenever changing implementation.
 
