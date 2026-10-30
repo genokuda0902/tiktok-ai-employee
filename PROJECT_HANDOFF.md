@@ -1,3 +1,12 @@
+## 2026-10-30 — cycle1010 opening Before/After spotlight (PRIVATE REVIEW ONLY)
+- Based on cycle1008 Draft PR #409; parallel #410 untouched. No merge, public private-media upload, or posting.
+- Local cycle1008 input SHA256 `25c38de04d557190dd93ca44211e88364e7629511548dc5ae2ae331ca7981d06`; new private cycle1010 MP4 SHA256 `20e0840d790b458e7a3a406fc3e76b5288fff54ba2c4ccaa0fb4ea6d63cd58ef`.
+- New opening 0.0–1.5s Before/After spotlight: 45 RGBA overlay frames, safe region y280–1250; local 11 tests PASS; 23.033333s 1080×1920 30fps H264, Japanese-tagged AAC 48kHz bit-identical elementary audio, 691 frames, full A/V decode PASS, no selectable subtitle. Original burned captions inherited.
+- First 2.9s overlay draft rejected because it covered scene 2; fixed to the actual 1.5s opening shot. Reimplementation, not v33 source recovery.
+- Source/tests/CI: `cycle1010/source/spotlight_review.py`, `cycle1010/tests/`, `.github/workflows/cycle1010-spotlight-qa.yml`; detailed review in `cycle1010/REVIEW_HANDOFF.md`.
+- Directly inspected user's 16-panel ChatGPT×Excel storyboard; accessible research summaries reviewed. Full TikTok research chats and original v33 MP4 unavailable. Independent Japanese ASR, speech/subtitle semantic sync, rights, phone playback, employee approval and Actions actual billing remain unverified. 10 genres fail closed except ai_work private render.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Next: offline Japanese ASR, approved distinct cutaways.
+
 ## 2026-10-30 — cycle1008 private review-only caption packaging checkpoint
 - Based on unmerged cycle1006 PR #407; parallel #408 untouched. **No merge or publication**.
 - Found real issue: cycle1006 MP4 has both burned-in Japanese captions and a default=1 mov_text track, risking duplicate captions. FFmpeg `-disposition:s:0 0` did NOT clear default on a synthetic MP4. Changed strategy to safe playback MP4 with burned captions only + optional separate 8-cue SRT.
