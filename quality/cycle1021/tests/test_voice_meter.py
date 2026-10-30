@@ -24,7 +24,7 @@ class TestVoiceMeter(unittest.TestCase):
         loud=make_patch(1,0,c)
         self.assertGreater(sum(loud),sum(quiet)+40000)
     def test_frame_determinism(self):
-        self.assertEqual(make_patch(.4,10,GENRE_COLORS['tech']),make_patch(.4,10,GENRE_COLORS['tech']))
+        self.assertEqual(make_patch(.4,10,GENRE_COLORS['career']),make_patch(.4,10,GENRE_COLORS['career']))
     def test_no_network_or_upload_code(self):
         src=(Path(__file__).resolve().parents[1]/'code'/'voice_meter.py').read_text()
         for forbidden in ['requests.', 'urllib.request', 'TikTok API', 'post_video(']:
