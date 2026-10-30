@@ -1,0 +1,57 @@
+name: cycle1002 evidence hook (synthetic CI only)
+on:
+  push:
+    branches:
+      - automation/cycle1002-evidence-verified-hook-20261030
+    paths:
+      - 'tools/quality/cycle1002_evidence_hook.py'
+      - 'tests/cycle1002/**'
+      - 'docs/quality/cycle1002_evidence_example.json'
+      - '.github/workflows/cycle1002-evidence-hook.yml'
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1002_evidence_hook.py'
+      - 'tests/cycle1002/**'
+      - 'docs/quality/cycle1002_evidence_example.json'
+      - '.github/workflows/cycle1002-evidence-hook.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free open-source tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check Pillow
+      - name: Eleven arithmetic and review-only tests
+        run: python -m unittest discover -s tests/cycle1002 -p 'test_*.py' -v
+      - name: Synthetic two-second A/V/subtitle smoke (not private Japanese media)
+        run: |
+          cat > /tmp/synthetic.srt <<'EOF'
+          1
+          00:00:00,000 --> 00:00:01,800
+          合成字幕
+          EOF
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x102030:s=1080x1920:r=30:d=2 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 \
+            -i /tmp/synthetic.srt -map 0:v:0 -map 1:a:0 -map 2:s:0 \
+            -t 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -c:s mov_text /tmp/synthetic_source.mp4
+          python tools/quality/cycle1002_evidence_hook.py \
+            --source /tmp/synthetic_source.mp4 --output /tmp/synthetic_output.mp4 \
+            --evidence docs/quality/cycle1002_evidence_example.json \
+            --badge /tmp/badge.png --report /tmp/report.json --review-only \
+            --srt /tmp/synthetic.srt --private-audio-review-dir /tmp/synthetic_review
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/synthetic_output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/synthetic_output.mp4)" = '1080,1920'
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of csv=p=0 /tmp/synthetic_output.mp4)" = '48000'
+          test -f /tmp/synthetic_review/caption_audio_review.json
