@@ -1,3 +1,11 @@
+## 2026-10-31 — cycle1036 opening question→proof kinetic hook (PRIVATE REVIEW ONLY)
+- Previous cycle1034 source SHA256 00fe0dc8648f9c28b3e12f06717977a2809d0d1043ee51526c27f764e0e24164; output SHA256 5adb8836b387dd09e4c7d184bcbe72ac5519a5df23f2bb1877d8c467a4c87148.
+- New 36-frame/1.2s original Japanese kinetic hook with ten genre question presets; 8-scene 23.033333s video unchanged in duration, original AAC elementary stream identical, full A/V decode PASS.
+- 13 local unit tests PASS and 2-second synthetic video PASS. All-frame subtitle ROI y1490–1840 max MAE 1.524/255 at quarter resolution. Full private MP4 is only in ChatGPT review package, NOT GitHub.
+- Directly inspected 16-panel storyboard and accessible market/video research summaries; original v33 MP4/full original research chats unavailable. Independent Japanese speech-to-text, semantic subtitle sync, media rights, smartphone playback, employee approval and actual billing UNVERIFIED.
+- Source/tests/CI: cycle1036/source/kinetic_hook.py, cycle1036/tests/, .github/workflows/cycle1036_review.yml; details cycle1036/REVIEW_HANDOFF.md. No merge, posting, paid service or confidential media upload.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Next: independent Japanese speech and subtitle review, then rights-approved image-first diversity.
+
 ## 2026-10-30 — cycle1010 opening Before/After spotlight (PRIVATE REVIEW ONLY)
 - Based on cycle1008 Draft PR #409; parallel #410 untouched. No merge, public private-media upload, or posting.
 - Local cycle1008 input SHA256 `25c38de04d557190dd93ca44211e88364e7629511548dc5ae2ae331ca7981d06`; new private cycle1010 MP4 SHA256 `20e0840d790b458e7a3a406fc3e76b5288fff54ba2c4ccaa0fb4ea6d63cd58ef`.
