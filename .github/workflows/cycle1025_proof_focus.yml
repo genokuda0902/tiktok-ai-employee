@@ -1,0 +1,32 @@
+name: cycle1025 proof-focus montage (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1025/**'
+      - '.github/workflows/cycle1025_proof_focus.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1025/**'
+      - '.github/workflows/cycle1025_proof_focus.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: pip install --disable-pip-version-check numpy opencv-python-headless
+      - run: python -m unittest discover -s quality/cycle1025/tests -v
+      - name: Generate synthetic 1080x1920 6s test media
+        run: |
+          ffmpeg -v error -y -f lavfi -i 'color=c=navy:s=1080x1920:r=30:d=6' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=6' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1025_input.mp4
+      - name: Render montage (synthetic, not the private final MP4)
+        run: python quality/cycle1025/code/proof_focus_montage.py /tmp/cycle1025_input.mp4 /tmp/cycle1025_output.mp4 --smoke
+      - name: Full decode and assert media streams
+        run: |
+          ffmpeg -v error -xerror -i /tmp/cycle1025_output.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0 /tmp/cycle1025_output.mp4 | grep -q '1080,1920,30/1'
