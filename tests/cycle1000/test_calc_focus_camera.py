@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from calc_focus_camera import GENRES,ROI,KEYFRAMES,camera_at,focus_frame,render
+from cycle1000_calc_focus_camera import GENRES,ROI,KEYFRAMES,camera_at,focus_frame,render
 
 class TestCamera(unittest.TestCase):
     def test_ten_genres(self): self.assertEqual(len(GENRES),10)
