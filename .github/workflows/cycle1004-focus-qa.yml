@@ -1,0 +1,43 @@
+name: cycle1004 caption-safe focus (synthetic QA only)
+on:
+  push:
+    branches:
+      - automation/cycle1004-caption-safe-focus-20261030
+    paths:
+      - 'cycle1004/**'
+      - '.github/workflows/cycle1004-focus-qa.yml'
+  pull_request:
+    paths:
+      - 'cycle1004/**'
+      - '.github/workflows/cycle1004-focus-qa.yml'
+  workflow_dispatch:
+jobs:
+  focus-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --disable-pip-version-check numpy opencv-python-headless
+      - name: Eight safety and focus unit tests
+        run: python -m unittest discover -s cycle1004/tests -p 'test_*.py' -v
+      - name: Synthetic H264 AAC Japanese subtitle track smoke test
+        run: |
+          printf '1\n00:00:00,000 --> 00:00:00,800\n合成字幕\n' > /tmp/synthetic.srt
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x14243b:s=1080x1920:r=30:d=1 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 \
+            -i /tmp/synthetic.srt -map 0:v -map 1:a -map 2:s \
+            -t 1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -c:s mov_text /tmp/synthetic.mp4
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/synthetic.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 /tmp/synthetic.mp4)" = '1080,1920'
+          test "$(ffprobe -v error -select_streams a:0 -show_entries stream=sample_rate -of csv=p=0 /tmp/synthetic.mp4)" = '48000'
