@@ -1,0 +1,57 @@
+name: cycle1014 review-only audio waveform QA
+on:
+  push:
+    branches:
+      - 'automation/cycle1014-real-audio-waveform-*'
+  pull_request:
+    paths:
+      - 'cycle1014/**'
+      - '.github/workflows/cycle1014_review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-audio-waveform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free local dependencies
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+          python -m pip install 'Pillow==11.3.0'
+      - name: Run safety and signal tests
+        run: python -m unittest discover -s cycle1014/tests -p 'test_*.py' -v
+      - name: Generate synthetic two-second H264/AAC Japanese-tagged fixture
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'testsrc2=size=1080x1920:rate=30:duration=2' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' \
+            -map 0:v -map 1:a -t 2 -c:v libx264 -preset ultrafast -crf 37 \
+            -pix_fmt yuv420p -c:a aac -ar 48000 \
+            -metadata:s:a:0 language=jpn -movflags +faststart /tmp/synthetic_input.mp4
+      - name: Render synthetic waveform and fully decode
+        run: |
+          python cycle1014/source/audio_truth_waveform.py \
+            --source /tmp/synthetic_input.mp4 \
+            --output /tmp/synthetic_output.mp4 \
+            --report /tmp/cycle1014_qa.json --review-only --synthetic-ci
+          python - <<'PY'
+          import json
+          q=json.load(open('/tmp/cycle1014_qa.json'))
+          assert q['video_audio_full_decode']=='PASS'
+          assert q['frames']==60 and q['resolution']==[1080,1920]
+          assert q['publication']=='NOT_APPROVED'
+          assert q['subtitle_semantic_sync']=='NOT_VERIFIED'
+          assert q['audio_sha256']
+          print('SYNTHETIC QA PASS; private 23-second MP4 NOT tested by CI')
+          PY
+      - name: No private media committed
+        run: |
+          test ! -e cycle1014/output/cycle1014_REAL_AUDIO_WAVEFORM_JP_REVIEW_ONLY.mp4
+          echo 'No private source video, narration, storyboard or completed MP4 in GitHub.'
