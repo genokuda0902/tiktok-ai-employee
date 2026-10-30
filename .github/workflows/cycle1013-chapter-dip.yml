@@ -1,0 +1,57 @@
+name: cycle1013-chapter-dip-synthetic
+on:
+  push:
+    branches:
+      - 'quality/cycle1013-chapter-micro-dip-*'
+  pull_request:
+    paths:
+      - 'tools/quality/cycle1013_chapter_dip.py'
+      - 'tests/test_cycle1013_chapter_dip.py'
+      - '.github/workflows/cycle1013-chapter-dip.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-chapter-dip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg if missing
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -p 'test_cycle1013_chapter_dip.py' -v
+      - name: Make synthetic 3s portrait video with two chapters
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x1d3455:s=1080x1920:r=30:d=3 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=3 -map 0:v -map 1:a -t 3 -c:v libx264 -preset ultrafast -crf 37 -pix_fmt yuv420p -c:a aac -ar 48000 -metadata:s:a:0 language=jpn /tmp/c1013_raw.mp4
+          cat > /tmp/c1013.ffmeta <<'EOF'
+          ;FFMETADATA1
+          [CHAPTER]
+          TIMEBASE=1/1000
+          START=0
+          END=1500
+          title=Scene 1
+          [CHAPTER]
+          TIMEBASE=1/1000
+          START=1500
+          END=3000
+          title=Scene 2
+          EOF
+          ffmpeg -hide_banner -loglevel error -y -i /tmp/c1013_raw.mp4 -i /tmp/c1013.ffmeta -map 0:v -map 0:a -map_chapters 1 -c copy /tmp/c1013_input.mp4
+      - name: Render, full decode and verify preservation
+        run: |
+          python3 tools/quality/cycle1013_chapter_dip.py --source /tmp/c1013_input.mp4 --output /tmp/c1013_output.mp4 --genre learning > /tmp/c1013_qa.json
+          python3 - <<'PY'
+          import json,subprocess
+          q=json.load(open('/tmp/c1013_qa.json'))
+          assert q['full_decode']=='PASS' and q['cut_count']==1
+          assert q['size']==[1080,1920] and q['frames']==90
+          assert q['chapters']==2 and q['publication']=='NOT_APPROVED'
+          def ahash(p):
+              return subprocess.check_output(['ffmpeg','-v','error','-i',p,
+                  '-map','0:a:0','-c','copy','-f','hash','-hash','sha256','-']).decode().strip()
+          assert ahash('/tmp/c1013_input.mp4')==ahash('/tmp/c1013_output.mp4')
+          print('SYNTHETIC 3s VIDEO PASS / AUDIO BITSTREAM MATCH',q['sha256'])
+          PY
