@@ -1,0 +1,45 @@
+name: cycle1028 review-only storyboard match
+on:
+  push:
+    branches:
+      - 'automation/cycle1028-storyboard-match-*'
+  pull_request:
+    paths:
+      - 'cycle1028/**'
+      - '.github/workflows/cycle1028_review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-storyboard-match:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow==11.3.0'
+      - name: Test 10 genres and fail-closed review gate
+        run: python -m unittest discover -s cycle1028/tests -v
+      - name: Generate synthetic two-second audio/video
+        run: |
+          mkdir -p cycle1028/tmp
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x0b1b29:s=1080x1920:r=30:d=2' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' \
+            -map 0:v -map 1:a -c:v libx264 -preset ultrafast -threads 2 \
+            -pix_fmt yuv420p -c:a aac -b:a 96k \
+            -metadata:s:a:0 language=jpn -t 2 cycle1028/tmp/input.mp4
+      - name: Render synthetic storyboard and decode full output
+        run: |
+          HASH=$(sha256sum cycle1028/tmp/input.mp4 | cut -d' ' -f1)
+          python cycle1028/source/storyboard_match.py \
+            --source cycle1028/tmp/input.mp4 --output cycle1028/tmp/output.mp4 \
+            --report cycle1028/tmp/qa.json --genre ai_work \
+            --expected-source-sha "$HASH" --review-only --synthetic-ci
+          ffmpeg -v error -xerror -i cycle1028/tmp/output.mp4 -f null -
+          python -c "import json; q=json.load(open('cycle1028/tmp/qa.json')); assert q['frames']==60 and q['full_av_decode']=='PASS' and q['audio_bitstream_unchanged'] and q['publication']=='NOT_APPROVED'"
