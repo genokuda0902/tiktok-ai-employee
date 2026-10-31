@@ -1,0 +1,26 @@
+name: cycle1080-fictional-proof-before-after-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1080/**'
+      - '.github/workflows/cycle1080-proof-before-after.yml'
+      - 'PROJECT_HANDOFF.md'
+  pull_request:
+    paths:
+      - 'quality/cycle1080/**'
+      - '.github/workflows/cycle1080-proof-before-after.yml'
+      - 'PROJECT_HANDOFF.md'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg python3-pil fonts-noto-cjk
+      - name: Ten-genre and caption-safe tests
+        run: /usr/bin/python3 -m unittest quality.cycle1080.test_proof_before_after -v
+      - name: Synthetic 18-second A/V smoke
+        run: /usr/bin/python3 -m quality.cycle1080.proof_before_after --smoke
