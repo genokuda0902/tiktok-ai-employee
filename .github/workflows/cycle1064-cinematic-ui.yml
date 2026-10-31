@@ -1,0 +1,31 @@
+name: cycle1064 cinematic screenshot motion QA
+on:
+  push:
+    branches:
+      - 'quality/cycle1064-cinematic-ui-20261031'
+    paths:
+      - 'quality/cycle1064/**'
+      - '.github/workflows/cycle1064-cinematic-ui.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1064/**'
+      - '.github/workflows/cycle1064-cinematic-ui.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Test ten genres, easing, safety and boundaries
+        run: python -m unittest quality.cycle1064.test_cinematic_ui_motion -v
+      - name: Synthetic 0.5s H264 AAC smoke
+        run: python -m quality.cycle1064.cinematic_ui_motion --smoke
