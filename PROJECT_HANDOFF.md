@@ -45,3 +45,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - GitHub Actions workflow tests a synthetic 6s H264/AAC video, not the actual private MP4. Check CI status in PR before asserting success.
 - Original v33 reference MP4 and original generation source not available in this run. Available 16-panel storyboard directly inspected. Prior TikTok market/video research summaries consulted; full source chats unavailable. Independent Japanese ASR and semantic subtitle match, smartphone playback, release rights and employee approval remain **UNVERIFIED**.
 - No merge, auto-post, public release, payment, or production deployment. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+
+
+## cycle1076 review checkpoint (2026-11-01 JST; NOT PUBLICATION APPROVED)
+- Independent stacked branch from unmerged cycle1074 PR #475; scene 07 only (frames 520–608, 17.333–20.300s). Original vector gutter checkmarks sequentially guide purpose / condition / output format on a **static** real Writer screenshot; not a recording of actual input.
+- Reusable 10-genre palette code: `quality/cycle1076/writer_review.py`; 18 local unit tests PASS; original/private MP4 never committed. Source hash fail-closed; existing narration and burned-in subtitles intentionally unchanged.
+- Private local MP4: 23.033333s / 691 frames / 1080x1920 30fps H.264 / AAC 48kHz stereo. Source SHA256 `1625df39f27e63dbb5c40ceeeff09b3be7949ad485d6a4455bb2832db0ca24f8`; output SHA256 `baf49198026575d770ae43fb1952278fe2afac5e963920fcbbe146536187ccee`. Full A/V decode PASS; ADTS audio bit-identical; subtitle protected region max mean pixel difference 1.2637/255; target region mean 10.0192/255.
+- GitHub CI only tests **synthetic 21s** video, not actual 23s private MP4. Verify workflow run conclusion before calling CI successful.
+- Research summaries available, full TikTok市場分析/TikTok動画研究 chats and original v33 reference MP4 not accessible. Reference 16-panel storyboard still materially richer than 8-scene current video. Independent Japanese ASR/semantic subtitle check, publication rights, smartphone playback, employee approval, actual Actions billing remain UNVERIFIED. No merge, paid service, auto-post, or public media upload.
