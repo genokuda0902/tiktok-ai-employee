@@ -17,7 +17,7 @@ jobs:
       - name: Install free dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y ffmpeg python3-pil
+          sudo apt-get install -y ffmpeg python3-pil fonts-noto-cjk
       - name: Ten-genre and caption-safe unit tests
         run: /usr/bin/python3 -m unittest quality.cycle1078.test_real_calc_capture -v
       - name: Synthetic nine-second A/V full-decode smoke
