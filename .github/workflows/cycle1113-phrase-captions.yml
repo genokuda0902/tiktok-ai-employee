@@ -1,0 +1,50 @@
+name: cycle1113 offline Japanese phrase captions QA
+on:
+  push:
+    branches:
+      - quality/cycle1113-voice-phrase-captions-20261031
+  pull_request:
+    paths:
+      - 'cycle1113/**'
+      - '.github/workflows/cycle1113-phrase-captions.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free offline rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Test pause detection, fail-closed, ten genres and subtitle safe area
+        run: python -m unittest discover -s cycle1113/tests -v
+      - name: Generate synthetic 2s source with two separated audio phrases
+        run: |
+          python - <<'PY'
+          import math,struct,wave
+          with wave.open('/tmp/phrases.wav','wb') as w:
+            w.setnchannels(1);w.setsampwidth(2);w.setframerate(48000)
+            data=bytearray()
+            for i in range(96000):
+              t=i/48000
+              on=(.15<t<.70) or (1.10<t<1.85)
+              amp=6000*math.sin(2*math.pi*240*t) if on else 0
+              data+=struct.pack('<h',int(amp))
+            w.writeframes(data)
+          PY
+          ffmpeg -v error -y -f lavfi -i color=c=0x06172a:s=1080x1920:r=30:d=2 -i /tmp/phrases.wav -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/phrase_input.mp4
+      - name: Render actual two-phrase synthetic video and fully decode
+        run: |
+          PYTHONPATH=cycle1113/code python - <<'PY'
+          from phrase_captions import render
+          r=render('/tmp/phrase_input.mp4','/tmp/phrase_output.mp4',scenes=[(0,2,'前半の字幕','後半の字幕')],preset='ultrafast')
+          assert len(r['reveals'])==1 and .90<r['reveals'][0]<1.25,r
+          print(r)
+          PY
+          ffmpeg -v error -xerror -i /tmp/phrase_output.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate -of json /tmp/phrase_output.mp4
+      - name: Safety
+        run: echo 'SYNTHETIC ONLY; NO POSTING, NO PAID API, NO PRIVATE MEDIA, HUMAN REVIEW'
