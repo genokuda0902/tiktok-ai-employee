@@ -1,0 +1,42 @@
+name: cycle1115 original Japanese image slides QA
+on:
+  push:
+    branches:
+      - quality/cycle1115-original-jp-slides-20261031
+  pull_request:
+    paths:
+      - 'cycle1115/**'
+      - '.github/workflows/cycle1115-original-slides.yml'
+permissions:
+  contents: read
+jobs:
+  offline-synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow
+      - name: Run Japanese slide geometry and 10-genre tests
+        run: python -m unittest discover -s cycle1115/tests -v
+      - name: Create synthetic audio-only input
+        run: |
+          ffmpeg -v error -y -f lavfi -i "sine=frequency=330:sample_rate=48000:duration=2" -c:a aac /tmp/synthetic.m4a
+      - name: Render 2-second synthetic slide and fully decode
+        run: |
+          python cycle1115/code/slide_template.py /tmp/synthetic.m4a /tmp/cycle1115_synthetic.mp4 --seconds 2
+          ffmpeg -v error -xerror -i /tmp/cycle1115_synthetic.mp4 -f null -
+          python - <<'PY'
+          import json,subprocess
+          p=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','stream=codec_name,width,height,r_frame_rate','-of','json','/tmp/cycle1115_synthetic.mp4']))
+          v=p['streams'][0]
+          assert (v['width'],v['height'])==(1080,1920),p
+          assert v['r_frame_rate']=='30/1',p
+          assert any(s['codec_name']=='aac' for s in p['streams']),p
+          print('SYNTHETIC QA PASS')
+          PY
+      - name: Review and rights boundary
+        run: echo 'Synthetic CI only; local actual MP4 separately reviewed. No publishing, no paid API, no external imagery.'
