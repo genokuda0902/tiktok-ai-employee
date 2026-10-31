@@ -4,10 +4,12 @@ on:
     paths:
       - 'quality/cycle1080/**'
       - '.github/workflows/cycle1080-proof-before-after.yml'
+      - 'PROJECT_HANDOFF.md'
   pull_request:
     paths:
       - 'quality/cycle1080/**'
       - '.github/workflows/cycle1080-proof-before-after.yml'
+      - 'PROJECT_HANDOFF.md'
 jobs:
   synthetic-only:
     runs-on: ubuntu-latest
