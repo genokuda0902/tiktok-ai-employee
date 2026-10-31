@@ -1,0 +1,28 @@
+name: cycle1044 replay-loop and audio-boundary synthetic QA
+on:
+  push:
+    branches:
+      - automation/cycle1044-replay-loop-audio-audit-20261031
+  pull_request:
+    paths:
+      - 'cycle1044/**'
+      - '.github/workflows/cycle1044-replay-loop-qa.yml'
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free media tooling
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Install free Python dependencies
+        run: python -m pip install --disable-pip-version-check 'numpy>=1.24,<3' 'Pillow>=10,<13'
+      - name: Run loop bridge and acoustic pause unit tests
+        run: python -m unittest discover -s cycle1044/tests -p 'test_*.py' -v
+      - name: Synthetic 2s A/V full decode (no private footage)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x0c2338:s=270x480:r=30:d=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -t 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac /tmp/cycle1044_synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle1044_synthetic.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=duration -of json /tmp/cycle1044_synthetic.mp4
