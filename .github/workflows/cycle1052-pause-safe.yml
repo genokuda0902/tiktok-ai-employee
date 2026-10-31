@@ -16,6 +16,10 @@ jobs:
           python-version: '3.11'
       - name: Unit tests for 10 genres and no-speech-masking guard
         run: python -m unittest discover -s quality/cycle1052/tests -v
+      - name: Install free FFmpeg package
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Synthetic H264/AAC video render and decode
         run: |
           ffmpeg -version
