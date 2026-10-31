@@ -1,0 +1,24 @@
+name: cycle1072-scene-light-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1072/**'
+      - '.github/workflows/cycle1072-scene-light.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1072/**'
+      - '.github/workflows/cycle1072-scene-light.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg python3-pil
+      - name: Ten-genre unit tests
+        run: /usr/bin/python3 -m unittest quality.cycle1072.test_scene_light -v
+      - name: Full synthetic H264/AAC render and decode
+        run: /usr/bin/python3 -m quality.cycle1072.scene_light --smoke
