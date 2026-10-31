@@ -1,0 +1,24 @@
+name: cycle1082-data-chart-bridge-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1082/**'
+      - '.github/workflows/cycle1082-chart-bridge.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1082/**'
+      - '.github/workflows/cycle1082-chart-bridge.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg python3-pil fonts-noto-cjk
+      - name: Unit tests including ten genre palettes and safe captions
+        run: /usr/bin/python3 -m unittest quality.cycle1082.test_chart_bridge -v
+      - name: Synthetic 15-second H264/AAC smoke
+        run: /usr/bin/python3 -m quality.cycle1082.chart_bridge --smoke
