@@ -5,7 +5,7 @@ Date: 2026-10-31 JST. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
 ## Sources and research
 - Inspected latest main 18e084c, open PRs including #444, PROJECT_HANDOFF.md, recovery/v33/RECOVERY_STATUS.md, and the cycle1042 implementation/test/workflow.
 - Accessible summaries from TikTok市場分析 and TikTok動画研究: 0–1.5s hook, proof-first, real operation imagery, short purposeful cuts, readable Japanese captions, manual approval/posting. Full original research chat texts unavailable.
-- User's original 16-panel storyboard was described in previously verified context, but was **not directly opened this run**. Original v33 MP4 was unavailable. Prior original v33 is 31.553s 512×910 according to repo recovery status; storyboard is ~36s/16 panels.
+- User's original `ChatGPT×Excel時短術16コマ絵コンテ.png` was **directly opened and visually inspected this run** from the Library. Its 16 panels show a cinematic 3D robot, human problem shot, ChatGPT prompt/Excel operation, Before/After, CTA and outro. Original v33 MP4 was unavailable. Prior original v33 is 31.553s 512×910 according to repo recovery status; storyboard is ~36s/16 panels.
 
 ## Distinct change versus cycle1042
 - Prior cycle1042: 1.5–2.9s three-cut teaser. This cycle: **22.433–23.033s replay-loop bridge** in upper y<1280. Last 18 frames reveal the first frame through an expanding soft circle, reducing the upper-image loop seam without touching original AAC or lower burned Japanese captions.
