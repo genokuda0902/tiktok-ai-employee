@@ -1,0 +1,24 @@
+name: cycle1070-format-reveal-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1070/**'
+      - '.github/workflows/cycle1070-format-reveal.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1070/**'
+      - '.github/workflows/cycle1070-format-reveal.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install synthetic-only dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk python3-pil
+      - name: Unit tests
+        run: /usr/bin/python3 -m unittest quality.cycle1070.test_format_reveal -v
+      - name: Synthetic H264 AAC 23-second smoke (no private assets)
+        run: /usr/bin/python3 -m quality.cycle1070.format_reveal --smoke
