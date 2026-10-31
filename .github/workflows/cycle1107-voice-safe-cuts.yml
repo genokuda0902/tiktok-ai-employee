@@ -1,0 +1,42 @@
+name: cycle1107 voice-safe cuts offline QA
+on:
+  push:
+    branches:
+      - quality/cycle1107-voice-safe-cuts-20261031
+  pull_request:
+    paths:
+      - 'cycle1107/**'
+      - '.github/workflows/cycle1107-voice-safe-cuts.yml'
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s cycle1107/tests -p 'test_*.py' -v
+      - name: Synthetic 22.5s video and audio render (not user media)
+        shell: bash
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x08172c:s=270x480:r=30:d=22.5 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=22.5 \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -shortest /tmp/cycle1107_input.mp4
+          python cycle1107/voice_safe_cuts.py /tmp/cycle1107_input.mp4 /tmp/cycle1107_output.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle1107_output.mp4 -f null -
+          python - <<'PY'
+          import json,subprocess
+          out=subprocess.check_output(['ffprobe','-v','error','-count_frames',
+             '-show_entries','format=duration:stream=codec_type,nb_read_frames:chapter=start_time,end_time',
+             '-of','json','/tmp/cycle1107_output.mp4'])
+          data=json.loads(out)
+          assert len(data['chapters'])==8
+          assert abs(float(data['format']['duration'])-22.5)<.03
+          assert next(s for s in data['streams'] if s['codec_type']=='video')['nb_read_frames']=='675'
+          print('SYNTHETIC PASS: 675 frames, 8 chapters, full A/V decode')
+          PY
