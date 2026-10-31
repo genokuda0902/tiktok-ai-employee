@@ -1,0 +1,50 @@
+name: cycle1109 Japanese-first chrome offline QA
+on:
+  push:
+    branches:
+      - quality/cycle1109-japanese-first-chrome-20261031
+  pull_request:
+    paths:
+      - 'cycle1109/**'
+      - '.github/workflows/cycle1109-jp-chrome.yml'
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install Pillow
+      - name: Unit tests for all ten genres
+        run: python -m unittest discover -s cycle1109/tests -p 'test_*.py' -v
+      - name: Synthetic 2-second 1080x1920 video (NOT user media)
+        shell: bash
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x06172a:s=1080x1920:r=30:d=2 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -shortest /tmp/cycle1109_input.mp4
+          python cycle1109/code/jp_chrome.py \
+            /tmp/cycle1109_input.mp4 /tmp/cycle1109_output.mp4 \
+            --duration 2 --scene1-end 0.7
+          ffmpeg -v error -xerror -i /tmp/cycle1109_output.mp4 -f null -
+          python - <<'PY'
+          import json, subprocess
+          data=json.loads(subprocess.check_output([
+              'ffprobe','-v','error','-count_frames',
+              '-show_entries','format=duration:stream=codec_type,codec_name,width,height,nb_read_frames',
+              '-of','json','/tmp/cycle1109_output.mp4']))
+          v=next(s for s in data['streams'] if s['codec_type']=='video')
+          a=next(s for s in data['streams'] if s['codec_type']=='audio')
+          assert (v['width'],v['height'])==(1080,1920)
+          assert int(v['nb_read_frames'])==60
+          assert v['codec_name']=='h264' and a['codec_name']=='aac'
+          assert abs(float(data['format']['duration'])-2)<0.04
+          print('SYNTHETIC PASS: 1080x1920, 60 frames, H264/AAC, full decode')
+          PY
