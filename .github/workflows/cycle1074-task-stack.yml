@@ -1,0 +1,24 @@
+name: cycle1074-task-stack-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1074/**'
+      - '.github/workflows/cycle1074-task-stack.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1074/**'
+      - '.github/workflows/cycle1074-task-stack.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg python3-pil
+      - name: Ten-genre unit tests
+        run: /usr/bin/python3 -m unittest quality.cycle1074.test_task_stack -v
+      - name: Six-second synthetic video and full decode
+        run: /usr/bin/python3 -m quality.cycle1074.task_stack --smoke
