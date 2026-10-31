@@ -1,0 +1,31 @@
+name: cycle1149 voice-onset caption accent (synthetic)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1149/**'
+      - '.github/workflows/cycle1149-speech-onset-review.yml'
+  push:
+    paths:
+      - 'quality/cycle1149/**'
+      - '.github/workflows/cycle1149-speech-onset-review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+      - name: Install free Python dependency
+        run: python -m pip install numpy
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1149/tests -v
+      - name: Synthetic 60-frame H264 and AAC render/decode
+        run: python quality/cycle1149/code/ci_synthetic.py
