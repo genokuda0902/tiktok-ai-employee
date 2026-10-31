@@ -36,3 +36,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Actual local review MP4 SHA-256 87ea4a7995f726edcb12739a7b6a6ce08bc13ce3ef5ffe61cf7cd8ca01581bfd. 23.033s / 691 frames / H264 1080x1920 30fps / inherited Japanese AAC 48kHz. Full decode PASS, ADTS audio bitstream identical, protected caption ROI max mean pixel delta 0.5328/255, exactly 82 changed frames. Seven local unit tests and synthetic 0.5s smoke PASS. GitHub CI status must be checked on final head; CI does NOT verify private full MP4.
 - Research: past accessible summaries of TikTok市場分析/TikTok動画研究 and original 16-panel user storyboard directly inspected; full research transcripts and v33 original MP4 unavailable this run. Reference still has richer cinematic human/robot and real UI operations.
 - Still blocked for publication: independent spoken Japanese transcription/semantic subtitle sync (especially 20.300s), asset/voice release rights, phone playback, employee approval, actual Actions billing. No merge, no automatic posting, no paid services, no public upload of private media. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+
+
+## Verified development checkpoint — cycle1074 (2026-11-01 JST, REVIEW ONLY)
+- Stacked Draft PR: https://github.com/genokuda0902/tiktok-ai-employee/pull/475 (base: unmerged cycle1072 PR #473; **not main**).
+- Added reusable 10-genre vector task-stack animation to scene 02, 2.900–5.800s, avoiding subtitle region. Code: quality/cycle1074/task_stack.py; 14 local unit tests PASS. Prior cycle1072 animated only the opening hook; concurrent PR #474 addresses caption zoom separately.
+- Local **private** MP4 produced, 23.033333s/691 frames/H264 1080x1920 30fps/AAC 48kHz. Full decode PASS; original AAC ADTS bitstream identical. Max caption-region mean pixel difference 1.2623/255; target region 87-frame mean difference 17.63018/255. The actual MP4 and extracted audio are NOT uploaded to GitHub.
+- GitHub Actions workflow tests a synthetic 6s H264/AAC video, not the actual private MP4. Check CI status in PR before asserting success.
+- Original v33 reference MP4 and original generation source not available in this run. Available 16-panel storyboard directly inspected. Prior TikTok market/video research summaries consulted; full source chats unavailable. Independent Japanese ASR and semantic subtitle match, smartphone playback, release rights and employee approval remain **UNVERIFIED**.
+- No merge, auto-post, public release, payment, or production deployment. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
