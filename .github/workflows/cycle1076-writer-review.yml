@@ -1,0 +1,24 @@
+name: cycle1076-writer-review-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1076/**'
+      - '.github/workflows/cycle1076-writer-review.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1076/**'
+      - '.github/workflows/cycle1076-writer-review.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg python3-pil
+      - name: Ten-genre unit tests
+        run: /usr/bin/python3 -m unittest quality.cycle1076.test_writer_review -v
+      - name: Synthetic 21-second A/V full-decode smoke
+        run: /usr/bin/python3 -m quality.cycle1076.writer_review --smoke
