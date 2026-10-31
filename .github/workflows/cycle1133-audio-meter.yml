@@ -1,0 +1,40 @@
+name: Cycle1133 audio-responsive visual QA
+on:
+  push:
+    branches:
+      - quality/cycle1133-audio-reactive-20261031
+    paths:
+      - 'quality/cycle1133/**'
+      - '.github/workflows/cycle1133-audio-meter.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1133/**'
+      - '.github/workflows/cycle1133-audio-meter.yml'
+permissions:
+  contents: read
+jobs:
+  offline-test-and-synthetic-av:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open source test dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pillow
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+      - name: Run component tests
+        run: python -m unittest discover -s quality/cycle1133/tests -p 'test_*.py' -v
+      - name: Render all ten genres
+        run: |
+          PYTHONPATH=quality/cycle1133 python - <<'PY'
+          from voice_meter import PALETTES,meter_frame
+          for genre in PALETTES:
+              im=meter_frame(.7,genre,5)
+              assert im.size==(160,112)
+          print('10/10 palettes rendered')
+          PY
+      - name: Synthetic 1-second H264 AAC smoke test (NOT the private MP4)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x102b42:s=360x640:r=30:d=1 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=1 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1133_synthetic.mp4
+          ffmpeg -v error -xerror -i /tmp/cycle1133_synthetic.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height -of json /tmp/cycle1133_synthetic.mp4
