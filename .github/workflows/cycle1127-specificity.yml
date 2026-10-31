@@ -1,0 +1,25 @@
+name: cycle1127 specificity-edit smoke
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1127/**'
+      - '.github/workflows/cycle1127-specificity.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies and FFmpeg
+        run: |
+          python -m pip install --disable-pip-version-check pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1127/tests -v
+      - name: Synthetic MP4 encode and full decode
+        run: python quality/cycle1127/ci_smoke.py
