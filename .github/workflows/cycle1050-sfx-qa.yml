@@ -1,0 +1,49 @@
+name: cycle1050 original transition SFX synthetic QA
+on:
+  push:
+    branches:
+      - quality/cycle1050-original-transition-sfx-20261031
+  pull_request:
+    paths:
+      - 'quality/cycle1050/**'
+      - '.github/workflows/cycle1050-sfx-qa.yml'
+permissions:
+  contents: read
+jobs:
+  offline-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          python -m pip install --disable-pip-version-check numpy
+          ffmpeg -version | head -1
+      - name: Unit tests for ten genres and narration protection
+        run: python -m unittest discover -s quality/cycle1050/tests -v
+      - name: Generate synthetic 2-second H264 AAC media
+        run: |
+          ffmpeg -v error -y -f lavfi -i 'color=c=0x061426:s=1080x1920:r=30:d=2' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=2' -t 2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac /tmp/synthetic.mp4
+      - name: Mix original SFX into synthetic media and full decode
+        run: |
+          python quality/cycle1050/original_sfx.py /tmp/synthetic.mp4 /tmp/synthetic_sfx.mp4 --boundaries 0.9,1.4 --report /tmp/sfx_report.json
+          ffmpeg -v error -xerror -i /tmp/synthetic_sfx.mp4 -f null -
+          python - <<'PY'
+          import hashlib,json,subprocess
+          def stream_hash(p):
+              b=subprocess.check_output(['ffmpeg','-v','error','-i',p,'-map','0:v','-c:v','copy','-f','h264','-'])
+              return hashlib.sha256(b).hexdigest()
+          assert stream_hash('/tmp/synthetic.mp4')==stream_hash('/tmp/synthetic_sfx.mp4')
+          j=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_entries','stream=codec_name,width,height,nb_frames','-show_entries','format=duration','-of','json','/tmp/synthetic_sfx.mp4']))
+          v=next(x for x in j['streams'] if x['codec_name']=='h264')
+          assert (v['width'],v['height'])==(1080,1920),j
+          assert int(v['nb_frames'])==60,j
+          assert any(x['codec_name']=='aac' for x in j['streams']),j
+          assert float(j['format']['duration'])>=1.99,j
+          print('PASS: 2s synthetic full decode, video bitstream unchanged, 1080x1920 H264/AAC')
+          PY
+      - name: Safety notice
+        run: echo 'Synthetic QA only. No private MP4, no publication, no paid service, no merge.'
