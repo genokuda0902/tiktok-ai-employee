@@ -1,0 +1,31 @@
+name: cycle1062 real Calc sample review QA
+on:
+  push:
+    branches:
+      - 'quality/cycle1062-real-calc-sample-20261031'
+    paths:
+      - 'quality/cycle1062/**'
+      - '.github/workflows/cycle1062-real-calc.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1062/**'
+      - '.github/workflows/cycle1062-real-calc.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline QA dependencies
+        run: |
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Unit tests including 10 genre palettes and protected pixels
+        run: python -m unittest quality.cycle1062.test_real_calc_sample -v
+      - name: Synthetic H264 AAC smoke only
+        run: python -m quality.cycle1062.real_calc_sample --smoke
