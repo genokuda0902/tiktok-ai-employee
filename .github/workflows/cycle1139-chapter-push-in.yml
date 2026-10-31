@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Free FFmpeg check
-        run: command -v ffmpeg && command -v ffprobe
+        run: |
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+          command -v ffprobe
       - name: Eight unit tests
         run: cd quality/cycle1139 && python -m unittest -v test_scene_push_in
       - name: Create synthetic media with chapters (never user audio)
