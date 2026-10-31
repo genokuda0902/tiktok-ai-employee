@@ -1,0 +1,31 @@
+name: cycle1068 scene bridge cleanup synthetic QA
+on:
+  push:
+    branches:
+      - 'quality/cycle1068-bridge-cleanup-20261101'
+    paths:
+      - 'quality/cycle1068/**'
+      - '.github/workflows/cycle1068-bridge-cleanup.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1068/**'
+      - '.github/workflows/cycle1068-bridge-cleanup.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Run ten-genre and safety tests
+        run: python -m unittest quality.cycle1068.test_bridge_cleanup -v
+      - name: Synthetic H264 AAC full render
+        run: python -m quality.cycle1068.bridge_cleanup --smoke
