@@ -1,0 +1,55 @@
+name: cycle1139 chapter-aware push-in synthetic QA
+on:
+  push:
+    branches: ['quality/cycle1139-chapter-push-in-20261101']
+  pull_request:
+    paths:
+      - 'quality/cycle1139/**'
+      - '.github/workflows/cycle1139-chapter-push-in.yml'
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Free FFmpeg check
+        run: |
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+          command -v ffprobe
+      - name: Eight unit tests
+        run: cd quality/cycle1139 && python -m unittest -v test_scene_push_in
+      - name: Create synthetic media with chapters (never user audio)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=1080x1920:rate=30:duration=2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/source.mp4
+          cat > /tmp/chapters.ffmeta <<'EOF'
+          ;FFMETADATA1
+          [CHAPTER]
+          TIMEBASE=1/1000
+          START=0
+          END=1000
+          title=Scene 1
+          [CHAPTER]
+          TIMEBASE=1/1000
+          START=1000
+          END=2000
+          title=Scene 2
+          EOF
+          ffmpeg -hide_banner -loglevel error -y -i /tmp/source.mp4 -i /tmp/chapters.ffmeta -map_metadata 1 -map_chapters 1 -c copy /tmp/chapters.mp4
+          python quality/cycle1139/scene_push_in.py /tmp/chapters.mp4 /tmp/cycle1139_synthetic.mp4
+          ffmpeg -v error -i /tmp/cycle1139_synthetic.mp4 -f null -
+          python - <<'PY'
+          import json,subprocess
+          d=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_chapters','-of','json','/tmp/cycle1139_synthetic.mp4']))
+          v=next(s for s in d['streams'] if s['codec_type']=='video')
+          a=next(s for s in d['streams'] if s['codec_type']=='audio')
+          assert (v['width'],v['height'],v['avg_frame_rate'],int(v['nb_frames']))==(1080,1920,'30/1',60)
+          assert a['codec_name']=='aac'
+          assert len(d['chapters'])==2
+          print('PASS: synthetic full decode, 1080x1920 30fps 60 frames, AAC, chapters')
+          PY
+      - name: Upload synthetic-only QA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cycle1139-synthetic-qa
+          path: /tmp/cycle1139_synthetic.mp4
+          retention-days: 3
