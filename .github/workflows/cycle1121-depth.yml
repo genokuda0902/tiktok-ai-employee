@@ -1,0 +1,25 @@
+name: cycle1121 depth story smoke
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1121/**'
+      - '.github/workflows/cycle1121-depth.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pillow
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1121/tests -v
+      - name: Synthetic vertical video full decode
+        run: python quality/cycle1121/ci_smoke.py
