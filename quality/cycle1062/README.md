@@ -6,11 +6,11 @@ Full review-only MP4 generated privately in ChatGPT: 23.033333s, 691 frames, H.2
 
 Run locally with a private sanitized screenshot and private source MP4 (neither committed):
 
-\`python -m quality.cycle1062.real_calc_sample --source /private/cycle1060.mp4 --screenshot /private/calc_real_optimal.png --source-sha256 <sha> --screenshot-sha256 <sha> --out /private/cycle1062.mp4 --work /private/tmp\`
+`python -m quality.cycle1062.real_calc_sample --source /private/cycle1060.mp4 --screenshot /private/calc_real_optimal.png --source-sha256 <sha> --screenshot-sha256 <sha> --out /private/cycle1062.mp4 --work /private/tmp`
 
-Tests: \`python -m unittest quality.cycle1062.test_real_calc_sample -v\`. CI smoke uses **synthetic 0.5s H.264/AAC**, NOT the real 23-second review MP4. Generic palettes for 10 genres, only AI-work full MP4 generated; unknown genres and wrong input hashes rejected.
+Tests: `python -m unittest quality.cycle1062.test_real_calc_sample -v`. CI smoke uses **synthetic 0.5s H.264/AAC**, NOT the real 23-second review MP4. Generic palettes for 10 genres, only AI-work full MP4 generated; unknown genres and wrong input hashes rejected.
 
-Research: accessible previous summaries of TikTok市場分析/TikTok動画研究 (strong 1.5s hook, real UI, purposeful short cuts, clear captions and manual review), plus earlier verified user-supplied 16-panel storyboard. Full original chats, original storyboard pixels this run, and v33 MP4 are not accessible. Main checked: 18e084c; base draft PR #461; PROJECT_HANDOFF.md and recovery/v33/RECOVERY_STATUS.md reviewed.
+Research: accessible previous summaries of TikTok市場分析/TikTok動画研究 (strong 1.5s hook, real UI, purposeful short cuts, clear captions and manual review), and the user's original 16-panel storyboard, directly inspected from the Library this run. Full original research chats and original v33 MP4 are not accessible. Main checked: 18e084c; base draft PR #461; PROJECT_HANDOFF.md and recovery/v33/RECOVERY_STATUS.md reviewed.
 
 Reference gap: 8 scenes/23s vs 16 panels/~36s with cinematic human/robot imagery and continuous screen interaction. Japanese spoken-word transcription/pronunciation/semantic subtitle sync (especially 20.300s), rights, mobile playback, employee approval, and actual Actions billing remain unverified.
 
