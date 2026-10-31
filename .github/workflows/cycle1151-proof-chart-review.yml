@@ -1,0 +1,31 @@
+name: cycle1151 animated proof chart (synthetic)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1151/**'
+      - '.github/workflows/cycle1151-proof-chart-review.yml'
+  push:
+    paths:
+      - 'quality/cycle1151/**'
+      - '.github/workflows/cycle1151-proof-chart-review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and Japanese font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - name: Install free dependency
+        run: python -m pip install pillow
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1151/tests -v
+      - name: Synthetic 270-frame render and full decode
+        run: python quality/cycle1151/code/ci_synthetic.py
