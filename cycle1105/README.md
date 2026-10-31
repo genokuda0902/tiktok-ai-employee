@@ -12,7 +12,7 @@
 - Mean immediate chapter-cut pixel-change reduction: 71.32% over seven cuts; this is a transition smoothness proxy, **not** proof of higher watch time.
 - Full audio/video decode PASS, original/output ADTS audio payload SHA-256 identical; lower learning rail sampled max MAE 1.277/255.
 - Local tests 9/9 PASS. Synthetic GitHub CI is **not** the actual 22.5-second video.
-- Actual output SHA-256: b8d0141c4cc855c11a52dfaef6ad59ff6a403d0174e2b3abf0adc5027ac31dab (superseded by verified final output if updated).
+- Actual output SHA-256: 0441c69da1a0edf299b305c822c15515d5ffcb2894a5b5eb9a66c8dfe9be0926 (superseded by verified final output if updated).
 
 ## Reproduction
 `python cycle1105/scene_safe_dip.py --source <private_source.mp4> --dest <private_output.mp4> --expected-sha <source_sha256> --genre ai_work`
