@@ -1,0 +1,26 @@
+name: cycle1135 original scene sweep synthetic QA
+on:
+  push:
+    branches: ['quality/cycle1135-scene-sweep-20261031']
+  pull_request:
+    paths:
+      - 'quality/cycle1135/**'
+      - '.github/workflows/cycle1135-scene-sweep.yml'
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check pillow
+      - name: Unit tests for ten genres
+        run: python -m unittest discover -s quality/cycle1135 -p 'test_*.py' -v
+      - name: Synthetic-only H264/AAC rendering and full decode
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x071d2c:s=1080x1920:r=30:d=3.2 -f lavfi -i sine=frequency=440:sample_rate=48000:duration=3.2 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/source.mp4
+          python quality/cycle1135/scene_sweep.py /tmp/source.mp4 /tmp/result.mp4
+          ffmpeg -v error -i /tmp/result.mp4 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,avg_frame_rate -of default=nw=1 /tmp/result.mp4
