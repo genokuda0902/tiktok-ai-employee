@@ -1,0 +1,24 @@
+name: cycle1078-real-calc-capture-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1078/**'
+      - '.github/workflows/cycle1078-real-calc-capture.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1078/**'
+      - '.github/workflows/cycle1078-real-calc-capture.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg python3-pil
+      - name: Ten-genre and caption-safe unit tests
+        run: /usr/bin/python3 -m unittest quality.cycle1078.test_real_calc_capture -v
+      - name: Synthetic nine-second A/V full-decode smoke
+        run: /usr/bin/python3 -m quality.cycle1078.real_calc_capture --smoke
