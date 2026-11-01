@@ -1,0 +1,19 @@
+name: Quality cycle1179 main diagram clarity (synthetic only)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1179/**'
+      - '.github/workflows/quality-cycle1179.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+      - name: Unit and synthetic H264/AAC integration tests
+        run: python -m unittest discover -s quality/cycle1179/tests -v
