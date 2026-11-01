@@ -1,0 +1,24 @@
+name: Quality cycle1116 provenance safety (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1116/**'
+      - '.github/workflows/quality-cycle1116.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1116/**'
+      - '.github/workflows/quality-cycle1116.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free offline tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install Pillow
+      - name: Ten genre contrast, caption safety and synthetic A/V
+        run: python -m unittest discover -s quality/cycle1116 -p 'test_*.py' -v
