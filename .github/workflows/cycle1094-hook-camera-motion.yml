@@ -1,0 +1,22 @@
+name: cycle1094-hook-camera-motion-synthetic
+on:
+  push:
+    paths:
+      - 'quality/cycle1094/**'
+      - '.github/workflows/cycle1094-hook-camera-motion.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1094/**'
+      - '.github/workflows/cycle1094-hook-camera-motion.yml'
+jobs:
+  synthetic-review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free rendering dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg python3-pil
+      - name: Ten-genre unit tests and rights gate
+        run: python3 -m unittest discover -s quality/cycle1094 -p 'test_*.py' -v
+      - name: Render and decode synthetic audio/video
+        run: python3 -m quality.cycle1094.hook_camera_motion --smoke
