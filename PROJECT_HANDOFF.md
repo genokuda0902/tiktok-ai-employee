@@ -86,6 +86,6 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 
 ## 2026-11-01 — cycle1100 review-only Calc formula focus (stacked on open PR #499)
 - Source: cycle1098 local MP4 SHA256 `71be71788fd58ffdf17862d61c4984c6ad5637ea44d4fe277b59748dd4f82cea`. Local cycle1100 output SHA256 `739599eafb7b2150ade1aa79aeef1dbd4f0390990c6236c33a4cc7ebc8754f54` (private ChatGPT review artifact; NOT committed).
-- Changed chapter03 frames 195–248, formula `=SUM(C2:C4)` then fictional 46/29 totals. 14 unit tests, full 23.033s 691-frame A/V decode, H264 1080x1920/30fps, Japanese-tagged AAC 48kHz ADTS bit-identical. All-frame quarter-resolution subtitle protection max delta 0.8928/255. Ten palettes tested; one genre rendered.
+- Changed chapter03 frames 195–248, formula `=SUM(C2:C4)` then fictional 46/29 totals. 14 unit tests, full 23.033s 691-frame A/V decode, H264 1080x1920/30fps, AAC 48kHz ADTS bit-identical (spoken Japanese per prior review; stream metadata `und`; no independent ASR). All-frame quarter-resolution subtitle protection max delta 0.8928/255. Ten palettes tested; one genre rendered.
 - Original 16-panel storyboard inspected; v33 original MP4 and full research chats inaccessible this run. Independent ASR/semantic subtitle sync, commercial rights, phone playback, employee approval, Actions charges NOT VERIFIED. GitHub CI tests synthetic 9-second A/V, not private MP4.
 - **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No merge, paid services, confidential media upload, or automatic posting. See `quality/cycle1100/README.md`.
