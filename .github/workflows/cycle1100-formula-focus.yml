@@ -1,0 +1,28 @@
+name: cycle1100-calc-formula-focus-synthetic
+on:
+  push:
+    paths:
+      - 'quality/cycle1100/**'
+      - '.github/workflows/cycle1100-formula-focus.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1100/**'
+      - '.github/workflows/cycle1100-formula-focus.yml'
+  workflow_dispatch:
+jobs:
+  offline-synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install zero-license-fee offline tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg python3-pil fonts-noto-cjk
+      - name: Ten-genre / privacy / geometry tests
+        run: python3 -m unittest discover -s quality/cycle1100 -p 'test_*.py' -v
+      - name: Render and decode synthetic A/V (not the private review MP4)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x071a2d:s=1080x1920:r=30:d=9' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=9' -c:v libx264 -preset ultrafast -crf 34 -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1100_synthetic.mp4
+          sha256sum /tmp/cycle1100_synthetic.mp4 | cut -d' ' -f1 > /tmp/source.sha
+          python3 quality/cycle1100/calc_formula_focus.py --source /tmp/cycle1100_synthetic.mp4 --source-sha "$(cat /tmp/source.sha)" --out /tmp/cycle1100_out.mp4 --manifest quality/cycle1100/manifest.json --report /tmp/cycle1100_qa.json
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/cycle1100_out.mp4 -f null -
+          python3 -c "import json; q=json.load(open('/tmp/cycle1100_qa.json')); assert q['audio_bitstream_identical']"
