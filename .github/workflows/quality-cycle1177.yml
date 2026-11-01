@@ -1,0 +1,22 @@
+name: Quality cycle1177 speech pause cue (synthetic only)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1177/**'
+      - '.github/workflows/quality-cycle1177.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free FFmpeg and Pillow
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --user pillow
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1177/tests -v
+      - name: Synthetic 1080x1920 H264 AAC end-to-end
+        run: python quality/cycle1177/code/synthetic_ci.py
