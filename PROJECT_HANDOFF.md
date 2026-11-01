@@ -110,3 +110,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Fixed observed scene02 contradictory top chapter label `STEP 01/08` versus lower caption `02/08`, replacing only the header digits with `02` for 2.9–5.8s. See `quality/cycle1114/RESULT.md` for local 23.033s MP4 SHA and tests.
 - 10 genre palette definitions, local 5 tests and synthetic H264/AAC integration. CI uses synthetic 1s only; private MP4 not committed.
 - v33 original source/video not recovered. Independent Japanese ASR/semantic timing, inherited rights, phone playback and employee approval remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED.
+
+
+## 2026-11-02 — cycle1116 provenance and human-review clarity (REVIEW ONLY)
+- Based on unmerged cycle1114 Draft PR #515, not main. Branch `quality/cycle1116-provenance-20261102`; no merge.
+- Distinct change: high-contrast provenance/safety banner at 14.300–17.333s, `架空データ｜数値は人が確認` and `社内レビュー用・公開／投稿は未承認`. Shared ten-genre palette, contrast >=7:1, source SHA fail-closed, no captions covered.
+- Private real MP4 SHA256 `36c940b02ebf5818477c04ee51329a0efac3fb51534ab2a836af17e0e78945e6`, 23.033333s / 691 frames / H264 1080x1920 30fps / AAC 48kHz. Full A/V decode PASS, AAC ADTS bit-identical. Local 6 unit tests including synthetic integration PASS. CI tests synthetic content only; confirm final workflow conclusion separately.
+- All 691 frames quarter-scale compared: protected caption y>=1280 max mean delta 0.25070/255; edited banner mean 55.9305/255. The real video stays in the ChatGPT private review artifact, not GitHub.
+- Original full TikTok research chats and reference v33 MP4 unavailable; user's 16-panel storyboard directly inspected. Japanese ASR/semantic subtitle timing, mobile hardware, publication rights, employee signoff and actual Actions billing UNVERIFIED. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, paid service, or public private-media upload.
