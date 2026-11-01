@@ -1,0 +1,40 @@
+name: Quality cycle1163 status-strip repair (synthetic)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1163/**'
+      - '.github/workflows/quality-cycle1163.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install --upgrade pillow
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1163 -p 'test_*.py' -v
+      - name: Synthetic 22.5s H264/AAC input (no private media)
+        run: |
+          mkdir -p /tmp/cycle1163
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x081e2b:s=1080x1920:r=30:d=22.5' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=22.5' \
+            -map 0:v:0 -map 1:a:0 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -b:a 96k -frames:v 675 -t 22.5 /tmp/cycle1163/input.mp4
+      - name: Render synthetic output
+        run: |
+          python quality/cycle1163/status_strip_cleanup.py \
+            --source /tmp/cycle1163/input.mp4 \
+            --output /tmp/cycle1163/output.mp4 \
+            --patch /tmp/cycle1163/patch.png --preset ultrafast
+      - name: Verify output frame count and full decode
+        run: |
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of default=nw=1:nk=1 /tmp/cycle1163/output.mp4)" = 675
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0:s=x /tmp/cycle1163/output.mp4)" = '1080x1920'
+          ffmpeg -v error -xerror -i /tmp/cycle1163/output.mp4 -map 0:v:0 -f null - -map 0:a:0 -f null -
+          echo 'Synthetic A/V smoke PASS; real private MP4 is not in CI'
