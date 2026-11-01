@@ -1,0 +1,43 @@
+name: Quality cycle1171 proof focus (synthetic only)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1171/**'
+      - '.github/workflows/quality-cycle1171.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install numpy pillow pytest
+      - name: Test ten-genre reusable overlay
+        run: python -m pytest -q quality/cycle1171/tests/test_proof_focus.py
+      - name: Generate synthetic portrait video and AAC audio (no user assets)
+        run: |
+          mkdir -p /tmp/cycle1171
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x081e2b:s=1080x1920:r=30:d=9' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=9' \
+            -map 0:v:0 -map 1:a:0 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -b:a 96k -frames:v 270 -t 9 /tmp/cycle1171/input.mp4
+      - name: Render numeric callout on synthetic video
+        run: |
+          python quality/cycle1171/code/proof_focus.py \
+            --input /tmp/cycle1171/input.mp4 \
+            --output /tmp/cycle1171/output.mp4 \
+            --workdir /tmp/cycle1171/work --preset ultrafast
+      - name: Decode full synthetic video and confirm audio bitstream unchanged
+        run: |
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of default=nw=1:nk=1 /tmp/cycle1171/output.mp4)" = 270
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0:s=x /tmp/cycle1171/output.mp4)" = '1080x1920'
+          ffmpeg -v error -xerror -i /tmp/cycle1171/output.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffmpeg -v error -i /tmp/cycle1171/input.mp4 -map 0:a:0 -c:a copy -f adts /tmp/cycle1171/in.aac
+          ffmpeg -v error -i /tmp/cycle1171/output.mp4 -map 0:a:0 -c:a copy -f adts /tmp/cycle1171/out.aac
+          cmp /tmp/cycle1171/in.aac /tmp/cycle1171/out.aac
+          echo 'Synthetic-only CI PASS; no original user MP4 uploaded'
