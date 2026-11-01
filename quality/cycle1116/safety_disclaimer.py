@@ -144,6 +144,5 @@ def main():
     Path(a.report).write_text(json.dumps(r, ensure_ascii=False, indent=2), encoding='utf8')
     print(json.dumps(r, ensure_ascii=False))
 
-
 if __name__ == '__main__':
     main()
