@@ -1,0 +1,28 @@
+name: Cycle1155 completion badge synthetic QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1155/**'
+      - '.github/workflows/cycle1155-completion-badge.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and free fonts
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1155/tests -v
+      - name: Synthetic H264 AAC 1080x1920 full decode
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i color=c=0x08212f:s=1080x1920:r=30:d=1.5 -f lavfi -i sine=frequency=220:sample_rate=48000:duration=1.5 -shortest -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -t 1.5 /tmp/input.mp4
+          python quality/cycle1155/action_ladder.py --source /tmp/input.mp4 --output /tmp/output.mp4 --png /tmp/step.png --start 0.4 --end 1.5 --fade 0.2
+          ffmpeg -v error -xerror -i /tmp/output.mp4 -f null -
+          ffprobe -v error -select_streams v:0 -show_entries stream=width,height,nb_frames -of default=noprint_wrappers=1 /tmp/output.mp4
