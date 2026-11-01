@@ -1,0 +1,36 @@
+name: cycle1102 proof closeup (synthetic only)
+on:
+  push:
+    branches:
+      - 'quality/cycle1102-proof-closeup-20261101'
+  pull_request:
+    paths:
+      - 'quality/cycle1102/**'
+      - '.github/workflows/cycle1102-proof-closeup.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Unit tests (10 genres)
+        run: cd quality/cycle1102 && python3 -m unittest -v test_proof_closeup.py
+      - name: Generate synthetic video and test renderer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle1102
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'testsrc2=size=1080x1920:rate=30:duration=3' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1102/in.mp4
+          HASH=$(sha256sum /tmp/cycle1102/in.mp4 | cut -d' ' -f1)
+          python3 quality/cycle1102/proof_closeup.py --source /tmp/cycle1102/in.mp4 --source-sha "$HASH" --manifest quality/cycle1102/manifest.json --out /tmp/cycle1102/out.mp4 --report /tmp/cycle1102/qa.json --start 0.5 --end 1.8
+          python3 - <<'PY'
+          import json
+          q=json.load(open('/tmp/cycle1102/qa.json'))
+          assert q['frames']==90 and q['audio_bitstream_identical']
+          assert q['release']=='HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          print(q)
+          PY
+          ffmpeg -hide_banner -loglevel error -i /tmp/cycle1102/out.mp4 -f null -
