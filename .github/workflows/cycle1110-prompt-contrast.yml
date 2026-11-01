@@ -1,0 +1,40 @@
+name: cycle1110 prompt contrast (synthetic review-only)
+on:
+  push:
+    branches:
+      - 'quality/cycle1110-prompt-contrast-20261101'
+  pull_request:
+    paths:
+      - 'quality/cycle1110/**'
+      - '.github/workflows/cycle1110-prompt-contrast.yml'
+  workflow_dispatch:
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python3 -m pip install --user 'Pillow>=10,<13'
+      - name: 10-genre offline unit tests
+        run: python3 -m unittest discover -s quality/cycle1110 -p 'test_*.py' -v
+      - name: Synthetic AV smoke test (not private finished MP4)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle1110
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x092b3b:s=1080x1920:r=30:d=3' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1110/input.mp4
+          python3 - <<'PY'
+          import importlib.util, json, pathlib
+          p=pathlib.Path('quality/cycle1110/prompt_contrast.py')
+          spec=importlib.util.spec_from_file_location('contrast',p)
+          m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          manifest=json.load(open('quality/cycle1110/manifest.json'))
+          r=m.render('/tmp/cycle1110/input.mp4','/tmp/cycle1110/output.mp4',m.sha('/tmp/cycle1110/input.mp4'),manifest,times=(.25,.85,1.6))
+          assert r['audio_bitstream_identical'] and r['frames']==90 and r['publication']=='NOT_APPROVED'
+          print(r)
+          PY
+          ffmpeg -v error -i /tmp/cycle1110/output.mp4 -f null -

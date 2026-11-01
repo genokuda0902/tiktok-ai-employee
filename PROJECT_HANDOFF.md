@@ -89,3 +89,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Changed chapter03 frames 195–248, formula `=SUM(C2:C4)` then fictional 46/29 totals. 14 unit tests, full 23.033s 691-frame A/V decode, H264 1080x1920/30fps, AAC 48kHz ADTS bit-identical (spoken Japanese per prior review; stream metadata `und`; no independent ASR). All-frame quarter-resolution subtitle protection max delta 0.8928/255. Ten palettes tested; one genre rendered.
 - Original 16-panel storyboard inspected; v33 original MP4 and full research chats inaccessible this run. Independent ASR/semantic subtitle sync, commercial rights, phone playback, employee approval, Actions charges NOT VERIFIED. GitHub CI tests synthetic 9-second A/V, not private MP4.
 - **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No merge, paid services, confidential media upload, or automatic posting. See `quality/cycle1100/README.md`.
+
+## 2026-11-01 cycle1110 review-only checkpoint
+- Base PR #509; draft PR #512; no merge or publication.
+- Exact source, test and manifest saved under quality/cycle1110; offline 11 unit tests, ten-genre overlay preset checks, synthetic CI.
+- Local review-only MP4 SHA256 bcf5b872effca785199589caa45f825f6a38c96f68263388b0fe50b3f3f6aa3b, source SHA256 40ff844987eec893748b5ab75264e2b1f37ab0ab08b59a0e67ab46b29b4e77c2; 691 frames, H264 1080x1920 30fps AAC 48kHz, full decode and audio stream identity PASS. Private MP4 not committed.
+- Difference: 8.85–10.95s scene4 fictional prompt Before/After cue, no productivity claim; caption y>=1280 preserved.
+- User 16-panel storyboard directly inspected; full research transcripts and original v33 MP4 not accessed. No ASR semantic check, rights approval, device playback, or employee approval. PUBLICATION_NOT_APPROVED.
