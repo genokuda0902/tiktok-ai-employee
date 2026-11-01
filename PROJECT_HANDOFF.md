@@ -78,3 +78,8 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local 6 unittest cases PASS, 3s synthetic full A/V smoke PASS. Completed local MP4 SHA256 \`8cd93dadba53243970d18265c404cd556af203385b3532c370935e150cb51306\`; full CI status and independent Japanese ASR not yet verified at this checkpoint.
 - Research summaries and prior v33 inspection retained; full original research chats and reference MP4 original were not retrieved in this run. Publication rights, phone QA, subtitle semantic verification and employee approval remain unverified.
 - **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**; manual posting only.
+
+## 2026-11-01 — cycle1098 review checkpoint (stacked draft, not main)
+- Parent open PR #497 (cycle1096), separate quality/cycle1098/writer spotlight patch. Real private MP4 SHA256 `71be71788fd58ffdf17862d61c4984c6ad5637ea44d4fe277b59748dd4f82cea`; source cycle1096 SHA256 `53bb7306b829054c0379d46cb6422f164f7be54153af67637d1b549331686831`.
+- Three successive thin highlights on fictional Writer purpose/conditions/format rows at 17.5–19.9s. 10 local unit tests, full private 23.033s A/V decode PASS; inherited AAC bitstream unchanged; independent Japanese ASR NOT VERIFIED. Synthetic-only GitHub CI; final run status tracked in PR.
+- Current 8-scene reimplementation is NOT v33 equivalent; rights, human review, phone playback, publication approval and billing unverified. No merge or auto-post. See `quality/cycle1098/README.md`.
