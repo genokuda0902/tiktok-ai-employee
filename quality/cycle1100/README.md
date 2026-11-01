@@ -14,7 +14,7 @@ Source cycle1098 MP4 SHA256: `71be71788fd58ffdf17862d61c4984c6ad5637ea44d4fe277b
 
 Output cycle1100 MP4 SHA256: `739599eafb7b2150ade1aa79aeef1dbd4f0390990c6236c33a4cc7ebc8754f54`.
 
-23.033s, 691 frames, H264 1080×1920 30fps; inherited Japanese-tagged AAC 48kHz stereo, ADTS bitstream identical. Full video/audio decode PASS. Frame-by-frame quarter-size comparison: 54 target frames, target picture mean delta 2.3312/255, outside-target maximum mean delta 1.2244/255 (re-encoding noise), subtitle-region maximum mean delta 0.8928/255. These metrics **do not verify Japanese speech/caption semantic alignment**. No smartphone physical playback test.
+23.033s, 691 frames, H264 1080×1920 30fps; inherited AAC 48kHz stereo (prior review describes Japanese narration; stream language metadata is `und`, independent transcription unavailable), ADTS bitstream identical. Full video/audio decode PASS. Frame-by-frame quarter-size comparison: 54 target frames, target picture mean delta 2.3312/255, outside-target maximum mean delta 1.2244/255 (re-encoding noise), subtitle-region maximum mean delta 0.8928/255. These metrics **do not verify Japanese speech/caption semantic alignment**. No smartphone physical playback test.
 
 To render locally with the privately retained review MP4:
 
