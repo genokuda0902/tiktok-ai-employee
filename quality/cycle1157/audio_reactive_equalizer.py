@@ -67,26 +67,40 @@ def compute_levels(audio,frames,fps=30,sample_rate=48000):
         smooth[i]=coeff*combined[i]+(1-coeff)*prev
     return np.clip(smooth,0,1),rms
 
-def rgba_frame(levels,color='#50d9cf',width=ICON_W,height=ICON_H):
+def rgba_frame(levels,color='#50d9cf',width=ICON_W,height=ICON_H,visibility=1.0):
     if len(levels)!=7:raise ValueError('Expected seven bands')
-    im=Image.new('RGBA',(width,height),(0,0,0,0))
+    alpha=int(round(float(np.clip(visibility,0,1))*255))
+    im=Image.new('RGBA',(width,height),(9,36,50,alpha))
     d=ImageDraw.Draw(im)
     for i,level in enumerate(levels):
         h=9+int(round(float(np.clip(level,0,1))*49))
         x=4+i*17;y=(height-h)//2
-        d.rounded_rectangle((x,y,x+10,y+h),radius=5,fill=color)
+        d.rounded_rectangle((x,y,x+10,y+h),radius=5,
+                            fill=(*tuple(bytes.fromhex(color.lstrip('#'))),alpha))
     return im
 
-def make_overlay_mov(levels,output,color):
+def extract_icon_visibility(source):
+    raw=call(['ffmpeg','-v','error','-i',str(source),'-vf',
+              f'crop={ICON_W}:{ICON_H}:{ICON_X}:{ICON_Y}',
+              '-pix_fmt','rgb24','-f','rawvideo','pipe:1']).stdout
+    frames=np.frombuffer(raw,dtype=np.uint8).reshape((-1,ICON_H,ICON_W,3))
+    area=((frames[:,:,:,0]<160)&(frames[:,:,:,1]>130)&
+          (frames[:,:,:,2]>125)).sum(axis=(1,2))
+    return np.clip((area.astype(float)-100)/900,0,1)
+
+def make_overlay_mov(levels,output,color,visibility=None):
     output=Path(output);output.parent.mkdir(parents=True,exist_ok=True)
     cmd=['ffmpeg','-hide_banner','-loglevel','error','-y',
          '-f','rawvideo','-pixel_format','rgba',
          '-video_size',f'{ICON_W}x{ICON_H}','-framerate','30','-i','pipe:0',
          '-c:v','qtrle','-pix_fmt','argb',str(output)]
+    if visibility is None:visibility=np.ones(len(levels))
+    if len(visibility)!=len(levels):raise ValueError('Visibility/frame mismatch')
     p=subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.DEVNULL,
                        stderr=subprocess.PIPE)
     try:
-        for row in levels:p.stdin.write(rgba_frame(row,color).tobytes())
+        for row,vis in zip(levels,visibility):
+            p.stdin.write(rgba_frame(row,color,visibility=vis).tobytes())
         p.stdin.close()
         err=p.stderr.read().decode(errors='replace')
         if p.wait()!=0:raise RuntimeError(err)
@@ -107,10 +121,11 @@ def render(source,output,overlay_mov,genre='ai-work',preset='veryfast'):
     if abs(fps-30)>.01:raise ValueError('Expected 30fps')
     frames=int(v.get('nb_frames') or round(float(info['format']['duration'])*30))
     levels,rms=compute_levels(extract_audio(source),frames)
-    make_overlay_mov(levels,overlay_mov,PALETTES[genre])
-    filt=(f'[0:v]drawbox=x={ICON_X}:y={ICON_Y}:w={ICON_W}:h={ICON_H}:'
-          'color=0x092432:t=fill[clean];'
-          f'[1:v]format=argb[eq];[clean][eq]overlay={ICON_X}:{ICON_Y}:'
+    visibility=extract_icon_visibility(source)
+    if len(visibility)!=frames:raise ValueError('Icon/video frame mismatch')
+    make_overlay_mov(levels,overlay_mov,PALETTES[genre],visibility)
+    # Dynamic alpha prevents floating bars during scene changes.
+    filt=(f'[1:v]format=argb[eq];[0:v][eq]overlay={ICON_X}:{ICON_Y}:'
           'shortest=1:format=auto,format=yuv420p[v]')
     output=Path(output);output.parent.mkdir(parents=True,exist_ok=True)
     call(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(source),
@@ -122,6 +137,7 @@ def render(source,output,overlay_mov,genre='ai-work',preset='veryfast'):
     corr=float(np.corrcoef(levels.mean(axis=1),rms)[0,1]) if np.std(rms)>1e-8 else None
     return {'frames':frames,'duration_s':frames/30,'genre':genre,
             'genre_presets':len(PALETTES),'audio_rms_bar_correlation':corr,
+            'icon_visible_frames':int((visibility>.5).sum()),
             'japanese_asr_verified':False,
             'subtitle_semantic_timing_verified':False,
             'publication_approved':False}
