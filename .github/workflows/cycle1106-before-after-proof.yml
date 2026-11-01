@@ -1,0 +1,42 @@
+name: cycle1106 before-after proof (synthetic CI only)
+on:
+  push:
+    branches:
+      - 'quality/cycle1106-before-after-proof-20261101'
+  pull_request:
+    paths:
+      - 'quality/cycle1106/**'
+      - '.github/workflows/cycle1106-before-after-proof.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free local render/test dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python3 -m pip install --user 'Pillow>=10,<13' 'numpy>=1.24,<3'
+      - name: Run all 10-genre and audio-signal tests
+        run: cd quality/cycle1106 && python3 -m unittest -v test_before_after_evidence.py test_audio_caption_audit.py
+      - name: Render and decode 18s synthetic AV only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle1106
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x092b3b:s=1080x1920:r=30:d=18' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=18' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1106/input.mp4
+          HASH=$(sha256sum /tmp/cycle1106/input.mp4 | cut -d' ' -f1)
+          python3 quality/cycle1106/before_after_evidence.py --source /tmp/cycle1106/input.mp4 --source-sha "$HASH" --manifest quality/cycle1106/manifest.json --out /tmp/cycle1106/output.mp4 --report /tmp/cycle1106/qa.json
+          python3 quality/cycle1106/audio_caption_audit.py --video /tmp/cycle1106/output.mp4 --out /tmp/cycle1106/audio_qa.json --cuts 0,2.9,5.7,8.7,11.5,14.3,15.3,17.333333,18
+          ffmpeg -v error -i /tmp/cycle1106/output.mp4 -f null -
+          python3 - <<'PY'
+          import json
+          q=json.load(open('/tmp/cycle1106/qa.json'))
+          a=json.load(open('/tmp/cycle1106/audio_qa.json'))
+          assert q['audio_bitstream_identical']
+          assert q['frames']==540 and abs(q['duration']-18)<0.1
+          assert len(a['cues'])==8 and all(c['nonzero_signal'] for c in a['cues'])
+          assert q['publication']=='NOT_APPROVED'
+          PY

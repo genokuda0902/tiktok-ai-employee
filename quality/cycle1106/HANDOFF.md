@@ -1,0 +1,5 @@
+# cycle1106 handoff — 2026-11-01 JST
+
+Previous verified cycle1104: arithmetic repaired, 23.033s, AAC unchanged, draft PR #505. New change: Before/After comparison in scene06 at 14.3–17.333s, without misleading productivity claims, plus a clearly labeled 8-cue PCM **signal-only** audit. This is NOT independent Japanese ASR. Output review-only MP4 SHA256 `642b66140d2c115ea5c5c45c80b28a0d73612c7c0aad110f9c2a4119fcb3eedf`. Source media and output MP4 are local only; do not commit unapproved footage/audio. Tests: 13 local PASS; synthetic CI configured. Main remains unmerged.
+
+Next priority: independent zero-cost Japanese ASR if an authorized offline model is available; verify all eight actual utterances against burned-in captions, especially 20.3–23.033s, with human listening. Avoid repeatedly adding minor overlays. Verify rights, phone playback, employee approval before any manual posting. The 16-panel/~36s storyboard remains much more cinematic than current 8-scene/23.03s output; no parity claim.
