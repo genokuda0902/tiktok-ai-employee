@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Review-only scene-caption track for a private Japanese MP4.
 
-Adds an optional, non-default mov_text subtitle track and writes a scene-caption
+Adds a selectable mov_text subtitle track and writes a scene-caption
 SRT for manual comparison. Captions are transcribed from *visible on-screen text*,
 not independently recognized from audio. This is NOT a speech alignment verdict.
+Some MP4 players automatically mark/show the sole subtitle track as default.
 """
 from __future__ import annotations
 import argparse
@@ -100,7 +101,7 @@ def build(source:Path, target:Path, srt:Path, report:Path, expected_sha:str, cue
         extracted=run(['ffmpeg','-v','error','-i',str(target),'-map','0:s:0','-f','srt','-'])
         for _,_,txt in cues:
             if txt not in extracted: raise RuntimeError('subtitle roundtrip text mismatch')
-        report_data={'source_sha256':expected_sha,'output_sha256':sha256(target),'srt_sha256':sha256(srt),'duration':dur,'frames':frames,'video':'H264 stream identical','audio':'AAC stream identical, Japanese content NOT ASR verified','subtitle_track':'mov_text jpn optional nondefault','cues':len(cues),'decode':'PASS','speech_semantic_alignment':'NOT VERIFIED','publication':'NOT APPROVED'}
+        report_data={'source_sha256':expected_sha,'output_sha256':sha256(target),'srt_sha256':sha256(srt),'duration':dur,'frames':frames,'video':'H264 stream identical','audio':'AAC stream identical, Japanese content NOT ASR verified','subtitle_track':'mov_text jpn (player may default-enable)' ,'subtitle_default_flag':next(s.get('disposition',{}).get('default',0) for s in result['streams'] if s['codec_type']=='subtitle'),'double_caption_risk':'MP4 may auto-show soft track over existing burned-in captions','cues':len(cues),'decode':'PASS','speech_semantic_alignment':'NOT VERIFIED','publication':'NOT APPROVED'}
         report.write_text(json.dumps(report_data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         return report_data
     except Exception:
