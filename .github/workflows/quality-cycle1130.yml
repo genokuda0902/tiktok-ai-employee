@@ -1,0 +1,36 @@
+name: cycle1130 review-only formula source audit
+on:
+  push:
+    branches:
+      - quality/cycle1130-formula-source-audit
+    paths:
+      - 'quality/cycle1130/**'
+      - '.github/workflows/quality-cycle1130.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1130/**'
+      - '.github/workflows/quality-cycle1130.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow>=10,<13'
+      - name: Unit tests, ten genres and synthetic H264/AAC
+        run: python -m unittest discover -s quality/cycle1130 -p 'test_*.py' -v
+      - name: Ensure no private source media committed
+        run: |
+          test ! -e quality/cycle1130/private_manifest.json
+          test ! -e quality/cycle1130/real_private.mp4
+          echo 'Synthetic CI only; completed review MP4 stays in private ChatGPT artifact.'

@@ -1,3 +1,10 @@
+## cycle1130 (2026-11-02 JST, REVIEW ONLY)
+- Corrected a previously overlooked contradiction in scene03: overlay =SUM(B2:B4) vs selected C5 and visible =SUM(C2:C4). Fictional B total 46, C total 29; corrected frames 180–217.
+- Source cycle1128 private MP4 SHA256 8200e485fca3042424b7d6f78d43bbd8b7ec7b3893197a6bee61418d1348ded0; output cycle1130 private MP4 SHA256 f20bcd0ca234cc68fa7eec82d6d07aa23775f4c44210a8aa7dcb333b8450b91e.
+- Local 10 unit tests PASS; 691-frame H264/AAC full decode PASS, audio ADTS identical, captions protected. GitHub workflow synthetic media only; private MP4 not committed.
+- Code/tests/CI: quality/cycle1130/ and .github/workflows/quality-cycle1130.yml. Formula/selected-cell/data-total gate supports 10 genres; specific geometry requires per-video review.
+- User 16-panel storyboard directly viewed; full TikTok research chats and original v33 MP4 inaccessible. Independent Japanese ASR, phone playback, rights, staff approval, Actions billing and reference parity NOT VERIFIED. Do not merge/post/auto-publish.
+
 ## cycle1128 (2026-11-02 JST, REVIEW ONLY)
 - Corrected scene04 factual month-count mismatch (4月–6月 = 3か月, not 4か月) with a tiny 69-frame digit replacement; preserved AAC and burned-in captions.
 - Source private MP4 SHA256 `68d13d172353e06fa6913a176de347a7eae1e592791fdd460ce760418007fc2e`; output private MP4 SHA256 `8200e485fca3042424b7d6f78d43bbd8b7ec7b3893197a6bee61418d1348ded0`; full A/V decode PASS, 691 frames 1080x1920/30fps, 10 local tests PASS.
