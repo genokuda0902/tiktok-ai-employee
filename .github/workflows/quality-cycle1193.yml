@@ -1,0 +1,27 @@
+name: quality-cycle1193-numeric-proof
+on:
+  pull_request:
+    paths:
+      - 'tools/quality_cycle1193/**'
+      - '.github/workflows/quality-cycle1193.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-numeric-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source offline dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fontconfig fonts-noto-cjk
+          python -m pip install 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5' 'Pillow>=10,<12'
+      - name: Unit tests
+        run: python -m unittest discover -s tools/quality_cycle1193/tests -p 'test_*.py' -v
+      - name: Synthetic video render and full decode
+        run: python tools/quality_cycle1193/tests/ci_smoke.py
