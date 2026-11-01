@@ -1,0 +1,23 @@
+name: Quality cycle1118 optional Japanese captions (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1118/**'
+      - '.github/workflows/quality-cycle1118.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1118/**'
+      - '.github/workflows/quality-cycle1118.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check offline dependencies
+        run: |
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
+      - name: Ten genre caption rules and synthetic MP4 mux
+        run: python -m unittest discover -s quality/cycle1118 -p 'test_*.py' -v
