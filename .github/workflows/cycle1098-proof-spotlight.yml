@@ -1,0 +1,27 @@
+name: cycle1098-writer-proof-spotlight-synthetic
+on:
+  push:
+    paths:
+      - 'quality/cycle1098/**'
+      - '.github/workflows/cycle1098-proof-spotlight.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1098/**'
+      - '.github/workflows/cycle1098-proof-spotlight.yml'
+jobs:
+  offline-synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free offline tools
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg python3-pil
+      - name: Ten-genre, privacy, timing, rendering unit tests
+        run: python3 -m unittest discover -s quality/cycle1098 -p 'test_*.py' -v
+      - name: Synthetic 23-second H264/AAC render and decode (NOT private video)
+        run: |
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x071a2d:s=1080x1920:r=30:d=23.033333' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=23.033333' -c:v libx264 -preset ultrafast -crf 33 -pix_fmt yuv420p -c:a aac -shortest /tmp/synthetic.mp4
+          sha256sum /tmp/synthetic.mp4 | cut -d' ' -f1 > /tmp/source.sha
+          python3 quality/cycle1098/proof_spotlight.py --source /tmp/synthetic.mp4 --source-sha "$(cat /tmp/source.sha)" --out /tmp/synthetic_spotlight.mp4 --manifest quality/cycle1098/manifest.json --report /tmp/qa.json
+          ffmpeg -hide_banner -loglevel error -xerror -i /tmp/synthetic_spotlight.mp4 -f null -
+          python3 -c "import json; x=json.load(open('/tmp/qa.json')); assert x['audio_bitstream_identical']"
