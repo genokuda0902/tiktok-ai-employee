@@ -1,3 +1,8 @@
+## cycle1128 (2026-11-02 JST, REVIEW ONLY)
+- Corrected scene04 factual month-count mismatch (4月–6月 = 3か月, not 4か月) with a tiny 69-frame digit replacement; preserved AAC and burned-in captions.
+- Source private MP4 SHA256 `68d13d172353e06fa6913a176de347a7eae1e592791fdd460ce760418007fc2e`; output private MP4 SHA256 `8200e485fca3042424b7d6f78d43bbd8b7ec7b3893197a6bee61418d1348ded0`; full A/V decode PASS, 691 frames 1080x1920/30fps, 10 local tests PASS.
+- Code/tests: `quality/cycle1128/`; CI synthetic only. Original v33, independent Japanese ASR, rights, smartphone and employee approval remain unverified. Never merge/publish without human review.
+
 # TikTok AI社員システム — authoritative handoff
 
 ## Latest review-only checkpoint — cycle1126 (2026-11-02 JST)
