@@ -1,0 +1,15 @@
+name: cycle1086 review-only calc evidence bridge
+on:
+  push:
+    paths: ['quality/cycle1086/**', '.github/workflows/cycle1086-calc-proof-bridge.yml']
+  pull_request:
+    paths: ['quality/cycle1086/**', '.github/workflows/cycle1086-calc-proof-bridge.yml']
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk python3-pil
+      - run: PYTHONPATH=. /usr/bin/python3 -m unittest quality.cycle1086.test_calc_proof_bridge -v
+      - run: PYTHONPATH=. /usr/bin/python3 -m quality.cycle1086.calc_proof_bridge --smoke
