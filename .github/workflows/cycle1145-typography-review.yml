@@ -1,0 +1,26 @@
+name: cycle1145 typography ghost cut (synthetic review)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1145/**'
+      - '.github/workflows/cycle1145-typography-review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg libgl1
+          python -m pip install --disable-pip-version-check numpy pillow opencv-python-headless
+      - name: Run unit tests
+        run: python -m unittest discover -s quality/cycle1145/tests -v
+      - name: Synthetic-only video and audio QA
+        run: python quality/cycle1145/code/ci_synthetic.py

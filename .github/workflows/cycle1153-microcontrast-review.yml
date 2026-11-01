@@ -1,0 +1,27 @@
+name: cycle1153 diagram microcontrast (synthetic)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1153/**'
+      - '.github/workflows/cycle1153-microcontrast-review.yml'
+  push:
+    paths:
+      - 'quality/cycle1153/**'
+      - '.github/workflows/cycle1153-microcontrast-review.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Run unit tests
+        run: python -m unittest discover -s quality/cycle1153/tests -v
+      - name: Render and decode synthetic 60-frame video
+        run: python quality/cycle1153/code/ci_synthetic.py
