@@ -1,4 +1,11 @@
 # TikTok AI社員システム — authoritative handoff
+
+## Latest review-only checkpoint — cycle1126 (2026-11-02 JST)
+- Branch `quality/cycle1126-completion-reuse-cue` (based on open PR #525). Local private output MP4 SHA256 `68d13d172353e06fa6913a176de347a7eae1e592791fdd460ce760418007fc2e`, H.264 1080x1920/30fps/23.033s with unchanged AAC 48kHz and burned Japanese subtitles; full local A/V decode PASS.
+- Distinct change: animated closing 02 Save → 03 Reuse focus during 20.8–22.8s, ten-genre safe-area/PII/approval gates and synthetic A/V tests. Code and tests in `quality/cycle1126/`; CI in `.github/workflows/quality-cycle1126.yml`.
+- Original 16-panel user storyboard inspected; original v33 MP4 and full market research chats not accessible. No semantic Japanese ASR, phone test, media rights or publication approval. Do not merge/post. See `quality/cycle1126/README.md`.
+- This checkpoint describes a review-only reimplementation; it does not supersede the product/security decisions below.
+
 Updated: 2026-09-18 JST. This document is an index, NOT proof of end-to-end completion. At the start of each chat, read this file and `recovery/v33/RECOVERY_STATUS.md`, then verify actual code and artifacts. Update this file with verified commit SHAs and test results whenever changing implementation.
 
 ## Binding decisions (latest wins)
