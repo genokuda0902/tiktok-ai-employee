@@ -1,0 +1,43 @@
+name: Quality cycle1169 opening hook (synthetic)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1169/**'
+      - '.github/workflows/quality-cycle1169.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install numpy pillow pytest
+      - name: Run 23 tests without private assets
+        run: python -m pytest -q quality/cycle1169/tests/test_hook_underline.py
+      - name: Generate synthetic 1080x1920 H264/AAC
+        run: |
+          mkdir -p /tmp/cycle1169
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x081e2b:s=1080x1920:r=30:d=22.5' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=22.5' \
+            -map 0:v:0 -map 1:a:0 -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -b:a 96k -frames:v 675 -t 22.5 /tmp/cycle1169/input.mp4
+      - name: Render opening underline on synthetic video
+        run: |
+          python quality/cycle1169/code/hook_underline.py \
+            --input /tmp/cycle1169/input.mp4 \
+            --output /tmp/cycle1169/output.mp4 \
+            --workdir /tmp/cycle1169/work --preset ultrafast
+      - name: Verify full decode, dimensions and exact AAC copy
+        run: |
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of default=nw=1:nk=1 /tmp/cycle1169/output.mp4)" = 675
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0:s=x /tmp/cycle1169/output.mp4)" = '1080x1920'
+          ffmpeg -v error -xerror -i /tmp/cycle1169/output.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffmpeg -v error -i /tmp/cycle1169/input.mp4 -map 0:a:0 -c:a copy -f adts /tmp/cycle1169/in.aac
+          ffmpeg -v error -i /tmp/cycle1169/output.mp4 -map 0:a:0 -c:a copy -f adts /tmp/cycle1169/out.aac
+          cmp /tmp/cycle1169/in.aac /tmp/cycle1169/out.aac
+          echo 'Synthetic video and exact audio-copy PASS; no private MP4 uploaded'
