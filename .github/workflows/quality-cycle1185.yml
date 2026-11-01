@@ -1,0 +1,26 @@
+name: cycle1185 synthetic pair trace QA
+on:
+  push:
+    branches: [quality/cycle1185-pair-trace]
+  pull_request:
+    paths:
+      - 'cycle1185/**'
+      - '.github/workflows/quality-cycle1185.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s cycle1185 -p 'test_*.py' -v
+      - name: Synthetic 3s vertical AAC video with chapter metadata
+        run: |
+          printf ';FFMETADATA1\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=0\nEND=3000\ntitle=04/08 synthetic\n' > /tmp/chapters.txt
+          ffmpeg -nostdin -v error -y -f lavfi -i 'color=c=0x101b2a:s=1080x1920:r=30:d=3' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=3' -i /tmp/chapters.txt -map 0:v -map 1:a -map_metadata 2 -map_chapters 2 -c:v libx264 -preset ultrafast -crf 30 -pix_fmt yuv420p -c:a aac -shortest /tmp/input.mp4
+          python cycle1185/pair_trace.py /tmp/input.mp4 /tmp/output.mp4 --genre ai
+          ffmpeg -nostdin -v error -i /tmp/output.mp4 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate,nb_frames -of json /tmp/output.mp4
