@@ -1,0 +1,36 @@
+name: cycle1126 review-only completion cue QA
+on:
+  push:
+    branches:
+      - quality/cycle1126-completion-reuse-cue
+    paths:
+      - 'quality/cycle1126/**'
+      - '.github/workflows/quality-cycle1126.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1126/**'
+      - '.github/workflows/quality-cycle1126.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-cost dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow>=10,<13'
+      - name: Test 10-genre policy and synthetic A/V
+        run: python -m unittest discover -s quality/cycle1126 -p 'test_*.py' -v
+      - name: Enforce review-only media scope
+        run: |
+          test ! -e quality/cycle1126/real_private.mp4
+          test ! -e quality/cycle1126/private_manifest.json
+          echo 'Synthetic QA only. Japanese ASR, phone playback, rights and publication approval remain unverified.'
