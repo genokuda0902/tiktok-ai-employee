@@ -1,0 +1,24 @@
+name: cycle1084-proof-reconcile-synthetic-qa
+on:
+  push:
+    paths:
+      - 'quality/cycle1084/**'
+      - '.github/workflows/cycle1084-proof-reconcile.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1084/**'
+      - '.github/workflows/cycle1084-proof-reconcile.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg python3-pil fonts-noto-cjk
+      - name: Arithmetic, ten genre, caption-safe tests
+        run: /usr/bin/python3 -m unittest quality.cycle1084.test_proof_reconcile -v
+      - name: Synthetic H264/AAC smoke and full decode
+        run: /usr/bin/python3 -m quality.cycle1084.proof_reconcile --smoke
