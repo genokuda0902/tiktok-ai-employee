@@ -1,0 +1,50 @@
+name: cycle1112 row verification (synthetic review-only)
+on:
+  push:
+    branches:
+      - 'quality/cycle1112-row-verification-20261101'
+  pull_request:
+    paths:
+      - 'quality/cycle1112/**'
+      - '.github/workflows/cycle1112-row-verification.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python3 -m pip install --user 'Pillow>=10,<13'
+      - name: Run 10-genre and fail-closed unit tests
+        run: python3 -m unittest discover -s quality/cycle1112 -p 'test_*.py' -v
+      - name: Synthetic A/V render, stream identity and full decode (not private MP4)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle1112
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i 'color=c=0x092b3b:s=1080x1920:r=30:d=15' \
+            -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=15' \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -b:a 96k -shortest \
+            /tmp/cycle1112/input.mp4
+          python3 - <<'PY'
+          import importlib.util, json, pathlib
+          p=pathlib.Path('quality/cycle1112/row_verification_cut.py')
+          s=importlib.util.spec_from_file_location('cut',p)
+          m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+          manifest=json.loads(pathlib.Path('quality/cycle1112/manifest.json').read_text())
+          r=m.render('/tmp/cycle1112/input.mp4','/tmp/cycle1112/output.mp4',m.sha('/tmp/cycle1112/input.mp4'),manifest)
+          assert r['audio_bitstream_identical'] is True
+          assert r['frames']==450 and r['size']==[1080,1920]
+          assert r['publication']=='NOT_APPROVED'
+          assert r['arithmetic']=='12+8=20'
+          print(r)
+          PY
+          ffmpeg -hide_banner -v error -i /tmp/cycle1112/output.mp4 -map 0:v:0 -f null -
+          ffmpeg -hide_banner -v error -i /tmp/cycle1112/output.mp4 -map 0:a:0 -f null -
