@@ -1,0 +1,38 @@
+name: Cycle1157 audio-reactive equalizer synthetic QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1157/**'
+      - '.github/workflows/cycle1157-audio-equalizer.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check numpy pillow
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1157/tests -v
+      - name: Synthetic 1080x1920 H264/AAC audio-reactive render
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x092432:s=1080x1920:r=30:d=2 \
+            -f lavfi -i sine=frequency=420:sample_rate=48000:duration=2 \
+            -shortest -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -t 2 /tmp/input.mp4
+          python quality/cycle1157/audio_reactive_equalizer.py \
+            --source /tmp/input.mp4 --output /tmp/output.mp4 \
+            --overlay /tmp/equalizer.mov
+          ffmpeg -v error -xerror -i /tmp/output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 /tmp/output.mp4)" = "1080"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 /tmp/output.mp4)" = "1920"
+          ffmpeg -v error -i /tmp/input.mp4 -map 0:a:0 -c:a copy -f adts /tmp/a.aac
+          ffmpeg -v error -i /tmp/output.mp4 -map 0:a:0 -c:a copy -f adts /tmp/b.aac
+          cmp /tmp/a.aac /tmp/b.aac
