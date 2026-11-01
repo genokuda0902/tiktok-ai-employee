@@ -90,7 +90,7 @@ def frame(i,genre="ai-work"):
     if t<1.70:
         progress=max(0,min(1,(t-.42)/.45))
         bottom=int(273+progress*(432-273))
-        d.rectangle((465,273,659,bottom),fill=(56,198,174,48),outline=accent,width=5)
+        d.rectangle((465,273,659,bottom),outline=accent,width=5)
         d.ellipse((648,bottom-10,666,bottom+8),fill=accent)
     else:
         d.rectangle((270,432,465,496),outline=accent,width=5)
