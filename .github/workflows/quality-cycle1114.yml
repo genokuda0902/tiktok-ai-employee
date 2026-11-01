@@ -1,0 +1,24 @@
+name: Quality cycle1114 header consistency (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1114/**'
+      - '.github/workflows/quality-cycle1114.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1114/**'
+      - '.github/workflows/quality-cycle1114.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg, Pillow and font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          python -m pip install Pillow
+      - name: Run unit and synthetic H264/AAC smoke tests
+        run: python -m unittest discover -s quality/cycle1114 -p 'test_*.py' -v
