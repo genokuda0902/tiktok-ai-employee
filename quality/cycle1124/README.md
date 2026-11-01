@@ -11,16 +11,16 @@ HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. Original reimplementation, not recovere
 - PR #524 independently improves soft transitions; no duplicate transition changes here.
 
 ## Distinct issue and fix
-At 6.0–8.66 seconds, the original scene03 animated hint could display =SUM(C2:C4) even though the spreadsheet formula bar shows =SUM(B2:B4) for sales A, 12+16+18=46. The previous hint was inconsistent with the visible spreadsheet.
+At 6.0–8.699 seconds, the original scene03 animated hint could display =SUM(C2:C4) even though the spreadsheet formula bar shows =SUM(B2:B4) for sales A, 12+16+18=46. The previous hint was inconsistent with the visible spreadsheet.
 
 This change masks the stale hint with a high-contrast banner and provides two accurate guides:
 - 6.00–7.25s: ① 数式：=SUM(B2:B4) plus cyan formula focus outline.
-- 7.25–8.66s: ② 合計欄：46 / 29 plus amber totals focus outline.
+- 7.25–8.699s: ② 合計欄：46 / 29 plus amber totals focus outline.
 
 All values are fictional. This does not imply AI verified the data. Manifest requires exact source SHA, review-only approval, ten supported genre IDs, PII-pattern rejection and bounded focus coordinates/timing. Existing files cannot be overwritten.
 
 ## Local finished private MP4
-- SHA256 2a5c41857bb82999323ca26c3b29e78a0409c805bd657bebda72eaacd83de01b.
+- SHA256 3caccf4358354c6cf0e756f52f31f98809024a40a6690a158edb895906c84ea0.
 - H264 1080x1920, 30fps, 691 frames, 23.033333s; AAC 48kHz tagged Japanese; zero soft subtitle tracks.
 - Full A/V decode PASS; AAC elementary stream identical to cycle1122.
 - 12 sampled-frame comparisons; subtitle ROI mean pixel difference 0.418–0.982 / 255. Re-encoding also changes pixels outside the focus scene.
