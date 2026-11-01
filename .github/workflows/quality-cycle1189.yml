@@ -1,0 +1,27 @@
+name: quality-cycle1189-ui-save-motion
+on:
+  pull_request:
+    paths:
+      - 'tools/quality_cycle1189/**'
+      - '.github/workflows/quality-cycle1189.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-ui-motion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'Pillow>=10,<12'
+      - name: Unit tests
+        run: python -m unittest discover -s tools/quality_cycle1189/tests -p 'test_*.py' -v
+      - name: Synthetic video render and decode
+        run: python tools/quality_cycle1189/tests/ci_smoke.py
