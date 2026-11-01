@@ -1,0 +1,22 @@
+name: cycle1096-cta-voice-guard-synthetic
+on:
+  push:
+    paths:
+      - 'quality/cycle1096/**'
+      - '.github/workflows/cycle1096-cta-voice-guard.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1096/**'
+      - '.github/workflows/cycle1096-cta-voice-guard.yml'
+jobs:
+  offline-synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free local renderer dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg python3-pil fonts-noto-cjk
+      - name: Ten genre, privacy, safety and timing unit tests
+        run: python3 -m unittest discover -s quality/cycle1096 -p 'test_*.py' -v
+      - name: Render synthetic 23 second H264/AAC and full decode
+        run: python3 -m quality.cycle1096.cta_voice_guard --smoke
