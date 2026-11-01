@@ -1,0 +1,35 @@
+name: cycle1124 review-only focus QA
+on:
+  push:
+    branches:
+      - quality/cycle1124-two-stage-formula-focus
+    paths:
+      - 'quality/cycle1124/**'
+      - '.github/workflows/quality-cycle1124.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1124/**'
+      - '.github/workflows/quality-cycle1124.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-video-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow>=10,<13'
+      - name: Run 10-genre and synthetic A/V tests
+        run: python -m unittest discover -s quality/cycle1124 -p 'test_*.py' -v
+      - name: Confirm review-only scope
+        run: |
+          test ! -e quality/cycle1124/real_private.mp4
+          echo 'Synthetic-only CI. Real Japanese narration, rights, ASR and phone playback not tested.'
