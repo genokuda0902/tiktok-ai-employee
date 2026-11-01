@@ -1,0 +1,22 @@
+name: cycle1092-stable-total-guard-synthetic
+on:
+  push:
+    paths:
+      - 'quality/cycle1092/**'
+      - '.github/workflows/cycle1092-stable-total-guard.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1092/**'
+      - '.github/workflows/cycle1092-stable-total-guard.yml'
+jobs:
+  synthetic-review-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free rendering dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk python3-pil
+      - name: Unit tests (ten genres, arithmetic and safety)
+        run: python3 -m unittest discover -s quality/cycle1092 -p 'test_*.py' -v
+      - name: Render synthetic audio/video smoke
+        run: python3 -m quality.cycle1092.stable_total_guard --smoke
