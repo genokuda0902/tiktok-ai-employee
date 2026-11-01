@@ -1,0 +1,13 @@
+{
+  "genre": "ai_work",
+  "topic": "AI × EXCEL / REUSE",
+  "headline": "小さな時短を、毎日の習慣に。",
+  "detail": "確認した集計を、次の作業にも活かす",
+  "steps": ["数字を確認", "保存する", "次回も再利用"],
+  "preview_time": 16.7,
+  "preview_crop": [76, 292, 1010, 804],
+  "synthetic": true,
+  "review_only": true,
+  "rights_status": "unverified",
+  "contains_private_data": false
+}
