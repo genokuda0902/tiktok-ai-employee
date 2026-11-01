@@ -1,0 +1,19 @@
+name: Quality cycle1183 footer legibility (synthetic only)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1183/**'
+      - '.github/workflows/quality-cycle1183.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free media tools and Japanese font
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - name: Run unit and synthetic 1080x1920 MP4 test
+        run: python -m unittest discover -s quality/cycle1183/tests -v
