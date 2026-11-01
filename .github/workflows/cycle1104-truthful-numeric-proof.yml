@@ -1,0 +1,40 @@
+name: cycle1104 truthful numeric proof (synthetic only)
+on:
+  push:
+    branches:
+      - 'quality/cycle1104-truthful-numeric-proof-20261101'
+  pull_request:
+    paths:
+      - 'quality/cycle1104/**'
+      - '.github/workflows/cycle1104-truthful-numeric-proof.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install open-source FFmpeg, Japanese font, Pillow
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python3 -m pip install --user 'Pillow>=10,<13'
+      - name: Test ten genre presets and fail-closed arithmetic
+        run: cd quality/cycle1104 && python3 -m unittest -v test_truthful_numeric_proof.py
+      - name: Render and decode synthetic A/V (no private footage)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/cycle1104
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x102c3d:s=1080x1920:r=30:d=18' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=18' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1104/input.mp4
+          HASH=$(sha256sum /tmp/cycle1104/input.mp4 | cut -d' ' -f1)
+          python3 quality/cycle1104/truthful_numeric_proof.py --source /tmp/cycle1104/input.mp4 --source-sha "$HASH" --manifest quality/cycle1104/manifest.json --out /tmp/cycle1104/output.mp4 --report /tmp/cycle1104/qa.json
+          python3 - <<'PY'
+          import json
+          q=json.load(open('/tmp/cycle1104/qa.json'))
+          assert q['frames']==540 and q['audio_bitstream_identical']
+          assert q['verified_arithmetic']=='46+29=75'
+          assert q['release']=='HUMAN_REVIEW / PUBLICATION_NOT_APPROVED'
+          print(q)
+          PY
+          ffmpeg -hide_banner -loglevel error -i /tmp/cycle1104/output.mp4 -f null -

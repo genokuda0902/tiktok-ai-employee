@@ -1,0 +1,8 @@
+{
+  "genre": "ai_work",
+  "synthetic_scenario": true,
+  "review_only": true,
+  "rights_status": "unverified",
+  "contains_private_data": false,
+  "proof": {"labels": ["営業A", "営業B"], "operands": [46, 29], "total": 75}
+}
