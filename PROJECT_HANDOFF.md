@@ -69,3 +69,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local actual MP4 SHA256 ac53a00467f4a75297b80c2d32ccc310a11aa5fd0065e487e08b444ae1502436; source SHA256 d9ffee665fbc233fb0ead5c501088f69a08ac931521a4490fb56b5ea26d65de1. 23.033333s, 691 frames, 1080x1920 30fps H264 / AAC 48kHz. Full A/V decode PASS; AAC ADTS SHA256 identical (76801539a721f7d968b5a8bf725fd056ab00de5a74bd09caf50112993c4aa2f8). Exactly 91 changed frames (global mean >1.5/255); caption ROI max mean pixel difference 0.48145/255; target scene mean difference 71.4123/255; outside scene mean 0.2404/255. Twelve local tests and synthetic 18s smoke PASS.
 - Research: directly inspected user's Library `ChatGPT×Excel時短術16コマ絵コンテ.png` (16 panels/~36s) and accessible TikTok市場分析/TikTok動画研究 summaries; full original chats and v33 MP4 inaccessible. Current 8-scene/23s still lacks cinematic imagery, variety and full ChatGPT interaction.
 - Unverified: independent Japanese ASR/meaning/timing alignment for eight subtitles (especially 20.300s+), smartphone playback, media/voice publication rights, employee approval, GitHub Actions actual billing. CI validates only synthetic video; check actual final workflow run conclusion separately. **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**. No merge, paid services, public private-media upload or auto-post.
+
+
+## Cycle1092 review checkpoint (2026-11-01 JST; branch-only, unmerged)
+- Branch: \`quality/cycle1092-stable-total-20261101\`, stacked on unmerged cycle1090 PR #492, **not** main. Do not merge automatically.
+- Scene06 truth defect: 46 + 29 displayed transient wrong totals 13 at ~15.7s and 71 at ~16.0s. New \`quality/cycle1092/stable_total_guard.py\` masks the false intermediate totals, shows 確認中 then source-calculated 75. Ten genre presets and synthetic-only safety gate.
+- Source review MP4 pinned SHA256 \`0a0a653ac06a96a5445b3af138ad5018642b913096ff12123f080d3b78b694e7\`; original source media is not committed.
+- Local 6 unittest cases PASS, 3s synthetic full A/V smoke PASS. Completed local MP4 SHA256 \`8cd93dadba53243970d18265c404cd556af203385b3532c370935e150cb51306\`; full CI status and independent Japanese ASR not yet verified at this checkpoint.
+- Research summaries and prior v33 inspection retained; full original research chats and reference MP4 original were not retrieved in this run. Publication rights, phone QA, subtitle semantic verification and employee approval remain unverified.
+- **HUMAN_REVIEW / PUBLICATION_NOT_APPROVED**; manual posting only.
