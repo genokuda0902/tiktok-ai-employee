@@ -32,7 +32,7 @@ def stats(rows=DATA):
             "rate":round(100*done/total,1) if total else 0.0}
 
 def safe(x=X,y=Y,w=W,h=H):
-    if min(x,y)<0 or min(w,h)<=0 or x+w>1080 or y+h>1240:
+    if min(x,y)<0 or y<500 or min(w,h)<=0 or x+w>1080 or y+h>1240:
         raise ValueError("Would cover title, narration, or leave frame")
     return True
 
