@@ -1,0 +1,6 @@
+{
+  "genre":"ai_work", "synthetic_scenario":true, "review_only":true,
+  "rights_status":"unverified", "contains_private_data":false,
+  "proof":{"operands":[46,29],"total":75},
+  "labels":{"before":"BEFORE / 検算前","after":"AFTER / 検算後","pending":"合計は要確認","note":"架空データの計算確認のみ・元データの正確性は別確認"}
+}
