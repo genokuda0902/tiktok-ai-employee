@@ -96,3 +96,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local review-only MP4 SHA256 bcf5b872effca785199589caa45f825f6a38c96f68263388b0fe50b3f3f6aa3b, source SHA256 40ff844987eec893748b5ab75264e2b1f37ab0ab08b59a0e67ab46b29b4e77c2; 691 frames, H264 1080x1920 30fps AAC 48kHz, full decode and audio stream identity PASS. Private MP4 not committed.
 - Difference: 8.85–10.95s scene4 fictional prompt Before/After cue, no productivity claim; caption y>=1280 preserved.
 - User 16-panel storyboard directly inspected; full research transcripts and original v33 MP4 not accessed. No ASR semantic check, rights approval, device playback, or employee approval. PUBLICATION_NOT_APPROVED.
+
+
+## 2026-11-01 cycle1112 review-only checkpoint (unmerged)
+- Based on open Draft PR #512 / cycle1110; separate branch quality/cycle1112-row-verification-20261101. Do not merge or publish automatically.
+- Distinct improvement: two-beat fictional April row validation in scene05, 11.70–13.29s / 48 frames, showing 営業A12 + 営業B8 = 20. This is arithmetic verification, not proof of productivity or recovered v33 source. 10 genre palettes, fail-closed SHA/privacy/rights/false-math checks.
+- Local source SHA256 bcf5b872effca785199589caa45f825f6a38c96f68263388b0fe50b3f3f6aa3b; private MP4 SHA256 aff73f105774cb6fbfad6ccc8b656e3626365d144c0feffc044002767dd31b1c (NOT committed). H264 1080x1920 30fps 691 frames / 23.033s; inherited AAC 48kHz ADTS identical. Full A/V decode PASS; all 691 frames quarter-resolution visual QA PASS; caption ROI max delta 0.2323/255, outside edit max 0.2034/255, edited ROI 48-frame mean delta 93.6569/255. Local 15 tests and synthetic 15s smoke PASS.
+- GitHub Actions tests only synthetic A/V. CI result must be checked on final commit. Original 16-panel storyboard directly inspected; prior TikTok市場分析/動画研究 summaries reviewed, full chats and original v33 MP4 inaccessible.
+- Independent Japanese ASR/meaning and word timing, rights, mobile device playback, employee approval and actual Actions billing NOT VERIFIED. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no merge, paid service, public media upload or automatic posting.
