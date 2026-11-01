@@ -1,0 +1,24 @@
+name: Quality cycle1122 Japanese audio metadata and timing QA (synthetic only)
+on:
+  push:
+    paths:
+      - 'quality/cycle1122/**'
+      - '.github/workflows/quality-cycle1122.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1122/**'
+      - '.github/workflows/quality-cycle1122.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free FFmpeg and Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install numpy
+      - name: Ten-genre guards and synthetic H264 AAC integration
+        run: python -m unittest discover -s quality/cycle1122 -p 'test_*.py' -v
