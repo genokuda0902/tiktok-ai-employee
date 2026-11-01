@@ -17,7 +17,8 @@ class AudioReactiveTests(unittest.TestCase):
         im=rgba_frame([.2]*7)
         self.assertEqual(im.size,(124,74))
         self.assertEqual(im.mode,'RGBA')
-        self.assertEqual(im.getpixel((0,0))[3],0)
+        self.assertEqual(rgba_frame([.2]*7,visibility=0).getpixel((0,0))[3],0)
+        self.assertEqual(im.getpixel((0,0))[3],255)
         self.assertGreater(im.getpixel((8,37))[3],0)
     def test_audio_reactivity(self):
         sr=48000;t=np.arange(sr*2)/sr
