@@ -29,7 +29,7 @@ jobs:
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=0x092b3b:s=1080x1920:r=30:d=18' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=18' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/cycle1106/input.mp4
           HASH=$(sha256sum /tmp/cycle1106/input.mp4 | cut -d' ' -f1)
           python3 quality/cycle1106/before_after_evidence.py --source /tmp/cycle1106/input.mp4 --source-sha "$HASH" --manifest quality/cycle1106/manifest.json --out /tmp/cycle1106/output.mp4 --report /tmp/cycle1106/qa.json
-          python3 quality/cycle1106/audio_caption_audit.py --video /tmp/cycle1106/output.mp4 --out /tmp/cycle1106/audio_qa.json --cuts 0,2.9,5.7,8.7,11.5,14.3,17.333333,17.6
+          python3 quality/cycle1106/audio_caption_audit.py --video /tmp/cycle1106/output.mp4 --out /tmp/cycle1106/audio_qa.json --cuts 0,2.9,5.7,8.7,11.5,14.3,15.3,17.333333,18
           ffmpeg -v error -i /tmp/cycle1106/output.mp4 -f null -
           python3 - <<'PY'
           import json
