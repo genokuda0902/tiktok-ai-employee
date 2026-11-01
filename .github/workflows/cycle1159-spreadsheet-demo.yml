@@ -1,0 +1,39 @@
+name: Cycle1159 spreadsheet demo synthetic QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1159/**'
+      - '.github/workflows/cycle1159-spreadsheet-demo.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow
+      - name: Run six synthetic tests
+        run: python -m unittest discover -s quality/cycle1159/tests -v
+      - name: Render synthetic 1080x1920 H264/AAC review-only sample
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x092432:s=1080x1920:r=30:d=9 \
+            -f lavfi -i sine=frequency=420:sample_rate=48000:duration=9 \
+            -shortest -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -t 9 /tmp/input.mp4
+          python quality/cycle1159/spreadsheet_demo_overlay.py \
+            --source /tmp/input.mp4 --output /tmp/output.mp4 \
+            --overlay /tmp/overlay.mov
+          ffmpeg -v error -xerror -i /tmp/output.mp4 -f null -
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of csv=p=0 /tmp/output.mp4)" = "1080"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of csv=p=0 /tmp/output.mp4)" = "1920"
+          test "$(ffprobe -v error -select_streams v:0 -show_entries stream=nb_frames -of csv=p=0 /tmp/output.mp4)" = "270"
+          ffmpeg -v error -i /tmp/input.mp4 -map 0:a:0 -c:a copy -f adts /tmp/a.aac
+          ffmpeg -v error -i /tmp/output.mp4 -map 0:a:0 -c:a copy -f adts /tmp/b.aac
+          cmp /tmp/a.aac /tmp/b.aac
