@@ -1,0 +1,47 @@
+name: Cycle1161 Focus Synthetic QA
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg from Ubuntu repositories
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Install free Pillow
+        run: python -m pip install pillow
+      - name: Test ten-genre overlay geometry
+        run: python -m unittest discover -s quality/cycle1161 -p 'test_*.py' -v
+      - name: Build synthetic H264/AAC source
+        run: |
+          ffmpeg -hide_banner -loglevel error -y \
+            -f lavfi -i color=c=0x081521:s=1080x1920:r=30:d=6 \
+            -f lavfi -i sine=frequency=440:sample_rate=48000:duration=6 \
+            -c:v libx264 -preset ultrafast -pix_fmt yuv420p \
+            -c:a aac -metadata:s:a:0 language=jpn -shortest /tmp/in.mp4
+      - name: Render focus into synthetic clip
+        run: |
+          python quality/cycle1161/repetition_focus.py \
+            --source /tmp/in.mp4 --output /tmp/out.mp4 \
+            --overlay /tmp/focus.mov --preset ultrafast
+      - name: Verify video and unchanged AAC payload
+        run: |
+          ffmpeg -hide_banner -loglevel error -i /tmp/out.mp4 -map 0:v:0 -map 0:a:0 -f null -
+          ffprobe -v error -show_entries stream=codec_name,width,height,avg_frame_rate,nb_frames,sample_rate -of json /tmp/out.mp4
+          ffmpeg -hide_banner -loglevel error -i /tmp/in.mp4 -map 0:a:0 -c:a copy -f adts /tmp/in.aac
+          ffmpeg -hide_banner -loglevel error -i /tmp/out.mp4 -map 0:a:0 -c:a copy -f adts /tmp/out.aac
+          cmp /tmp/in.aac /tmp/out.aac
+          python - <<'PY'
+          import json,subprocess
+          p=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-of','json','/tmp/out.mp4']))
+          v=next(s for s in p['streams'] if s['codec_type']=='video')
+          a=next(s for s in p['streams'] if s['codec_type']=='audio')
+          assert (v['codec_name'],v['width'],v['height'],v['avg_frame_rate'],int(v['nb_frames']))==('h264',1080,1920,'30/1',180)
+          assert a['codec_name']=='aac' and int(a['sample_rate'])==48000
+          print('SYNTHETIC VIDEO/AAC QA PASS (not actual Japanese review MP4)')
+          PY
