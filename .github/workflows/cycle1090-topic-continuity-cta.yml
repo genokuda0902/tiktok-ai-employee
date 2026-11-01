@@ -1,0 +1,16 @@
+name: cycle1090 topic-continuity CTA synthetic QA
+on:
+  push:
+    paths: ['quality/cycle1090/**', '.github/workflows/cycle1090-topic-continuity-cta.yml']
+  pull_request:
+    paths: ['quality/cycle1090/**', '.github/workflows/cycle1090-topic-continuity-cta.yml']
+  workflow_dispatch:
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk python3-pil
+      - run: PYTHONPATH=. /usr/bin/python3 -m unittest quality.cycle1090.test_topic_continuity_cta -v
+      - run: PYTHONPATH=. /usr/bin/python3 -m quality.cycle1090.topic_continuity_cta --smoke
