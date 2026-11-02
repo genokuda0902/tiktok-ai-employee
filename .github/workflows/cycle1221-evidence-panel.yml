@@ -1,0 +1,27 @@
+name: cycle1221-evidence-panel-review
+on:
+  push:
+    branches: [quality/cycle1221-evidence-panel-repair]
+  pull_request:
+    paths:
+      - 'quality/cycle1221/**'
+      - '.github/workflows/cycle1221-evidence-panel.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-evidence-repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install 'Pillow>=10,<12'
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1221/tests -p 'test_*.py' -v
+      - name: Synthetic 1080x1920 A/V and full-decode smoke
+        run: python quality/cycle1221/tests/ci_smoke.py
