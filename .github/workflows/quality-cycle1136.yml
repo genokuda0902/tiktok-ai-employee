@@ -1,0 +1,36 @@
+name: cycle1136 content-only spatial wipes (synthetic only)
+on:
+  push:
+    branches:
+      - quality/cycle1136-content-wipe
+    paths:
+      - 'quality/cycle1136/**'
+      - '.github/workflows/quality-cycle1136.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1136/**'
+      - '.github/workflows/quality-cycle1136.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install 'Pillow>=10,<12'
+      - name: Ten-genre gates and synthetic H264/AAC render/decode
+        run: python -m unittest discover -s quality/cycle1136 -p 'test_*.py' -v
+      - name: Verify private media absent
+        run: |
+          test ! -e quality/cycle1136/manifest.private.json
+          test ! -e quality/cycle1136/real_private.mp4
+          echo 'Only synthetic CI assets; review MP4 stays in private ChatGPT workspace.'
