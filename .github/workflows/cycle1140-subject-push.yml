@@ -1,0 +1,30 @@
+name: cycle1140 subject camera motion (synthetic only)
+on:
+  push:
+    branches: [quality/cycle1140-subject-push]
+    paths:
+      - 'quality/cycle1140/**'
+      - '.github/workflows/cycle1140-subject-push.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1140/**'
+      - '.github/workflows/cycle1140-subject-push.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only-synthetic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install offline-render libraries
+        run: python -m pip install numpy==1.26.4 Pillow==10.4.0
+      - name: Install ffmpeg (runner does not preinstall it)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1140 -p 'test_subject_push.py' -v
+      - name: Synthetic video smoke (no private footage)
+        run: python quality/cycle1140/test_synthetic_render.py

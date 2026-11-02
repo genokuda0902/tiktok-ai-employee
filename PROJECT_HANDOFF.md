@@ -80,3 +80,8 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local verification: H264 1080x1920 30fps, 691 frames/23.033s, full A/V decode PASS, AAC jpn 48kHz elementary bit-identical (ADTS SHA256 `27c264983af59b982989997b1e7648f703c1610f35d057b17f6346848e3e6a65`); 12 local tests PASS including synthetic render. Source/test/workflow in `quality/cycle1138/` and `.github/workflows/quality-cycle1138.yml`.
 - User storyboard directly inspected (16 panels/~36s); accessible research summaries consulted. Full research chats and original v33 MP4 unavailable. Current output still 8 scenes/23s. Independent Japanese ASR, meaning/timing alignment, source rights, smartphone playback, employee approval and actual CI billing NOT VERIFIED.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid API, or private media commit.
+
+## Verified cycle1140 review-only checkpoint (2026-11-02 JST)
+- Based on unmerged cycle1138 PR #539, adds subject-local 56-frame eased 1.08x camera push/pull with mandatory 90px title guard, 10-genre safety checks, 12 local unit tests and 75-frame synthetic smoke. See `quality/cycle1140/RESULT.md`.
+- Private full video SHA256 `20e3fb916ef5654c4d333863c907c35f348f4daab1fbcc7caa5a7fe6f1fcd775`; 1080x1920 30fps 691 frames/23.033s, AAC 48kHz Japanese-tagged stream bit-identical; full decode passed. Video and private manifest NOT committed.
+- Independent Japanese speech transcription, subtitle meaning/timing, original v33 comparison, rights approval, phone playback, employee signoff, and actual CI billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, merge or paid services.
