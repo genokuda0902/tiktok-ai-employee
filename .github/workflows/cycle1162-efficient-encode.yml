@@ -1,0 +1,31 @@
+name: cycle1162-efficient-encode-review
+on:
+  push:
+    branches: [quality/cycle1162-efficient-encode]
+  pull_request:
+    paths:
+      - 'quality/cycle1162/**'
+      - '.github/workflows/cycle1162-efficient-encode.yml'
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free ffmpeg on minimal runner
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Verify ffmpeg and unit tests
+        env:
+          PYTHONPATH: quality/cycle1162
+        run: |
+          ffmpeg -version | head -1
+          python -m unittest discover -s quality/cycle1162/tests -p 'test_*.py' -v
+      - name: Synthetic-only full HD video and audio quality smoke
+        env:
+          PYTHONPATH: quality/cycle1162
+        run: python quality/cycle1162/tests/ci_smoke.py
