@@ -78,8 +78,7 @@ def filtergraph(m):
   f.append(f'drawbox=x={x+10}:y={y+14}:w=44:h=8:color=0x{accent}@1:t=fill:{en}')
   f.append(f"drawtext=fontfile={FONT}:text='{i+1:02d}':fontsize=27:fontcolor=0x{accent}:x={x+15}:y={y+34}:{en}")
   f.append(f"drawtext=fontfile={FONT}:text='{label}':fontsize=44:fontcolor=white:x={x+72}:y={y+24}:{en}")
- # A compact timeline in the safe central area, only after all three cues have appeared.
- f.append(f"drawbox=x=360:y=938:w=360:h=7:color=0x{accent}@0.35:t=fill:enable='between(t,1.62,{END:.2f})'")
+ # A compact three-step timeline in the safe central area.
  for i in range(3):
   f.append(f"drawbox=x={360+i*120}:y=938:w=113:h=7:color=0x{accent}@0.98:t=fill:enable='between(t,{STARTS[i]:.2f},{END:.2f})'")
  return ','.join(f)
