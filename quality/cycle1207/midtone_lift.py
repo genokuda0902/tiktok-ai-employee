@@ -39,7 +39,7 @@ def build_filter(roi=ROI,lift=12):
        f'min(235,val+{lift}*min(1,max(0,(val-24)/35))*'
        f'min(1,max(0,(185-val)/40))),val)')
  return (f'[0:v]split=2[base][mid];'
-         f'[mid]crop={w}:{h}:{x}:{y},lutyuv=y=\\'{expr}\\'[adjusted];'
+         f"[mid]crop={w}:{h}:{x}:{y},lutyuv=y='{expr}'[adjusted];"
          f'[base][adjusted]overlay={x}:{y}:shortest=1:format=auto[outv]')
 def render(src,dst,genre='ai',frames=None,crf=16):
  if genre not in GENRE_PROFILES:raise ValueError('Unknown genre')
