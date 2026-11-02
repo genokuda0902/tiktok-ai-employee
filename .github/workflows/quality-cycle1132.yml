@@ -1,0 +1,36 @@
+name: cycle1132 original review-only UI sound cues
+on:
+  push:
+    branches:
+      - quality/cycle1132-original-proof-sfx
+    paths:
+      - 'quality/cycle1132/**'
+      - '.github/workflows/quality-cycle1132.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1132/**'
+      - '.github/workflows/quality-cycle1132.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install 'numpy>=1.24,<3'
+      - name: Ten-genre unit tests and synthetic H264/AAC render
+        run: python -m unittest discover -s quality/cycle1132 -p 'test_*.py' -v
+      - name: Ensure private media is not committed
+        run: |
+          test ! -e quality/cycle1132/private_manifest.json
+          test ! -e quality/cycle1132/real_private.mp4
+          echo 'CI uses synthetic test media only. Real MP4 remains private review artifact.'
