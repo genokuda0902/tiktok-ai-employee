@@ -20,7 +20,7 @@ SCENES = [
  {'start':333,'end':414,'rect':[508,530,952,1110]},
  {'start':414,'end':501,'rect':[74,840,951,1150]},
  {'start':501,'end':579,'rect':[610,760,952,1120]},
- {'start':579,'end':675,'rect':[80,650,945,850]},
+ {'start':579,'end':675,'rect':[80,765,945,915]},
 ]
 def validate(scenes, frame_count=675):
  assert 1<=len(scenes)<=16
