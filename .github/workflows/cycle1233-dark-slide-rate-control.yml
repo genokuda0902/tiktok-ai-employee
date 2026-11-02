@@ -1,0 +1,26 @@
+name: cycle1233-dark-slide-rate-control-review
+on:
+  push:
+    branches: [quality/cycle1233-dark-slide-rate-control]
+  pull_request:
+    paths:
+      - 'quality/cycle1233/**'
+      - '.github/workflows/cycle1233-dark-slide-rate-control.yml'
+  workflow_dispatch:
+jobs:
+  offline-quality-gate-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1233/tests -p 'test_*.py' -v
+      - name: Synthetic 1080x1920 A/V smoke
+        run: python quality/cycle1233/tests/ci_smoke.py
