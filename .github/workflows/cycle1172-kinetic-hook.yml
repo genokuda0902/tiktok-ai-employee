@@ -1,0 +1,25 @@
+name: cycle1172-review-only-kinetic-hook
+on:
+  push:
+    branches: [quality/cycle1172-kinetic-hook]
+  pull_request:
+    paths:
+      - 'quality/cycle1172/**'
+      - '.github/workflows/cycle1172-kinetic-hook.yml'
+permissions:
+  contents: read
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free FFmpeg and Japanese fonts
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1172/tests -p 'test_*.py' -v
+      - name: Synthetic-only MP4 smoke
+        run: python quality/cycle1172/tests/ci_smoke.py
