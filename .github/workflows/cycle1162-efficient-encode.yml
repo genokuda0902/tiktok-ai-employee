@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install free ffmpeg on minimal runner
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Verify ffmpeg and unit tests
         env:
           PYTHONPATH: quality/cycle1162
