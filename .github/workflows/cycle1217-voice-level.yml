@@ -1,0 +1,24 @@
+name: cycle1217-japanese-narration-mastering-review
+on:
+  push:
+    branches: [quality/cycle1217-voice-level]
+  pull_request:
+    paths:
+      - 'quality/cycle1217/**'
+      - '.github/workflows/cycle1217-voice-level.yml'
+  workflow_dispatch:
+jobs:
+  synthetic-audio-mastering:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1217/tests -p 'test_*.py' -v
+      - name: Synthetic 3-second MP4 audio mastering and decode
+        run: python quality/cycle1217/tests/ci_smoke.py
