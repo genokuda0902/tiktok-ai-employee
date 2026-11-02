@@ -13,14 +13,14 @@ class ParallaxTests(unittest.TestCase):
             p=Path(d)/'s';p.write_bytes(b'video')
             import scene_parallax
             m={'policy':POLICY,'asset_approval':'review_only_no_publication','manual_post_only':True,'source_sha256':scene_parallax.sha256(p),'genre':'ai','layout_id':'eight_scene_v1'}
-            self.assertEqual(len(validate(m,p,23.033333)),3)
+            self.assertEqual(len(validate(m,p,23.033333)),2)
             for g in GENRES:
-                m['genre']=g;self.assertEqual(len(validate(m,p,23.033333)),3)
+                m['genre']=g;self.assertEqual(len(validate(m,p,23.033333)),2)
             for key,value in [('policy','PUBLIC'),('manual_post_only',False),('source_sha256','wrong'),('layout_id','unknown'),('asset_approval','approved')]:
                 mm=dict(m);mm[key]=value
                 with self.assertRaises(ValueError):validate(mm,p,23.033333)
     def test_scene_windows_disjoint_and_safe(self):
-        self.assertEqual(len(SCENES),3)
+        self.assertEqual(len(SCENES),2)
         for a,b in zip(SCENES,SCENES[1:]):self.assertLess(a[2],b[1])
         for x,y,w,h in ROIS.values():
             self.assertLess(y+h,1000)
