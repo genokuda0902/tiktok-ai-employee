@@ -72,3 +72,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Source/tests/CI/QA record: quality/cycle1136/ and .github/workflows/quality-cycle1136.yml. Ten genre safety configurations checked; only AI/Excel video rendered. Private media/manifest NOT committed.
 - User's 16-panel storyboard directly inspected; accessible research summaries consulted, full task transcripts and original v33 MP4 unavailable. Current 8/23s vs reference 16/36s, cinematic gap remains.
 - Independent Japanese ASR, source rights, real-phone playback, employee approval and actual CI billing NOT VERIFIED. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No paid API, merge, auto-post or publication.
+
+
+## 2026-11-02 cycle1138 checkpoint (draft, NOT MERGED)
+- Based on cycle1136 review-only MP4 SHA256 `fea134e081c44363eb1bf3f8aecac57c4da4ed074efaffaee317eefcec379687`; produced private MP4 SHA256 `4a881fc32e9bd03117801c6c82f9c4e96795b2a172d71be9541d4d5b5eef3f45`. Private MP4/manifest are not in GitHub.
+- New, distinct improvement: 29-frame (0.967s) soft cyan directional key-light sweep on audited opening robot ROI x110..779/y475..974. Frame 4..32, peak alpha 0.16. No text overlay, Japanese caption and header regions protected; cinematic reference quality NOT claimed.
+- Local verification: H264 1080x1920 30fps, 691 frames/23.033s, full A/V decode PASS, AAC jpn 48kHz elementary bit-identical (ADTS SHA256 `27c264983af59b982989997b1e7648f703c1610f35d057b17f6346848e3e6a65`); 12 local tests PASS including synthetic render. Source/test/workflow in `quality/cycle1138/` and `.github/workflows/quality-cycle1138.yml`.
+- User storyboard directly inspected (16 panels/~36s); accessible research summaries consulted. Full research chats and original v33 MP4 unavailable. Current output still 8 scenes/23s. Independent Japanese ASR, meaning/timing alignment, source rights, smartphone playback, employee approval and actual CI billing NOT VERIFIED.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid API, or private media commit.
