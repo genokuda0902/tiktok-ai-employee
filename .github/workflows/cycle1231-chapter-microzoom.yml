@@ -1,0 +1,26 @@
+name: cycle1231-chapter-microzoom-review
+on:
+  push:
+    branches: [quality/cycle1231-chapter-microzoom]
+  pull_request:
+    paths:
+      - 'quality/cycle1231/**'
+      - '.github/workflows/cycle1231-chapter-microzoom.yml'
+  workflow_dispatch:
+jobs:
+  offline-microzoom-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1231/tests -p 'test_*.py' -v
+      - name: Synthetic 1080x1920 A/V smoke
+        run: python quality/cycle1231/tests/ci_smoke.py
