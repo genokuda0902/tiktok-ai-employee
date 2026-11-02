@@ -1,0 +1,37 @@
+name: cycle1142 review-only lineage focus
+on:
+  push:
+    branches: [quality/cycle1142-lineage-focus]
+  pull_request:
+    paths:
+      - 'quality/cycle1142/**'
+      - '.github/workflows/cycle1142-lineage-focus.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-private-safe-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow==11.1.0 numpy==2.2.3
+      - name: Extract exact reviewed source and tests
+        run: tar -xJf quality/cycle1142/source_tests.tar.xz -C .
+      - name: 13 tests including 8s synthetic H264 AAC full decode
+        env:
+          RUN_MEDIA_SMOKE: '1'
+          PYTHONPATH: quality/cycle1142
+        run: python -m unittest discover -s quality/cycle1142 -p 'test_lineage_focus.py' -v
+      - name: Enforce no private media committed
+        run: |
+          if find quality/cycle1142 -type f \( -iname '*.mp4' -o -iname '*.wav' -o -iname '*private_manifest*' \) | grep .; then
+            echo 'Private media/manifest detected' >&2; exit 1
+          fi

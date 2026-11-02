@@ -85,3 +85,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Based on unmerged cycle1138 PR #539, adds subject-local 56-frame eased 1.08x camera push/pull with mandatory 90px title guard, 10-genre safety checks, 12 local unit tests and 75-frame synthetic smoke. See `quality/cycle1140/RESULT.md`.
 - Private full video SHA256 `20e3fb916ef5654c4d333863c907c35f348f4daab1fbcc7caa5a7fe6f1fcd775`; 1080x1920 30fps 691 frames/23.033s, AAC 48kHz Japanese-tagged stream bit-identical; full decode passed. Video and private manifest NOT committed.
 - Independent Japanese speech transcription, subtitle meaning/timing, original v33 comparison, rights approval, phone playback, employee signoff, and actual CI billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No auto-post, merge or paid services.
+
+
+## cycle1142 review-only checkpoint (2026-11-02 JST)
+- Stacked on cycle1140 PR #541, NOT merged. New spreadsheet evidence improvement: B5 formula/label mismatch repaired in frames 182–206, with arithmetic provenance cues for B=46 and C=29 in frames 182–217. Not the previous robot zoom or original v33 engine.
+- Private review MP4 SHA256 \`c3227077c8284a4d7d35e2dd4b0745f4a6e3d6615b509ce1a36db8c41d2b4053\`, H264 1080x1920 30fps 691 frames/23.033s; AAC jpn 48kHz ADTS bit-identical to cycle1140; full decode PASS; 13 local tests PASS including synthetic AV.
+- All 691 caption frames compared: max downsampled caption MAE 0.4956/255. Exact renderer, QA comparison and tests stored as content-addressed tar.xz in quality/cycle1142; CI extracts and tests synthetic media only.
+- User 16-panel storyboard directly inspected, research summaries consulted; full chats/v33 MP4 inaccessible. Independent Japanese ASR/caption semantic timing, rights, real phone, employee approval and billing remain unverified. HUMAN_REVIEW/PUBLICATION_NOT_APPROVED. No auto-post, merge, private-media commit or paid API.
