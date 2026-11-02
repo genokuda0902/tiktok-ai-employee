@@ -1,0 +1,24 @@
+name: cycle1215-mobile-scene-keyframes-review
+on:
+  push:
+    branches: [quality/cycle1215-mobile-keyframes]
+  pull_request:
+    paths:
+      - 'quality/cycle1215/**'
+      - '.github/workflows/cycle1215-mobile-keyframes.yml'
+  workflow_dispatch:
+jobs:
+  test-and-synthetic-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Unit tests (10 genres)
+        run: python -m unittest discover -s quality/cycle1215/tests -p 'test_*.py' -v
+      - name: Synthetic 3-second 1080x1920 MP4 render and decode
+        run: python quality/cycle1215/tests/ci_smoke.py
