@@ -20,7 +20,8 @@ jobs:
           python-version: '3.11'
       - name: Install open-source dependencies
         run: |
-          command -v ffmpeg >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y ffmpeg; }
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg fonts-noto-cjk
           python -m pip install --disable-pip-version-check pillow==11.1.0 numpy==2.2.3
       - name: Extract exact reviewed source and tests
         run: tar -xJf quality/cycle1142/source_tests.tar.xz -C .
