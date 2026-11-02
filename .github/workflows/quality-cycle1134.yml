@@ -1,0 +1,36 @@
+name: cycle1134 proportional proof bars review-only
+on:
+  push:
+    branches:
+      - quality/cycle1134-proportional-proof-bars
+    paths:
+      - 'quality/cycle1134/**'
+      - '.github/workflows/quality-cycle1134.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1134/**'
+      - '.github/workflows/quality-cycle1134.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install zero-cost dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install 'Pillow>=10,<12'
+      - name: Ten-genre tests and synthetic video render
+        run: python -m unittest discover -s quality/cycle1134 -p 'test_*.py' -v
+      - name: No private MP4 or manifests in repository
+        run: |
+          test ! -e quality/cycle1134/manifest.private.json
+          test ! -e quality/cycle1134/real_private.mp4
+          echo 'Synthetic CI only. Real review MP4 stays outside GitHub.'
