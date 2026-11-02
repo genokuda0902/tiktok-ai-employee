@@ -1,0 +1,32 @@
+name: cycle1174 guided tasks review-only
+on:
+  push:
+    branches: ['quality/cycle1174-guided-tasks']
+    paths: ['quality/cycle1174/**', '.github/workflows/cycle1174-guided-tasks.yml']
+  pull_request:
+    paths: ['quality/cycle1174/**', '.github/workflows/cycle1174-guided-tasks.yml']
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+      - run: python -m pip install 'Pillow==11.3.0'
+      - run: python -m unittest discover -s quality/cycle1174/tests -p 'test_*.py' -v
+      - name: Synthetic audio/video smoke (no private media)
+        run: |
+          mkdir -p /tmp/c1174
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=navy:s=1080x1920:r=30:d=6.2' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=6.2' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/c1174/in.mp4
+          python - <<'PY'
+          import hashlib,json
+          p='/tmp/c1174/in.mp4'
+          j={'policy':'HUMAN_REVIEW/PUBLICATION_NOT_APPROVED','asset_approval':'review_only_no_publication','manual_post_only':True,'roi_reviewed':True,'genre':'ai','overlay_height':1270,'source_sha256':hashlib.sha256(open(p,'rb').read()).hexdigest()}
+          open('/tmp/c1174/manifest.json','w').write(json.dumps(j))
+          PY
+          python quality/cycle1174/guided_tasks.py --source /tmp/c1174/in.mp4 --output /tmp/c1174/out.mp4 --manifest /tmp/c1174/manifest.json --report /tmp/c1174/qa.json
+          python -c 'import json;assert json.load(open("/tmp/c1174/qa.json"))["technical_pass"]'
