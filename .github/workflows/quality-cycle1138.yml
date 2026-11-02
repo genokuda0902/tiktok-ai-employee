@@ -1,0 +1,36 @@
+name: cycle1138 cinematic hero light (synthetic only)
+on:
+  push:
+    branches:
+      - quality/cycle1138-hero-keylight
+    paths:
+      - 'quality/cycle1138/**'
+      - '.github/workflows/quality-cycle1138.yml'
+  pull_request:
+    paths:
+      - 'quality/cycle1138/**'
+      - '.github/workflows/quality-cycle1138.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only-synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free offline renderer dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install 'Pillow>=10,<12' 'numpy>=1.24,<3'
+      - name: Ten-genre gates and synthetic video render/decode
+        run: python -m unittest discover -s quality/cycle1138 -p 'test_*.py' -v
+      - name: Ensure no private source media or manifests
+        run: |
+          test ! -e quality/cycle1138/manifest.private.json
+          test ! -e quality/cycle1138/real_private.mp4
+          echo 'Synthetic CI only. Review MP4 is not committed.'
