@@ -1,0 +1,27 @@
+name: cycle1235-result-focus-review
+on:
+  push:
+    branches: [quality/cycle1235-result-focus]
+  pull_request:
+    paths:
+      - 'quality/cycle1235/**'
+      - '.github/workflows/cycle1235-result-focus.yml'
+  workflow_dispatch:
+jobs:
+  offline-focus-cue-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and Pillow
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install 'Pillow>=10,<13'
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1235/tests -p 'test_*.py' -v
+      - name: Synthetic 1080x1920 A/V smoke
+        run: python quality/cycle1235/tests/ci_smoke.py
