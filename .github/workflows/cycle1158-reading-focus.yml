@@ -1,0 +1,31 @@
+name: cycle1158-reading-focus-review
+on:
+  push:
+    branches: [quality/cycle1158-reading-focus]
+  pull_request:
+    paths:
+      - 'quality/cycle1158/**'
+      - '.github/workflows/cycle1158-reading-focus.yml'
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free open-source dependencies
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install pillow==11.1.0
+      - name: Ten-genre policy and focus unit tests
+        env:
+          PYTHONPATH: quality/cycle1158
+        run: python -m unittest discover -s quality/cycle1158/tests -p 'test_*.py' -v
+      - name: Render and decode synthetic H264/AAC video
+        env:
+          PYTHONPATH: quality/cycle1158
+        run: python quality/cycle1158/tests/ci_smoke.py
