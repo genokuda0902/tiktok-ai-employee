@@ -173,3 +173,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local review-only private MP4 SHA256 4f663f774b0154a366625cd27ff122008c0a023dd74c59fed661264b1b8805d4; H264 1080x1920/30fps, 691 frames/23.033s, AAC48kHz ADTS bit-identical, full A/V decode PASS. 691-frame caption ROI MAE mean 0.369/255, max 0.6275/255; 43 focus frames MAE mean 3.9734/255. Local 6 tests + 11s synthetic-only smoke PASS; CI pending verification.
 - Reference 16-panel storyboard directly inspected. Full TikTok research chats and original v33 MP4 unavailable; speech/caption semantic/timing ASR, rights, smartphone playback, employee approval and Actions billing unverified.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no auto-post, no public upload of private media, no paid services.
+
+
+## 2026-11-03 cycle1174 branch-only QA addendum (not merged)
+- Prior review-only PR #573 cycle1173, original lower-band progress rail, remains unmerged; parallel PR #574 cycle1239 also open and untouched.
+- New `quality/cycle1174/guided_tasks.py` and tests render a **three-stage, original vector** task visualization only during 3.00–5.96s, leaving the Japanese captions below y1400 unchanged. Ten configurable palettes, strict manifest SHA/policy gate, AAC bitcopy.
+- Private actual cycle1174 MP4 SHA-256 `0a2c63f2100801294d595c4da2edfdd5241b59d8e8b776a497f562f3ab3de1e8`; 1080x1920 30fps/691 frames/23.033s, H264/AAC, full A/V decode PASS; source/output AAC ADTS identical. Local 10 tests and 6.2s synthetic video smoke PASS. 691-frame caption-region max MAE 0.197/255.
+- Source, exact QA and provenance: `quality/cycle1174/RESULT.md`. Private MP4 is not in public GitHub; synthetic CI does not test it.
+- Reference 16-panel storyboard was inspected; original v33 MP4 and full research chats remain inaccessible. Speech/subtitle semantic timing, smartphone playback, rights and employee approval NOT verified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid service or private-media upload.
