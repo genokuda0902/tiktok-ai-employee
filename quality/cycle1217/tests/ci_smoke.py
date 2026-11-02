@@ -46,6 +46,7 @@ def main():
         assert abs(report['after_lufs'] + 16) <= .4, report
         assert report['after_true_peak_dbtp'] <= -1.35, report
         assert before['streams'][0]['codec_name'] == v['codec_name']
+        assert abs(float(after['format']['duration']) - float(v['duration'])) <= .05, 'audio tail extends video'
         print('PASS synthetic 3s 1080x1920, full decode, audio target, H264 bitstream identical')
 
 
