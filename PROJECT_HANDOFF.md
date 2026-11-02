@@ -1,3 +1,9 @@
+## cycle1170 (2026-11-03 JST, REVIEW ONLY; stacked on open #567)
+- New original proportional fictional-data A/B bar chart in scene06, 14.50–16.90s, reviewed ROI x54/y806/w940/h240; A=12+16+18=46, B=8+9+12=29, total75. Distinct from cycle1168's prompt focus.
+- Source private MP4 SHA256 4f663f774b0154a366625cd27ff122008c0a023dd74c59fed661264b1b8805d4. Real output MP4 created locally, 23.033333s H.264 1080x1920 30fps/691 frames, AAC48kHz Japanese-tagged stereo; full A/V decode PASS, AAC elementary stream identical.
+- Local 11 unit tests PASS and synthetic 3-second A/V smoke PASS. All 691 subtitle-protected frames compared, max sampled MAE 0.619/255; 73 chart frames changed. Code/tests/CI under quality/cycle1170/ and .github/workflows/cycle1170-proof-chart.yml. Draft PR #569, base open PR #567. Private media remains outside GitHub.
+- Directly viewed user's 16-panel storyboard and consulted accessible TikTok research summaries; full task chats and original v33 MP4 unavailable. Independent Japanese ASR, speech-caption meaning/timing, rights, phone test, employee approval and Actions actual billing NOT VERIFIED. HUMAN_REVIEW/PUBLICATION_NOT_APPROVED. No merge, paid service, automatic posting or public private-media upload.
+
 ## cycle1130 (2026-11-02 JST, REVIEW ONLY)
 - Corrected a previously overlooked contradiction in scene03: overlay =SUM(B2:B4) vs selected C5 and visible =SUM(C2:C4). Fictional B total 46, C total 29; corrected frames 180–217.
 - Source cycle1128 private MP4 SHA256 8200e485fca3042424b7d6f78d43bbd8b7ec7b3893197a6bee61418d1348ded0; output cycle1130 private MP4 SHA256 f20bcd0ca234cc68fa7eec82d6d07aa23775f4c44210a8aa7dcb333b8450b91e.
