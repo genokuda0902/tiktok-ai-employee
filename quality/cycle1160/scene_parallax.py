@@ -28,7 +28,6 @@ ROIS = {
 SCENES = (
     ('robot_open', 0.36, 2.52, 0.029, 5),
     ('problem', 3.18, 5.34, 0.034, -5),
-    ('closing', 20.72, 22.76, 0.031, 4),
 )
 
 
@@ -118,7 +117,7 @@ def render(source,output,manifest,report_path,smoke=False):
     cmd=['ffmpeg','-hide_banner','-loglevel','error','-y',
          '-f','rawvideo','-pix_fmt','bgr24','-s','1080x1920','-r','30','-i','pipe:0',
          '-i',str(source),'-map','0:v:0','-map','1:a:0',
-         '-c:v','libx264','-preset','ultrafast','-crf','18','-pix_fmt','yuv420p','-threads','4',
+         '-c:v','libx264','-preset','superfast','-crf','19','-pix_fmt','yuv420p','-threads','4',
          '-c:a','copy','-movflags','+faststart','-t',f'{duration:.6f}',str(output)]
     proc=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
     n=0;changed=0;by_scene={s[0]:0 for s in scenes}
