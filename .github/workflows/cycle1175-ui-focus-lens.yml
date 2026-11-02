@@ -1,0 +1,31 @@
+name: cycle1175 source-true UI focus (synthetic QA)
+on:
+  push:
+    branches: ['quality/cycle1175-ui-focus-lens']
+    paths: ['quality/cycle1175/**', '.github/workflows/cycle1175-ui-focus-lens.yml']
+  pull_request:
+    paths: ['quality/cycle1175/**', '.github/workflows/cycle1175-ui-focus-lens.yml']
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: python -m unittest discover -s quality/cycle1175/tests -p 'test_*.py' -v
+      - name: Synthetic 9-second video with AAC (no private media)
+        run: |
+          mkdir -p /tmp/c1175
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i 'color=c=navy:s=1080x1920:r=30:d=9' -f lavfi -i 'sine=frequency=440:sample_rate=48000:duration=9' -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -shortest /tmp/c1175/in.mp4
+          python - <<'PY'
+          import hashlib,json
+          p='/tmp/c1175/in.mp4'
+          m={'policy':'HUMAN_REVIEW/PUBLICATION_NOT_APPROVED','asset_approval':'review_only_no_publication','manual_post_only':True,'roi_reviewed':True,'genre':'ai','caption_safe_y':1270,'source_sha256':hashlib.sha256(open(p,'rb').read()).hexdigest()}
+          open('/tmp/c1175/manifest.json','w').write(json.dumps(m))
+          PY
+          python quality/cycle1175/ui_focus_lens.py --source /tmp/c1175/in.mp4 --output /tmp/c1175/out.mp4 --manifest /tmp/c1175/manifest.json --report /tmp/c1175/qa.json
+          python -c 'import json;assert json.load(open("/tmp/c1175/qa.json"))["technical_pass"]'
