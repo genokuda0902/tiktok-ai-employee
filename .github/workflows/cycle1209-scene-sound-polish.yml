@@ -1,0 +1,27 @@
+name: cycle1209-scene-sound-polish
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1209/**'
+      - '.github/workflows/cycle1209-scene-sound-polish.yml'
+  workflow_dispatch:
+jobs:
+  audio-quality-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and free Python dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --disable-pip-version-check numpy scipy
+      - name: Unit tests (10)
+        run: python -m unittest discover -s quality/cycle1209/tests -p 'test_*.py' -v
+      - name: Synthetic 1080x1920 H264/AAC full encode/decode
+        run: python quality/cycle1209/tests/ci_smoke.py
