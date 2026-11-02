@@ -1,0 +1,4 @@
+# cycle1148 — review only (2026-11-02 JST)
+Previous cycle1146 improved scene02 takeaway. This cycle fixes *final scene* three-step CTA card text ghosting/overlap by re-rendering three clean cards with timed focus. Real MP4 remains a private conversation attachment, never committed.
+Local input SHA256 acf8d9fac8139f08bfa4a71e7fe4900e2c2e6a0b8e44d3923c1dcdf6bdaafbb8; output SHA256 e0015a1bf632a9676cef3af8073f939edc766ea92841c14d6df30af23134356e. 1080x1920 H264 30fps 691 frames/23.033333s; AAC jpn 48kHz elementary bit-identical. Full decode PASS, 7 unit tests and 23.1s synthetic smoke PASS. 10 genre settings tested, one genre real MP4 generated.
+Archived source/tests are stored in source_tests.tar.xz. CI extracts and tests synthetic media only. Original v33 MP4, full research chats, independent Japanese ASR, rights clearance, phone playback, employee signoff, actual billing remain unverified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, posting or paid services.

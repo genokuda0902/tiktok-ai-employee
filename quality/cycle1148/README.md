@@ -1,0 +1,2 @@
+# cycle1148 CTA ghosting repair
+Review-only ten-genre generator. Python 3.11, Pillow 11.1.0, FFmpeg, Noto CJK. Run: python quality/cycle1148/cta_cards.py --source PRIVATE.mp4 --output REVIEW_ONLY.mp4 --manifest PRIVATE.json --report QA.json. Manifest needs policy, genre, source_sha256, asset_approval=review_only_original_graphics and four step times. Source is 1080x1920 H264 30fps AAC 48kHz. Original v33 MP4 unavailable. No publication approval; employee manual posting only. See RESULT.md.

@@ -1,0 +1,31 @@
+name: cycle1148-cta-deghost-review
+on:
+  push:
+    branches: [quality/cycle1148-cta-deghost]
+  pull_request:
+    paths:
+      - 'quality/cycle1148/**'
+      - '.github/workflows/cycle1148-cta-deghost.yml'
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install pillow==11.1.0
+      - name: Unit tests for 10 genres
+        env:
+          PYTHONPATH: quality/cycle1148
+        run: python -m unittest discover -s quality/cycle1148/tests -p 'test_*.py' -v
+      - name: Synthetic full-length A/V smoke
+        env:
+          PYTHONPATH: quality/cycle1148
+        run: python quality/cycle1148/tests/ci_smoke.py
