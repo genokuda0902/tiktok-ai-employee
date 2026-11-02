@@ -154,3 +154,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Private MP4 SHA256 `ae5aa03ac90f3dd025858e9481fe3ba16224c07081812887428ea9d00074f551`; 691 frames, 23.033s, 1080x1920/30fps H264, AAC48kHz ADTS bit-identical, full A/V decode PASS. Full 691-frame caption ROI SSIM 0.996629; sampled caption MAE 0.675–0.679/255. CI status must be verified separately.
 - Initial looping overlay caused runaway duration; fixed with explicit -t. First layout exposed underlying spreadsheet; enlarged backdrop. See `quality/cycle1166/RESULT.md` for reproducibility and prior errors.
 - Original 16-panel storyboard directly inspected; full research chats and v33 original MP4 unavailable. Japanese speech/caption meaning and sync, rights, smartphone playback, staff approval, actual Actions billing UNVERIFIED. HUMAN_REVIEW/PUBLICATION_NOT_APPROVED. No merge, posting, paid service or public private-media upload.
+
+
+## cycle1168 — ordered prompt reading focus (2026-11-03 JST)
+- Stacked on unmerged PR #565; main still 18e084c38db0dc55db7dfc0532b9451b1167f2aa. No merge. Independent parallel PRs untouched.
+- New three-stage visual focus on right-side prompt comparison (目的→条件→形式), 9.10–10.52s. Shared 10-genre palette + source SHA/approval manifest fail-closed gates; other genres require separately reviewed ROI/timing. Source, 6 unit tests and synthetic-only CI at quality/cycle1168/.
+- Local review-only private MP4 SHA256 4f663f774b0154a366625cd27ff122008c0a023dd74c59fed661264b1b8805d4; H264 1080x1920/30fps, 691 frames/23.033s, AAC48kHz ADTS bit-identical, full A/V decode PASS. 691-frame caption ROI MAE mean 0.369/255, max 0.6275/255; 43 focus frames MAE mean 3.9734/255. Local 6 tests + 11s synthetic-only smoke PASS; CI pending verification.
+- Reference 16-panel storyboard directly inspected. Full TikTok research chats and original v33 MP4 unavailable; speech/caption semantic/timing ASR, rights, smartphone playback, employee approval and Actions billing unverified.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED; no auto-post, no public upload of private media, no paid services.
