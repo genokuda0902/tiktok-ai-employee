@@ -22,6 +22,8 @@ jobs:
           python-version: '3.11'
       - name: Install offline-render libraries
         run: python -m pip install numpy==1.26.4 Pillow==10.4.0
+      - name: Install ffmpeg (runner does not preinstall it)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Unit tests
         run: python -m unittest discover -s quality/cycle1140 -p 'test_subject_push.py' -v
       - name: Synthetic video smoke (no private footage)
