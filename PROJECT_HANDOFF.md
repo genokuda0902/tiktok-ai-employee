@@ -92,3 +92,10 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Private review MP4 SHA256 \`c3227077c8284a4d7d35e2dd4b0745f4a6e3d6615b509ce1a36db8c41d2b4053\`, H264 1080x1920 30fps 691 frames/23.033s; AAC jpn 48kHz ADTS bit-identical to cycle1140; full decode PASS; 13 local tests PASS including synthetic AV.
 - All 691 caption frames compared: max downsampled caption MAE 0.4956/255. Exact renderer, QA comparison and tests stored as content-addressed tar.xz in quality/cycle1142; CI extracts and tests synthetic media only.
 - User 16-panel storyboard directly inspected, research summaries consulted; full chats/v33 MP4 inaccessible. Independent Japanese ASR/caption semantic timing, rights, real phone, employee approval and billing remain unverified. HUMAN_REVIEW/PUBLICATION_NOT_APPROVED. No auto-post, merge, private-media commit or paid API.
+
+
+## cycle1144 review-only checkpoint (2026-11-02 JST)
+- Stacked on unmerged cycle1142 PR #544; draft PR #545. Distinct visual change: 90-frame original vector cursor guiding B5=46, C5=29, and total=75 at 14.3–17.3s. This is an illustrative cursor, not actual recorded interaction.
+- Source/test Git blob `28602a651a59b6e122bc9b25e90dd39e0aa9648a` at `quality/cycle1144/source_tests.tar.xz`, SHA256 `fa081a17938d55800f7ea27ff55f56539520722efbc2f188ad0f768d506c0116`; local 11/11 unittest PASS including synthetic 2-second A/V. GitHub CI is synthetic only.
+- Private MP4 SHA256 `18c7da2395524fb490f0d427e190fcbfccd2f40062482c864c389060d4bcde15`: H264 1080×1920/30fps 691 frames/23.033s, AAC jpn 48kHz bit-identical to cycle1142 ADTS; full decode PASS; 691 caption frames max MAE 0.5264/255. Full private video and manifest NOT committed.
+- 16-panel/~36s user storyboard directly inspected; research summaries consulted; full original research transcripts and original v33 MP4 inaccessible. Independent Japanese ASR/caption meaning/timing, rights, phone, employee approval and Actions billing NOT verified. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, private media commit or paid services.

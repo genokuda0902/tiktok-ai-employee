@@ -1,0 +1,34 @@
+name: cycle1144 cursor proof synthetic QA
+on:
+  push:
+    branches:
+      - quality/cycle1144-cursor-proof
+  pull_request:
+    paths:
+      - 'quality/cycle1144/**'
+      - '.github/workflows/cycle1144-cursor-proof.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free open-source dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --disable-pip-version-check pillow==11.1.0
+      - name: Verify exact source archive and extract
+        run: |
+          echo 'fa081a17938d55800f7ea27ff55f56539520722efbc2f188ad0f768d506c0116  quality/cycle1144/source_tests.tar.xz' | sha256sum -c -
+          tar -xJf quality/cycle1144/source_tests.tar.xz -C quality/cycle1144
+      - name: Run 10-genre security tests and synthetic H264 AAC smoke
+        env:
+          RUN_MEDIA_SMOKE: '1'
+          PYTHONPATH: quality/cycle1144
+        run: python -m unittest discover -s quality/cycle1144 -p 'test_*.py' -v
