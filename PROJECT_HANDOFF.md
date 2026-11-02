@@ -1,3 +1,8 @@
+## cycle1172 (2026-11-03 JST, REVIEW ONLY; stacked on open #569)
+- Distinct from cycle1170 proportional chart: new 3-beat opening action cue 集計→確認→報告 at 0.18/0.58/0.98s, ending 1.43s before intro cut. 10-genre palette and review-only fail-closed manifest.
+- Source private MP4 SHA256 5ca750a72ab5be37a8df99386493d85902e0c4530e8571394b843b54f443907c; output SHA256 ed3f6082a10ac980f30d7584dde1ccd0af82cfb3da979744450c6539ab28164e. Local 1080x1920/30fps/691 frames/23.033s H.264, AAC48kHz jpn-tag, full A/V decode PASS, AAC bit-identical, 8 unit tests PASS, 4-second synthetic smoke PASS. Subtitle-protected ROI y1280–1860 max sampled MAE 0.4982/255 across 691 frames; 31 effect frames thresholded and no changed scene frames after 1.5s; audio activity 8/8 equal intervals. Local media not committed.
+- Consulted accessible TikTok market/video-research summaries and directly viewed 16-panel user storyboard; original full chats and v33 MP4 inaccessible. Independent ASR/semantic-timing alignment, rights, smartphone playback, employee approval and Actions billing NOT VERIFIED. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-post, paid service or private-media upload.
+
 ## cycle1170 (2026-11-03 JST, REVIEW ONLY; stacked on open #567)
 - New original proportional fictional-data A/B bar chart in scene06, 14.50–16.90s, reviewed ROI x54/y806/w940/h240; A=12+16+18=46, B=8+9+12=29, total75. Distinct from cycle1168's prompt focus.
 - Source private MP4 SHA256 4f663f774b0154a366625cd27ff122008c0a023dd74c59fed661264b1b8805d4. Real output MP4 created locally, 23.033333s H.264 1080x1920 30fps/691 frames, AAC48kHz Japanese-tagged stereo; full A/V decode PASS, AAC elementary stream identical.
