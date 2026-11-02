@@ -63,3 +63,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Local review MP4: 1080x1920, 30fps, 691 frames/23.033s, full decode PASS, original AAC bitstream SHA256 unchanged; 9 local unit tests PASS. Private video and manifest are NOT committed. See quality/cycle1134/RESULT.md for source/output SHA256 and measured ROI differences.
 - Reference storyboard directly inspected; full research transcripts and original v33 MP4 not accessible. 8-scene output still below 16-panel storyboard cinematic diversity. Japanese ASR semantics, smartphone playback, rights, staff approval and billing remain unverified.
 - No merge, auto-post, external distribution or paid API. PUBLICATION_NOT_APPROVED. Changes in draft PR on quality/cycle1134-proportional-proof-bars.
+
+
+## 2026-11-02 cycle1136 checkpoint (draft; not merged)
+- Source: cycle1134 private MP4 SHA256 `8f409be877ff1bd145a01edc2e8c268f6683e4f0df2f7df7351d4caabdf76d15`. Output: private review-only MP4 SHA256 `fea134e081c44363eb1bf3f8aecac57c4da4ed074efaffaee317eefcec379687`.
+- Distinct improvement: seven 8-frame left-to-right content-only wipes at audited scene boundaries. Initial full-image dissolve prototype rejected because of doubled Japanese UI text. Existing proof bars and original AAC jpn audio preserved.
+- Local QA: H264 1080x1920/30fps, 691 frames/23.033s, full A/V decode PASS, AAC elementary stream bit-identical; 30 sampled caption frames max MAE 0.749/255. Nine unit tests PASS including synthetic AV render. CI checks synthetic media only.
+- Source/tests/CI/QA record: quality/cycle1136/ and .github/workflows/quality-cycle1136.yml. Ten genre safety configurations checked; only AI/Excel video rendered. Private media/manifest NOT committed.
+- User's 16-panel storyboard directly inspected; accessible research summaries consulted, full task transcripts and original v33 MP4 unavailable. Current 8/23s vs reference 16/36s, cinematic gap remains.
+- Independent Japanese ASR, source rights, real-phone playback, employee approval and actual CI billing NOT VERIFIED. HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No paid API, merge, auto-post or publication.
