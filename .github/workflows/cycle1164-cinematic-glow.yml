@@ -1,0 +1,29 @@
+name: cycle1164-cinematic-glow-review
+on:
+  push:
+    branches: [quality/cycle1164-cinematic-glow]
+  pull_request:
+    paths:
+      - 'quality/cycle1164/**'
+      - '.github/workflows/cycle1164-cinematic-glow.yml'
+jobs:
+  synthetic-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: python -m pip install --disable-pip-version-check pillow
+      - name: Unit tests
+        env:
+          PYTHONPATH: quality/cycle1164
+        run: python -m unittest discover -s quality/cycle1164/tests -p 'test_*.py' -v
+      - name: Synthetic-only MP4 and AAC QA
+        env:
+          PYTHONPATH: quality/cycle1164
+        run: python quality/cycle1164/tests/ci_smoke.py

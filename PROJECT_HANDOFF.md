@@ -137,3 +137,12 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Output SHA256 83895018e312dbb1e01b6b8c3ad603f0160aebeff46d515d3dfe656f4d19d614; source SHA256 9fbae3325136e0da41e7b8fe55c1f5c816d296c3dd9b2d781d4b06271e762026. Private MP4 only in ChatGPT, NOT in GitHub.
 - New quality/cycle1162/efficient_encode.py and tests; local 8 unit tests and 2s synthetic A/V smoke PASS. GitHub Actions synthetic-only, not the private MP4. See quality/cycle1162/README.md for reproduction/limits.
 - Directly inspected 16-panel storyboard, research summaries consulted; original v33 MP4/full research chats unavailable. Spoken Japanese semantic sync, rights, employee approval, smartphone playback and actual billing unverified. HUMAN_REVIEW/PUBLICATION_NOT_APPROVED; no merge, paid services, or posting.
+
+
+## cycle1164 — cinematic light + chapter audio presence (2026-11-03 JST)
+- Base: open draft PR #562, SHA `7d8a547eeaeac23b2092d19d3bc8ce729dbcf345`; main remains `18e084c38db0dc55db7dfc0532b9451b1167f2aa`. Independent review-only stacked branch `quality/cycle1164-cinematic-glow`.
+- Distinct from cycle1162 compression: original translucent blue 2D light pass across opening robot illustration, 0.45–1.55s, restricted to y470–1110; 10-genre policy/manifest, chapter-level AAC presence checks. **NOT 3D or original v33.**
+- Private source cycle1162 MP4 SHA256 `83895018e312dbb1e01b6b8c3ad603f0160aebeff46d515d3dfe656f4d19d614`; new private MP4 SHA256 `a0acc08ba828f2984d8141a3092fce3d245aa6d64dd0f5ced225b2e1f4c8d96b`. 691 frames, 23.033s, 1080x1920/30fps H264, AAC 48kHz ADTS bit-identical, full decode PASS. 8/8 chapter RMS > 0.005. Sampled caption ROI pixel MAE 0.85–0.97/255. Local 4 unit tests + synthetic 2s smoke PASS.
+- Source/tests/workflow: `quality/cycle1164/`, `.github/workflows/cycle1164-cinematic-glow.yml`. GitHub Actions tests synthetic data ONLY; private MP4 is local ChatGPT attachment, not uploaded to public GitHub.
+- Reference 16-panel storyboard directly viewed; full research task/chat text and original v33 MP4 not accessible. Current 8 scenes/23s still far from cinematic 16 scenes/36s. Japanese ASR, subtitle semantic/timing verification, rights, phone playback, employee approval and actual Actions billing remain unverified.
+- HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-posting, paid contracts or private-media public upload.
