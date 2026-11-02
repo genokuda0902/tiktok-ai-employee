@@ -146,3 +146,11 @@ PR #5: https://github.com/genokuda0902/tiktok-ai-employee/pull/5
 - Source/tests/workflow: `quality/cycle1164/`, `.github/workflows/cycle1164-cinematic-glow.yml`. GitHub Actions tests synthetic data ONLY; private MP4 is local ChatGPT attachment, not uploaded to public GitHub.
 - Reference 16-panel storyboard directly viewed; full research task/chat text and original v33 MP4 not accessible. Current 8 scenes/23s still far from cinematic 16 scenes/36s. Japanese ASR, subtitle semantic/timing verification, rights, phone playback, employee approval and actual Actions billing remain unverified.
 - HUMAN_REVIEW / PUBLICATION_NOT_APPROVED. No merge, auto-posting, paid contracts or private-media public upload.
+
+
+## cycle1166 — procedural BEFORE/AFTER motion (2026-11-03 JST)
+- Draft PR #565 stacked on unmerged #564; main unchanged at `18e084c38db0dc55db7dfc0532b9451b1167f2aa`. Parallel PR #563 untouched.
+- New scene8 BEFORE/AFTER procedural comparison, 20.50–22.99s; 10-genre palette and review-only fail-closed guard. Original source code, 7 tests, synthetic-only 23s A/V CI in `quality/cycle1166/`.
+- Private MP4 SHA256 `ae5aa03ac90f3dd025858e9481fe3ba16224c07081812887428ea9d00074f551`; 691 frames, 23.033s, 1080x1920/30fps H264, AAC48kHz ADTS bit-identical, full A/V decode PASS. Full 691-frame caption ROI SSIM 0.996629; sampled caption MAE 0.675–0.679/255. CI status must be verified separately.
+- Initial looping overlay caused runaway duration; fixed with explicit -t. First layout exposed underlying spreadsheet; enlarged backdrop. See `quality/cycle1166/RESULT.md` for reproducibility and prior errors.
+- Original 16-panel storyboard directly inspected; full research chats and v33 original MP4 unavailable. Japanese speech/caption meaning and sync, rights, smartphone playback, staff approval, actual Actions billing UNVERIFIED. HUMAN_REVIEW/PUBLICATION_NOT_APPROVED. No merge, posting, paid service or public private-media upload.
