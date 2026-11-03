@@ -1,0 +1,18 @@
+name: cycle1180 review tests
+on:
+  push:
+    branches: ['quality/cycle1180-ending-fade-review']
+  pull_request:
+    paths:
+      - 'quality/cycle1180/**'
+      - '.github/workflows/cycle1180_review_tests.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run isolated unit tests
+        run: cd quality/cycle1180 && python -m unittest discover -p 'test_*.py' -v
