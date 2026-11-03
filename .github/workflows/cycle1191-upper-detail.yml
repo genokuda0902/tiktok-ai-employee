@@ -1,0 +1,19 @@
+name: cycle1191 upper detail tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1191/**'
+      - '.github/workflows/cycle1191-upper-detail.yml'
+  push:
+    branches:
+      - 'quality/cycle1191-upper-detail-20261103'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run unit tests
+        run: cd quality/cycle1191 && python -m unittest -v test_upper_detail.py

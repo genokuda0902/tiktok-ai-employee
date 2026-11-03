@@ -1,0 +1,18 @@
+name: cycle1183 caption backdrop QA
+on:
+  push:
+    branches:
+      - quality/cycle1183-caption-backdrop-review
+  pull_request:
+    paths:
+      - 'quality/cycle1183/**'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s quality/cycle1183 -p 'test_*.py'

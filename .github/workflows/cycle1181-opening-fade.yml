@@ -1,0 +1,16 @@
+name: cycle1181 opening fade tests
+on:
+  push:
+    branches:
+      - quality/cycle1181-opening-fade-review
+  pull_request:
+    paths:
+      - 'quality/cycle1181/**'
+      - '.github/workflows/cycle1181-opening-fade.yml'
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1181 -p 'test_*.py' -v
