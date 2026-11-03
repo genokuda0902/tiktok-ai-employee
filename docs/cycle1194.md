@@ -1,0 +1,2 @@
+# cycle1194 (REVIEW ONLY)
+Previous cycle1193: scene transition encode. This cycle: add subtle 12% black caption-region overlay from y=1370 to bottom, to test readability. Source MP4 is local and not committed. FFmpeg decode succeeded locally; Japanese transcript, alignment, subjective improvement and source rights NOT verified. No publishing or merging permitted. CI status must be checked separately.
