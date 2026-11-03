@@ -1,0 +1,3 @@
+# cycle1178 — audio clarity (REVIEW ONLY)
+
+Previous: cycle1177 added start/end fades. New: 80 Hz high-pass + -16 LUFS / -1.5 dBTP target; video stream copied without re-encoding. 10-genre reusable filter, no topic-specific words. Input cycle1177_AUDIO_EDGE_SMOOTH_REVIEW_ONLY.mp4. Local output cycle1178_AUDIO_CLARITY_REVIEW_ONLY.mp4; H.264 1080x1920 30fps, AAC 48 kHz, duration 23.033333 s, size 3,158,017 bytes; ffmpeg full decode PASS. Audio semantic transcription and subtitle alignment NOT tested. Do not publish. Source MP4 not committed (review-only artifact). Reference v33 original unavailable in this run.
