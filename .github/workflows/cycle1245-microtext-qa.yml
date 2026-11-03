@@ -1,0 +1,21 @@
+name: cycle1245 microtext legibility synthetic QA
+on:
+  push:
+    branches:
+      - quality/cycle1245-microtext-legibility
+  pull_request:
+    paths:
+      - 'cycle1245/**'
+      - '.github/workflows/cycle1245-microtext-qa.yml'
+jobs:
+  synthetic-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free CJK font and FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y fonts-noto-cjk ffmpeg
+      - name: Unit tests
+        run: python3 -m unittest discover -s cycle1245/tests -p 'test_*.py' -v
+      - name: Synthetic 126-frame video and full A/V decode
+        run: python3 cycle1245/tests/ci_smoke.py
