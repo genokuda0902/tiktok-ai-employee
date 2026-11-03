@@ -1,0 +1,19 @@
+name: Cycle1177 audio edge review
+on:
+  push:
+    branches: [quality/cycle1177-audio-edge-review]
+  pull_request:
+    paths:
+      - 'quality/cycle1177/**'
+      - '.github/workflows/cycle1177_audio_edge.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run audio edge unit tests
+        run: cd quality/cycle1177 && python -m unittest -v test_audio_edge
