@@ -8,10 +8,10 @@ def focus_filter(start=12.0, end=16.0, font="/usr/share/fonts/opentype/noto/Noto
         raise ValueError("focus interval must have positive duration")
     enabled = f"between(t,{start:g},{end:g})"
     return ",".join([
-        f"drawbox=x=105:y=1030:w=870:h=280:color=black@0.78:t=fill:enable='{enabled}'",
-        f"drawbox=x=105:y=1030:w=14:h=280:color=0x22d3ee:t=fill:enable='{enabled}'",
-        f"drawtext=fontfile={font}:text='確認してから使う':fontcolor=white:fontsize=64:x=(w-text_w)/2:y=1100:enable='{enabled}'",
-        f"drawtext=fontfile={font}:text='AIの出力は必ず見直す':fontcolor=0x67e8f9:fontsize=39:x=(w-text_w)/2:y=1200:enable='{enabled}'",
+        f"drawbox=x=105:y=1280:w=870:h=230:color=black@0.78:t=fill:enable='{enabled}'",
+        f"drawbox=x=105:y=1280:w=14:h=230:color=0x22d3ee:t=fill:enable='{enabled}'",
+        f"drawtext=fontfile={font}:text='確認してから使う':fontcolor=white:fontsize=64:x=(w-text_w)/2:y=1325:enable='{enabled}'",
+        f"drawtext=fontfile={font}:text='AIの出力は必ず見直す':fontcolor=0x67e8f9:fontsize=39:x=(w-text_w)/2:y=1420:enable='{enabled}'",
     ])
 
 def render(source: Path, output: Path, start=12.0, end=16.0):
