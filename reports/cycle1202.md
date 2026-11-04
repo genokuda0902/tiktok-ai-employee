@@ -1,0 +1,2 @@
+# Cycle 1202
+Previous: cycle1201 cleaned narration frequencies and peaks. This cycle adds FFmpeg loudnorm targeting -16 LUFS, -1.5 dBTP ceiling, and LRA 11; video copied, audio reencoded. Review-only MP4 is in ChatGPT session, not committed due to source approval uncertainty. Decode and codec checks passed; Japanese speech meaning, subtitle sync, subjective listening and phone playback not verified. Original reference MP4 and market-research chat full text unavailable. No publication approval. CI needs verification.
