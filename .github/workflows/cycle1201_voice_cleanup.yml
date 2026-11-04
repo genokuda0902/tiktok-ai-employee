@@ -1,0 +1,17 @@
+name: cycle1201 voice cleanup tests
+on:
+  pull_request:
+    paths:
+      - 'tools/cycle1201_voice_cleanup.py'
+      - 'tests/test_cycle1201_voice_cleanup.py'
+      - '.github/workflows/cycle1201_voice_cleanup.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_cycle1201_voice_cleanup.py' -v
