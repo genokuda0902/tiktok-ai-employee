@@ -1,0 +1,2 @@
+# cycle1203 review-only
+Input: cycle1202 local review MP4 (not committed). Output: 23.033333s 1080x1920 H.264/AAC, 675240 bytes. FFmpeg full decode succeeded. Added a timed top-of-frame chapter marker bar from 3–6 seconds; visual/auditory improvement and Japanese semantic sync unverified. Reference v33 original unavailable. No publishing approval. Previous cycle1202 focused on loudness; this cycle changes visual scene cue. CI pending.
