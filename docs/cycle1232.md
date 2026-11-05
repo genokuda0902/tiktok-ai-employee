@@ -1,0 +1,1 @@
+Cycle1232: adds fail-closed audio/Japanese speech/rights and caption timing review gate. Local MP4 is a review-only derivative of cycle1231, not a new narration. No claim of synchronized subtitles. CI status unverified. Prior cycle1231 introduced caption timing checks; this cycle adds explicit speech and rights evidence gates.
