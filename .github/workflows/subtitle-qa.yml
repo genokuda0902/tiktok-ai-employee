@@ -1,0 +1,20 @@
+name: Subtitle QA (no paid services)
+on:
+  push:
+    branches:
+      - 'automation/cycle1381-subtitle-qa'
+  pull_request:
+    paths:
+      - 'tools/subtitle_qa.py'
+      - 'tests/test_subtitle_qa.py'
+      - '.github/workflows/subtitle-qa.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_subtitle_qa.py' -v
