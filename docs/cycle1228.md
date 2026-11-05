@@ -1,0 +1,1 @@
+# cycle1228 review only\nSource: cycle1227 MP4. Change: 350ms fade-in and 450ms fade-out for both video and audio. Source audio copied conceptually but re-encoded; Japanese speech and caption sync unverified. Original v33 unavailable. No publication authorization. CI must run before acceptance.
