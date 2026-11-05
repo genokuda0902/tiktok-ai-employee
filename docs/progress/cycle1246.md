@@ -1,0 +1,4 @@
+# cycle1246 — 2026-11-06
+Previous cycle1245: 15s synthetic spreadsheet video, silent; 3 local tests PASS, CI not run.
+This cycle: numeric-proof spreadsheet scenes with visibly changing sum and explicit review-only gate. Local rendering used a separate implementation at /mnt/data/cycle1246/render.py (not byte-identical to this repository version). Local video SHA256 f02309f6457744d4d71d7bd1cd98c4b7fe4abb00b512d68b36aeae4b96e39330; 720x1280 H.264 15s, full decode PASS, audio absent. Three local tests PASS after fixing a mistaken test assertion. Repository version not yet executed.
+Reference video original unavailable; prior research says hook 0-1.5s, visual demonstration, before/after, short Japanese captions. This is not v33 or publication approved. No merge/post.
