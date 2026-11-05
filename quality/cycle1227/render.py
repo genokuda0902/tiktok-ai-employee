@@ -10,12 +10,12 @@ def filters():
     for i, (label, start) in enumerate([
         ("目的を明確に", 7), ("条件を具体的に", 9), ("最後に検証", 11)
     ]):
-        y = 1040 + i * 130
+        y = 1510 + i * 95
         enabled = f"between(t,{start},14)"
         layers.extend([
-            f"drawbox=x=125:y={y}:w=830:h=108:color=0x091b35@0.94:t=fill:enable='{enabled}'",
-            f"drawbox=x=125:y={y}:w=12:h=108:color=0x38bdf8:t=fill:enable='{enabled}'",
-            f"drawtext=fontfile={FONT}:text='{label}':fontcolor=white:fontsize=49:x=165:y={y+24}:enable='{enabled}'",
+            f"drawbox=x=125:y={y}:w=830:h=80:color=0x091b35@0.94:t=fill:enable='{enabled}'",
+            f"drawbox=x=125:y={y}:w=12:h=80:color=0x38bdf8:t=fill:enable='{enabled}'",
+            f"drawtext=fontfile={FONT}:text='{label}':fontcolor=white:fontsize=37:x=165:y={y+16}:enable='{enabled}'",
         ])
     return ",".join(layers)
 
