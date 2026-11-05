@@ -1,0 +1,1 @@
+Cycle1226: review-only 0.3-3.3s Japanese hook overlay. Local render from cycle1225 review MP4; 23.033s H264 1080x1920 AAC, ffmpeg full decode PASS; local equivalent tests 3/3 PASS. Audio language, caption sync, rights, phone playback unverified. Reference v33 original unavailable. Never merge or post without human review. CI pending.
