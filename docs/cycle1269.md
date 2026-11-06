@@ -1,0 +1,2 @@
+# Cycle 1269 (2026-11-07)
+Previous cycle1268: 11.967s 1080p silent MP4. Current: local 12.000s 720x1280 H264 review-only MP4, full decode PASS, local rendering tests 2 PASS. Japanese narration and synchronized captions still missing. Local renderer not committed. This PR adds a cross-genre fail-closed quality gate and tests; not integrated with production. Next: free Japanese TTS, synchronized captions, 1080p, reproducible renderer, CI. No automatic posting or merge.
