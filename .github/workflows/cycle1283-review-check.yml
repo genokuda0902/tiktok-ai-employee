@@ -1,0 +1,17 @@
+name: cycle1283 review contract
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1283/**'
+      - '.github/workflows/cycle1283-review-check.yml'
+  workflow_dispatch:
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install Pillow
+      - run: cd quality/cycle1283 && python -m unittest -q test_render
