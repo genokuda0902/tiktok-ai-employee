@@ -1,0 +1,14 @@
+name: Cycle1309 quality tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1309_quality.py'
+      - 'quality/test_cycle1309_quality.py'
+      - '.github/workflows/cycle1309-quality.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest discover -s quality -p 'test_cycle1309_quality.py' -v
