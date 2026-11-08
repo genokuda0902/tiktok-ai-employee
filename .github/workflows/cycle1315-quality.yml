@@ -1,0 +1,16 @@
+name: cycle1315 audio gate tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1315/**'
+      - '.github/workflows/cycle1315-quality.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s quality/cycle1315 -p 'test_*.py' -v
