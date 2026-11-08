@@ -1,0 +1,1 @@
+Review-only synthetic Excel demonstration. Install Pillow, FFmpeg and Noto CJK fonts; run `python render.py`, then `python -m unittest test_render.py`. No narration/audio; captions are separate SRT. Not approved for posting. Prior cycle1315 was silent 1080p; this cycle improves source reproducibility and on-frame disclosure, not audio.
