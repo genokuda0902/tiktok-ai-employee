@@ -1,0 +1,2 @@
+# cycle1312
+Local 18s 720x1280 H264 review MP4 decoded successfully; SHA256 070eabaeaf9a0a35be679beac0f3042d769adc6a832dd0d483649e1a881e7901. Five scenes, Japanese screen text, separate SRT; NO audio, no word-synchronized captions, no publication approval. Compared with cycle1311 15s 1080p: longer but lower resolution. Local rendering script is mirrored here, repository regeneration not yet validated. Original reference inaccessible. No automatic posting.
