@@ -1,0 +1,1 @@
+Review-only synthetic spreadsheet sample. Requires Pillow, FFmpeg and Noto CJK fonts. Run: python render.py cycle1308_REVIEW_ONLY.mp4; python -m unittest discover -p 'test_*.py'. No narration; subtitles are scene-timed, not speech-synced. Local demo is a separately generated implementation and not byte-identical to committed source. Never publish without human approval.
