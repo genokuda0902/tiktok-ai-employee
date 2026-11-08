@@ -1,0 +1,17 @@
+name: cycle1300 fail-closed gate tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1300_gate.py'
+      - 'tests/test_cycle1300_gate.py'
+      - '.github/workflows/cycle1300-gate.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_cycle1300_gate.py' -v
