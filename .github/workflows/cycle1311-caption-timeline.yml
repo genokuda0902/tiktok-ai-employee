@@ -1,0 +1,17 @@
+name: Cycle 1311 caption timeline
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1311_timeline.py'
+      - 'tests/test_cycle1311_timeline.py'
+      - '.github/workflows/cycle1311-caption-timeline.yml'
+  workflow_dispatch:
+jobs:
+  timeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_cycle1311_timeline.py' -v
