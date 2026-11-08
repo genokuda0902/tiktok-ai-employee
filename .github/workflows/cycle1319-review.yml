@@ -1,0 +1,16 @@
+name: cycle1319-review-gate
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1319/**'
+      - '.github/workflows/cycle1319-review.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run review gate
+        run: python -m unittest discover -s quality/cycle1319 -p 'test_*.py' -v
+      - name: Check FFmpeg
+        run: ffmpeg -version
