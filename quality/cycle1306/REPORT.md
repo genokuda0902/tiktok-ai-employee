@@ -1,0 +1,1 @@
+cycle1306: 15s 1080x1920 silent review demo generated locally. Local renderer source not committed in this PR; no reproducibility claim. Previous cycle1305: 18s 720x1280 silent. Current: 15s 1080x1920 silent. Audio synthesis and source preservation remain blockers. No publication approval.
