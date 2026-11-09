@@ -1,0 +1,2 @@
+# cycle1342 review-only
+Input: synthetic cycle1341_REVIEW_ONLY.mp4 (not committed). Run: python render.py input.mp4 output.mp4; python -m unittest test_render.py. 1080x1920 H264, 14.958s, silent, captions are **timed visual guidance**, not speech-synchronized. Local output SHA256 b76fd5d23cc22becd4942ab01b938bc39ce51a1533ba125dca283e3cd0033490. Tests 3/3 local PASS; full decode PASS. Not approved for posting. Original v33/reference inaccessible. No CI confirmation. No confidential assets.
