@@ -27,7 +27,7 @@ def render():
         d.text((65,1135),'REVIEW ONLY  |  未承認・投稿禁止',font=ImageFont.truetype(FONT,20),fill='#d4dae5')
         im.save(frames/f'{i:02}.png')
     concat=ROOT/'concat.txt'
-    concat.write_text(''.join("file '"+str((frames/f'{i:02}.png').resolve())+"'\nduration 3\\n" for i in range(4))+"file '"+str((frames/'03.png').resolve())+"'\n")
+    concat.write_text(''.join("file '"+str((frames/f'{i:02}.png').resolve())+"'\nduration 3\n" for i in range(4))+"file '"+str((frames/'03.png').resolve())+"'\n")
     out=ROOT/'cycle1325_REVIEW_ONLY.mp4'
     subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',str(concat),'-vf','fps=24,format=yuv420p','-c:v','libx264','-preset','ultrafast','-crf','25','-movflags','+faststart',str(out)],check=True)
     return out
