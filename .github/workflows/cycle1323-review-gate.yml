@@ -1,0 +1,19 @@
+name: cycle1323-review-gate
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1323/**'
+      - '.github/workflows/cycle1323-review-gate.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify review gate syntax
+        run: python -m py_compile quality/cycle1323/test_media_gate.py
+      - name: Verify fail-closed test
+        run: python -c "import runpy; runpy.run_path('quality/cycle1323/test_media_gate.py')['test_fail_closed']()"
