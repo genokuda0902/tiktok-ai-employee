@@ -1,0 +1,18 @@
+name: cycle1366 review gate tests
+on:
+  push:
+    branches: [quality/cycle1366-evidence-first]
+  pull_request:
+    paths:
+      - 'quality/cycle1366/**'
+      - '.github/workflows/cycle1366-review.yml'
+  workflow_dispatch:
+jobs:
+  review-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1366 -p 'test_*.py' -v
