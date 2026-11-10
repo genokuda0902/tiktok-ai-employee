@@ -1,0 +1,2 @@
+# Cycle 1595 — review only
+Previous: cycle1593 intro fade. New: optional 75 Hz high-pass for narration low-frequency rumble; video stream copied unchanged. 1080x1920 H264/AAC, 25.507 s, FFmpeg decode PASS locally. No listening/semantic subtitle sync, rights or mobile-device validation. High-pass effect on perceived sound quality unproven. Manual employee approval required before publication. No auto-posting, billing or merge.
