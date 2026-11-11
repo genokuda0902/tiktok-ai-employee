@@ -1,0 +1,24 @@
+name: cycle1390 audio evidence gate
+on:
+  push:
+    branches: [quality/cycle1390-no-audio-evidence]
+  pull_request:
+    paths: ['tools/cycle1390_audio_gate.py', '.github/workflows/cycle1390-audio-gate.yml']
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Syntax check
+        run: python -m py_compile tools/cycle1390_audio_gate.py
+      - name: Fail closed on absent MP4
+        run: |
+          python - <<'PY'
+          from tools.cycle1390_audio_gate import inspect
+          result = inspect('/tmp/nonexistent.mp4')
+          assert result['publishable'] is False
+          assert result['reason'] == 'missing_mp4'
+          print(result)
+          PY
