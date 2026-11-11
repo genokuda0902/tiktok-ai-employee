@@ -1,0 +1,1 @@
+Verified ffprobe: H.264 video 1080x1920, duration 12.000000 seconds, no audio stream. Earlier RESULTS.md said approximately 10 seconds based on intended scene durations; this is corrected here. Full ffmpeg decode passed. Local video SHA256 b154de48fdd37fbf9314a42d14984ae01bfde07c7ebde2dffbc36b1f06f79b78. Review only; no narration and no speech-aligned subtitles.
