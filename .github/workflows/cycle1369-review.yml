@@ -1,0 +1,20 @@
+name: cycle1369 review-only verification
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle1369/**'
+      - '.github/workflows/cycle1369-review.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: python -m pip install Pillow pytest
+      - run: cd experiments/cycle1369 && python -m pytest -q && python render.py
+      - run: ffmpeg -v error -i experiments/cycle1369/cycle1369_REVIEW_ONLY.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1369-review-only
+          path: experiments/cycle1369/cycle1369_REVIEW_ONLY.mp4
