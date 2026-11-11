@@ -1,0 +1,2 @@
+# cycle1380
+Local 12s 1080x1920 silent review MP4 generated and decoded; SHA256 3c90340966bdbc4742437858d21897f0d3aebee678e52e881fc05c2d4f80d6f9. Local render.py and MP4 not committed. This PR adds an audio-truth gate only. Japanese narration absent, captions are timed visual cards rather than speech-synced. PUBLICATION_NOT_APPROVED. Previous cycle1379 15s/1080x1920 silent; now 12s/1080x1920 silent. Reference original unavailable.
