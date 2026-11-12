@@ -1,0 +1,16 @@
+name: cycle1398 speech evidence
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle1398/**'
+      - '.github/workflows/cycle1398-speech-gate.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: cd experiments/cycle1398 && python -m unittest -v test_speech_evidence.py
