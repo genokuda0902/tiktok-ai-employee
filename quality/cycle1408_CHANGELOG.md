@@ -1,0 +1,1 @@
+# cycle1408\n\nLocal MP4: 1080x1920 H.264, 16s, silent; full decode passed. SHA256 8391b851d85bee284de58410959267ccc290760d3a23b2045e7ed0b569d2b356. Local video is NOT committed.\n\nCompared with cycle1407 (20s), shorter 4-scene review and explicit publication evidence gate. Not approved for posting. Source v33 reference not accessible.\n
