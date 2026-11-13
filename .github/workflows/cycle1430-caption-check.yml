@@ -1,0 +1,14 @@
+name: cycle1430-caption-check
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1430/**'
+      - '.github/workflows/cycle1430-caption-check.yml'
+  workflow_dispatch:
+jobs:
+  caption-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run dependency-free tests
+        run: python -m unittest discover -s quality/cycle1430 -p 'test_*.py' -v
