@@ -9,4 +9,4 @@ def scene_srt(captions, duration):
     if not captions or duration <= 0: raise ValueError("invalid scenes")
     if any(not str(c).strip() for c in captions): raise ValueError("blank caption")
     step=duration/len(captions)
-    return "".join(f"{i+1}\\n{srt_timestamp(i*step)} --> {srt_timestamp((i+1)*step)}\\n{caption}\\n\\n" for i,caption in enumerate(captions))
+    return "".join(f"{i+1}\n{srt_timestamp(i*step)} --> {srt_timestamp((i+1)*step)}\n{caption}\n\n" for i,caption in enumerate(captions))
