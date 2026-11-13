@@ -1,0 +1,25 @@
+name: Cycle1427 review MP4 QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1427/**'
+      - '.github/workflows/cycle1427-review.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: python -m pip install Pillow==11.3.0 pytest==8.4.2
+      - run: python quality/cycle1427/render.py
+      - run: python -m pytest -q quality/cycle1427/test_render.py
+      - run: ffmpeg -v error -i quality/cycle1427/cycle1427_REVIEW_ONLY.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1427-review-only
+          path: |
+            quality/cycle1427/cycle1427_REVIEW_ONLY.mp4
+            quality/cycle1427/captions.srt
+            quality/cycle1427/qa.json
+          retention-days: 7
