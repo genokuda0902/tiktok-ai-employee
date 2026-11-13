@@ -1,0 +1,2 @@
+# cycle1417
+Complete renderer + tests + CI workflow. Local MP4: 15 s, 1080x1920, silent. SHA256 7b6b33961c35708a3edbaa6c37e452db9aa7b36d12333d4bf18924d1f6bdd88e. This is NOT v33 source and NOT publication-approved. Compared with cycle1416: new hook text; renderer now committed in full. Japanese narration and synced captions absent. CI requires actual run verification. No private assets.
