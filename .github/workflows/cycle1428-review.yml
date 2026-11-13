@@ -1,0 +1,28 @@
+name: Cycle1428 review renderer tests
+on:
+  pull_request:
+    paths:
+      - 'quality_cycles/cycle1428/**'
+      - '.github/workflows/cycle1428-review.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install pillow pytest
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: python -m pytest -q quality_cycles/cycle1428/test_render.py
+      - run: python quality_cycles/cycle1428/render.py
+      - run: ffmpeg -v error -i quality_cycles/cycle1428/cycle1428_REVIEW_ONLY.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1428-review-only
+          path: |
+            quality_cycles/cycle1428/cycle1428_REVIEW_ONLY.mp4
+            quality_cycles/cycle1428/qa.json
+            quality_cycles/cycle1428/captions.srt
+          retention-days: 7
