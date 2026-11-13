@@ -1,0 +1,2 @@
+# cycle1418
+Review-only procedural video. Compared to cycle1417: question-form opening hook and BEFORE/AFTER header. 15 seconds, 1080x1920, silent. Prior cycle1417 CI run 43341036309 succeeded and artifact 14000210463 was verified present. Japanese TTS unavailable in this environment; do not publish. Reference v33 original unavailable. Reproduce: `python3 render.py`.
