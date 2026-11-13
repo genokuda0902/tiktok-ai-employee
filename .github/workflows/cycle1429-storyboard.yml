@@ -1,0 +1,19 @@
+name: Cycle1429 storyboard checks
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1429/**'
+      - '.github/workflows/cycle1429-storyboard.yml'
+  push:
+    branches:
+      - 'quality/cycle1429-storyboard-structure'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s quality/cycle1429 -p 'test_storyboard.py' -v
