@@ -1,0 +1,2 @@
+# cycle1421 review-only
+Local 15s 1080x1920 MP4 generated with improved bordered Japanese captions. No narration, no speech synchronization; not approved for posting. Local MP4 SHA256: 624ed34fd1d4f1725ff780e8d2cc3456fe0e2211b270038142d7766db6625997. The exact renderer is not yet committed. This PR adds a reusable caption legibility/audio/approval fail-closed QA module and tests. Run: `cd quality/cycle1421 && python -m unittest -v test_caption_qa.py`. No merge or auto-post.
