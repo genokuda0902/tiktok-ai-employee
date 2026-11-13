@@ -1,0 +1,25 @@
+name: cycle1418 review render (not publication)
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1418/**'
+      - '.github/workflows/cycle1418-review.yml'
+  workflow_dispatch:
+jobs:
+  render-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk python3-pil
+      - run: cd quality/cycle1418 && python3 -m unittest discover -p 'test_render.py' -v
+      - run: cd quality/cycle1418 && python3 render.py
+      - run: ffmpeg -v error -i quality/cycle1418/cycle1418_REVIEW_ONLY.mp4 -f null -
+      - run: ffprobe -v error -show_entries stream=codec_name,width,height,codec_type -show_entries format=duration -of json quality/cycle1418/cycle1418_REVIEW_ONLY.mp4 > quality/cycle1418/qa.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1418-review-only
+          path: |
+            quality/cycle1418/cycle1418_REVIEW_ONLY.mp4
+            quality/cycle1418/qa.json
+          retention-days: 7
