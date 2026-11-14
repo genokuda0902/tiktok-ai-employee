@@ -1,0 +1,22 @@
+name: Cycle1458 review renderer smoke
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1458/**'
+      - '.github/workflows/cycle1458-review.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: python -m unittest discover -s quality/cycle1458 -p 'test_*.py' -v
+      - run: python quality/cycle1458/render.py --output cycle1458_REVIEW_ONLY.mp4
+      - run: ffmpeg -v error -i cycle1458_REVIEW_ONLY.mp4 -f null -
+      - run: ffprobe -v error -show_entries stream=codec_name,width,height -show_entries format=duration -of json cycle1458_REVIEW_ONLY.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1458-review-only
+          path: cycle1458_REVIEW_ONLY.mp4
+          retention-days: 7
