@@ -1,0 +1,16 @@
+name: Cycle1447 isolated renderer QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1447/**'
+      - '.github/workflows/cycle1447-review.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s quality/cycle1447 -p 'test_*.py'
