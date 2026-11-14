@@ -1,0 +1,3 @@
+# cycle1445 — review only
+
+Reimplementation, not original v33. Python Pillow and ffmpeg required. Run `python render.py && python -m unittest -v test_render.py`. Output 1080x1920 H.264 18fps 12 seconds, three burned-in captions and SRT. No narration; NOT APPROVED for publication. Synthetic spreadsheet data only. Difference vs cycle1444: 15fps -> 18fps and timeline progress bar. No claim of quality equivalence. CI may require explicit workflow dispatch.
