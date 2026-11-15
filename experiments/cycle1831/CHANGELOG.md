@@ -1,0 +1,1 @@
+cycle1831: cycle1829 audio-end-fade source; new localized caption-region contrast boost y=1330..1509, contrast 1.14, brightness 0.008. Audio bitstream preserved; video 1080x1920 22.87s fully decoded. Local pytest 1 PASS. Japanese transcript sync, rights, reference-video parity and human approval NOT verified. MP4 distributed separately in conversation; no auto-posting.
