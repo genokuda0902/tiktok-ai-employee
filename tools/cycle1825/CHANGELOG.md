@@ -1,0 +1,2 @@
+# cycle1825
+Previous cycle1823: top progress bar. This cycle: restrained luma-only sharpening of Japanese slide text; no additional color saturation. MP4 locally generated and verified at 1080x1920 H264/AAC 48kHz; full decode and compressed audio identity passed. Subtitle transcription/synchronization, source rights, real-device quality and reference parity remain unverified. No auto-post or merge.
