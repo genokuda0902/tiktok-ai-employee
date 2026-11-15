@@ -1,0 +1,21 @@
+name: cycle1471 review render
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle1471/**'
+      - '.github/workflows/cycle1471-review.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: cd experiments/cycle1471 && python3 -m unittest -v test_render
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1471-review-only
+          path: |
+            experiments/cycle1471/cycle1471_REVIEW_ONLY.mp4
+            experiments/cycle1471/captions.srt
+          retention-days: 7
