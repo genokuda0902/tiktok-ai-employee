@@ -1,0 +1,22 @@
+name: cycle1482-review-ci
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1482/**'
+      - '.github/workflows/cycle1482-review.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk python3-pil
+      - run: python3 quality/cycle1482/render.py --out quality/cycle1482/output
+      - run: cd quality/cycle1482/output && python3 -m unittest ../test_render.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1482-review-only
+          path: |
+            quality/cycle1482/output/cycle1482_REVIEW_ONLY.mp4
+            quality/cycle1482/output/captions.srt
+            quality/cycle1482/output/manifest.json
