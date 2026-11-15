@@ -1,0 +1,1 @@
+Cycle1851: Mild gamma lift (1.10) and contrast (1.015), vs cycle1849 sharpening. 1080x1920 H264 AAC 48kHz 22.893s, full decode pass, audio hash unchanged, 2 local tests pass. Japanese speech/subtitle synchronization, rights and device playback unverified. Review-only; no merge/posting.
