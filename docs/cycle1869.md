@@ -1,0 +1,2 @@
+# cycle1869 loudness normalization
+Compared with cycle1867 low-frequency high-pass, adds EBU R128 one-pass loudness normalization targeting -16 LUFS, -1.5 dBTP. Local MP4 decoded, 1080x1920 H264/AAC 48kHz; measured input -15.79 LUFS, true peak -2.49 dBTP, LRA 0.70 (measurement after normalization). Japanese narration intelligibility, subtitle synchronization, subjective quality, rights and real device playback remain unverified. No automatic posting. No merge.
