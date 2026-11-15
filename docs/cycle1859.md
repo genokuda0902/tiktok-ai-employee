@@ -1,0 +1,2 @@
+# Cycle 1859
+Previous: cycle1857 high fidelity CRF16. New: force keyframes every 2 seconds for reliable seeking and retain faststart, CRF16 and audio stream copy. Local ffmpeg full decode passed, 1080x1920 H264/AAC 48kHz 22.893s, one unit test passed. Audio/subtitle semantic synchronization, reference-video parity, rights and human playback remain unverified. No automatic posting or merge. Review only.
