@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from cycle1877_gamma_readability import improve
+from tools.cycle1877_gamma_readability import improve
 
 class TestGamma(unittest.TestCase):
     @patch("subprocess.run")
