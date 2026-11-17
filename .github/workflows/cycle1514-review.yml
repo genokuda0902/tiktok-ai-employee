@@ -1,0 +1,36 @@
+name: cycle1514 review-only validation
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1514/**'
+      - '.github/workflows/cycle1514-review.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg and CJK font
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - name: Unit tests
+        run: cd quality/cycle1514 && python -m unittest -v test_render
+      - name: Render and validate MP4
+        run: |
+          python quality/cycle1514/render.py cycle1514_REVIEW_ONLY.mp4
+          ffprobe -v error -show_entries stream=codec_name,width,height,codec_type -of json cycle1514_REVIEW_ONLY.mp4 > probe.json
+          ffmpeg -v error -i cycle1514_REVIEW_ONLY.mp4 -f null -
+          python - <<'PY'
+          import json
+          m=json.load(open('cycle1514_REVIEW_ONLY.json'))
+          p=json.load(open('probe.json'))
+          assert not m['posting_allowed'] and not m['narration_verified']
+          assert any(s.get('width')==720 and s.get('height')==1280 for s in p['streams'])
+          assert all(s['codec_type']!='audio' for s in p['streams'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1514-review-only
+          path: |
+            cycle1514_REVIEW_ONLY.mp4
+            cycle1514_REVIEW_ONLY.json
+            probe.json
