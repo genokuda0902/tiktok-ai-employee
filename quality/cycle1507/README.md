@@ -1,0 +1,2 @@
+# Cycle 1507
+Review-only 1080x1920 10-second caption cards. Run `python -m unittest quality/cycle1507/test_render.py` from this directory or `cd quality/cycle1507 && python -m unittest`. Run `python render.py` with Pillow, ffmpeg and Noto CJK fonts installed. Video uses silent AAC, **not** Japanese narration. No approval, no publication. Local full decode passed; CI not verified. Prior cycle1506 was 720x1280 8 seconds. Reference v33 original not available.
