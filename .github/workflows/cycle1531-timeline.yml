@@ -1,0 +1,16 @@
+name: cycle1531 timeline tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1531_timeline.py'
+      - 'tests/test_cycle1531_timeline.py'
+      - '.github/workflows/cycle1531-timeline.yml'
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_cycle1531_timeline.py'
