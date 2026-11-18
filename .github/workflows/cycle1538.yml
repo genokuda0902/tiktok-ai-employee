@@ -1,0 +1,29 @@
+name: cycle1538 reproducible demo tests
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle1538/**'
+      - '.github/workflows/cycle1538.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free render dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - name: Unit tests
+        run: python -m unittest discover -s experiments/cycle1538 -p 'test_*.py'
+      - name: Generate and validate real MP4
+        run: python experiments/cycle1538/render.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1538-review-only
+          path: |
+            experiments/cycle1538/cycle1538_REVIEW_ONLY.mp4
+            experiments/cycle1538/captions_ja.srt
+            experiments/cycle1538/probe.json
+          retention-days: 7
