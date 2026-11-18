@@ -7,4 +7,4 @@ def test_missing_input(tmp_path):
         master(tmp_path / "missing.mp4", tmp_path / "out.mp4")
 
 def test_peak_ceiling():
-    assert "TP=-1.5" in Path(__file__).with_name("audio_master.py").read_text()
+    assert "TP=-3.0" in Path(__file__).with_name("audio_master.py").read_text()
