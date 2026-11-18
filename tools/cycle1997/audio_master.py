@@ -10,7 +10,7 @@ def master(src: Path, dst: Path):
     subprocess.run([
         "ffmpeg", "-hide_banner", "-y", "-i", str(src),
         "-map", "0:v:0", "-map", "0:a:0", "-c:v", "copy",
-        "-af", "loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000",
+        "-af", "loudnorm=I=-16:TP=-3.0:LRA=11,aresample=48000",
         "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart",
         str(dst),
     ], check=True)
