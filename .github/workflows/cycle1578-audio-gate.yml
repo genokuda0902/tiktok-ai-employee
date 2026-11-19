@@ -1,0 +1,14 @@
+name: Cycle1578 audio evidence tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1578/**'
+      - '.github/workflows/cycle1578-audio-gate.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1578 -p 'test_*.py' -v
