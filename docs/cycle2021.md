@@ -1,0 +1,1 @@
+Cycle2021: Audio loudness target -16 LUFS, true peak -2 dBTP; video stream copied; outro fade 0.65 s. Local 1080x1920 H264/AAC 48kHz decode and 2 tests PASS. Speech/transcript sync and rights not verified. No auto-posting.
