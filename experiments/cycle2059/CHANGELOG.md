@@ -1,0 +1,1 @@
+cycle2057: contextual icons. cycle2059: legible high-contrast review footer with larger text. Local MP4 decoded at 1080x1920 with AAC audio. Japanese speech, captions sync, rights, and reference-video comparison unverified. Do not publish without approval.
