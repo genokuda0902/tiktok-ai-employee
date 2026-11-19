@@ -1,0 +1,2 @@
+# Cycle 2023
+Previous cycle2021: loudness normalization. This cycle: configurable 120ms audio fade-in to mitigate possible hard-start transients; video bitstream is copied. Local unittest 1 PASS, FFmpeg decode PASS, 1080x1920 H.264 AAC 48kHz verified. This does not establish an audible improvement. Transcript/subtitle alignment, rights, real-device playback, and subjective image quality unverified. Review-only; no auto-post, merge, or paid service.
