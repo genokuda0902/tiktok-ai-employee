@@ -3,7 +3,7 @@ import re, subprocess
 
 def check_audio(path, narration_verified=False, transcript_verified=False, sync_verified=False):
     p=subprocess.run(["ffmpeg","-hide_banner","-nostats","-i",str(path),"-af","volumedetect","-vn","-f","null","-"],capture_output=True,text=True)
-    m=re.search(r"mean_volume:\\s*(-?(?:\\d+(?:\\.\\d+)?|inf)) dB",p.stderr)
+    m=re.search(r"mean_volume:\s*(-?(?:\d+(?:\.\d+)?|inf)) dB",p.stderr)
     volume=float(m.group(1)) if m else None
     blockers=[]
     if p.returncode: blockers.append("audio_decode_failed")
