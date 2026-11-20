@@ -1,0 +1,2 @@
+# Cycle 1589 — REVIEW ONLY
+Previous cycle1588: 720x1280, 9 seconds, static scenes, no audio. This cycle: adds slow zoom/pan motion, still 720x1280, 9 seconds, **no Japanese narration and no speech-synchronized subtitles**. Local artifact SHA256: 2d3e9d8588e16c69b27d49c20620c770ccab1c012a79e185473f0c49cbfc8f46. Run: `python experiments/cycle1589/render.py`. Requires Pillow, ffmpeg, Noto CJK fonts. Generated MP4 not committed. Quality not approved; no publishing or automatic posting.
