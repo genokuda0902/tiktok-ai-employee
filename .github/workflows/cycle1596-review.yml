@@ -1,0 +1,23 @@
+name: cycle1596-review
+on:
+  pull_request:
+    paths:
+      - 'experiments/cycle1596/**'
+      - '.github/workflows/cycle1596-review.yml'
+  workflow_dispatch:
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: python -m pip install Pillow==11.3.0
+      - run: cd experiments/cycle1596 && python -m unittest test_render.py && python render.py
+      - run: ffmpeg -v error -i experiments/cycle1596/cycle1596_REVIEW_ONLY.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1596-review-mp4
+          path: experiments/cycle1596/cycle1596_REVIEW_ONLY.mp4
+          retention-days: 7
