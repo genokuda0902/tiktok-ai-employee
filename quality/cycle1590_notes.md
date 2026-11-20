@@ -1,0 +1,3 @@
+# Cycle1590 review only
+
+Previous cycle1589: 9s 720x1280, no speech; CI failed initially on missing Pillow. This cycle: 9s 720x1280 12fps, three timed synthetic spreadsheet scenes, no speech. Local generated MP4 SHA256: 45f9c3f77d81b986c0d0455faccc226c49d0993e163bf1163c65a1ed9edf967d. Local ffmpeg decode PASS, local scene tests 3 PASS. MP4 and full renderer are not committed. No v33 equivalence or publication approval. Next: Japanese speech and caption synchronization, CI artifact.
