@@ -1,0 +1,16 @@
+name: Cycle1601 audio preflight tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1601/**'
+      - '.github/workflows/cycle1601-audio.yml'
+  workflow_dispatch:
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s quality/cycle1601 -p 'test_*.py' -v
