@@ -1,0 +1,14 @@
+name: cycle1595 quality gate
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1595/**'
+      - '.github/workflows/cycle1595-quality-gate.yml'
+  workflow_dispatch:
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run fail-closed gate regression tests
+        run: cd quality/cycle1595 && python -m unittest discover -v
