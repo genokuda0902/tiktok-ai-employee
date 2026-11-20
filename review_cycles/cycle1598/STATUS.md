@@ -1,0 +1,2 @@
+# Cycle1598
+Local review MP4: 12s, 720x1280, H264, 24fps, synthetic four-scene Japanese on-screen text, **NO AUDIO**. SHA256 d9d093ae962848839f595c4ab150c574e0147cbd4a99a621186d24b806c75912. Previous cycle1597: 15s 720x1280 6 scenes and silent. New focus: commit a reproducible renderer plus artifact workflow; no quality equivalence claimed. Voice, spoken captions, rights and employee approval unverified. No publication. Original v33 unavailable.
