@@ -1,0 +1,20 @@
+name: Cycle1599 review-only render
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'experiments/cycle1599/**'
+      - '.github/workflows/cycle1599.yml'
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk python3-pil
+      - run: python3 -m unittest discover -s experiments/cycle1599 -p 'test_*.py'
+      - run: python3 experiments/cycle1599/render.py
+      - run: ffmpeg -v error -i experiments/cycle1599/cycle1599_REVIEW_ONLY.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1599-review-only
+          path: experiments/cycle1599/cycle1599_REVIEW_ONLY.mp4
