@@ -1,0 +1,16 @@
+name: cycle1594 quality gate
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1594/**'
+      - '.github/workflows/cycle1594-quality.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s quality/cycle1594 -p 'test_*.py' -v
