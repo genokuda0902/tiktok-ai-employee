@@ -1,0 +1,17 @@
+name: Cycle 1623 narration gate
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1623_narration_gate.py'
+      - 'tests/test_cycle1623_narration_gate.py'
+      - '.github/workflows/cycle1623-narration.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests -p 'test_cycle1623_narration_gate.py' -v
