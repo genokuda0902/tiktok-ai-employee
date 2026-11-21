@@ -1,0 +1,28 @@
+name: cycle1625 review-only render
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'experiments/cycle1625/**'
+      - '.github/workflows/cycle1625-review.yml'
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: python -m pip install Pillow==11.3.0
+      - run: python experiments/cycle1625/test_render.py
+      - run: python experiments/cycle1625/render.py
+      - run: ffprobe -v error -show_entries format=duration:stream=codec_name,width,height,codec_type -of json experiments/cycle1625/cycle1625_REVIEW_ONLY.mp4 > experiments/cycle1625/probe.json
+      - run: ffmpeg -v error -i experiments/cycle1625/cycle1625_REVIEW_ONLY.mp4 -f null -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1625-review-only
+          path: |
+            experiments/cycle1625/cycle1625_REVIEW_ONLY.mp4
+            experiments/cycle1625/probe.json
+            experiments/cycle1625/qa.json
+          retention-days: 7
