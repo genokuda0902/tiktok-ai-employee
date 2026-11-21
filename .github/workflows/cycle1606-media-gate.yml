@@ -1,0 +1,17 @@
+name: cycle1606 media quality gate
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1606_media_gate.py'
+      - 'quality/test_cycle1606_media_gate.py'
+      - '.github/workflows/cycle1606-media-gate.yml'
+  workflow_dispatch:
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest quality.test_cycle1606_media_gate -v
