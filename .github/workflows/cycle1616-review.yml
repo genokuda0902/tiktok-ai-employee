@@ -1,0 +1,18 @@
+name: cycle1616 review render
+on:
+  push:
+    branches: [quality/cycle1616-motion-progress]
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-cjk python3-pil python3-pytest
+      - run: python3 -m pytest quality_cycles/cycle1616/test_render.py -q
+      - run: python3 quality_cycles/cycle1616/render.py
+      - run: ffprobe -v error -show_entries stream=codec_name,width,height,r_frame_rate -show_entries format=duration -of json quality_cycles/cycle1616/cycle1616_REVIEW_ONLY.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle1616-review-only
+          path: quality_cycles/cycle1616/cycle1616_REVIEW_ONLY.mp4
