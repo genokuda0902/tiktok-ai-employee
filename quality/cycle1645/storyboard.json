@@ -1,0 +1,31 @@
+{
+  "status": "PUBLICATION_NOT_APPROVED",
+  "duration_seconds": 20,
+  "scene_seconds": 4,
+  "source": "synthetic-only",
+  "scenes": [
+    [
+      "手入力の転記を減らす",
+      "まず入力欄を整理する"
+    ],
+    [
+      "BEFORE",
+      "氏名：山田　太郎 / 住所：サンプル市"
+    ],
+    [
+      "AFTER",
+      "氏名：山田太郎 / 住所：サンプル市"
+    ],
+    [
+      "公開前に確認",
+      "入力漏れ・表記ゆれ・個人情報"
+    ],
+    [
+      "今日の一歩",
+      "公開可能なサンプルで試し、最後は人が確認"
+    ]
+  ],
+  "narration_verified": false,
+  "captions_synchronized": false,
+  "employee_approved": false
+}
