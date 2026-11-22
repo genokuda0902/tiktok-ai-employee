@@ -1,0 +1,1 @@
+Cycle1650: embed optional Japanese subtitle track in review-only MP4. Command: python quality/cycle1650/review_caption_mux.py input.mp4 captions.srt output.mp4. This does NOT generate Japanese speech; no approval to publish. Previous cycle1649 was video-only; this cycle adds mov_text subtitle track without re-encoding video.
