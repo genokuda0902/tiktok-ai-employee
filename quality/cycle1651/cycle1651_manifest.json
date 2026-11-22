@@ -1,0 +1,14 @@
+{
+  "cycle": 1651,
+  "baseline": "cycle1650",
+  "change": "Burn Japanese SRT into picture instead of player-dependent mov_text",
+  "duration_seconds": 12,
+  "resolution": "1080x1920",
+  "japanese_narration_verified": false,
+  "caption_speech_sync_verified": false,
+  "posting_allowed": false,
+  "human_approval_required": true,
+  "source_assets": "prior cycle1650 review-only video and SRT; not approved for publication",
+  "ci_status": "not verified",
+  "reference_original_accessed": false
+}
