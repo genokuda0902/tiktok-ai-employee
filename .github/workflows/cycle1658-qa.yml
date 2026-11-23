@@ -1,0 +1,14 @@
+name: cycle1658 review QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1658/**'
+      - '.github/workflows/cycle1658-qa.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unit tests
+        run: python -m unittest discover -s quality/cycle1658 -p 'test_*.py' -v
