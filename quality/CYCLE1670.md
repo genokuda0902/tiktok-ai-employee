@@ -1,0 +1,3 @@
+# Cycle 1670 — visual motion audit
+
+Local render: 14-second fictional spreadsheet demo, 1080x1920, H.264, four scenes, subtle zoompan motion. Original fictional rows only. Local MP4 is not uploaded to GitHub. Local pytest: 2 tests passed. No narration or speech-synced subtitles; publication prohibited. Previous cycle1669 used four static scene stills; this cycle adds gradual motion and explicit before/after review states. Source render.py is retained in the conversation artifact, not in this PR. Reference v33 source video and market-analysis full chat were unavailable. Do not merge or publish without review.
