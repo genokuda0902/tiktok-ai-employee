@@ -1,0 +1,14 @@
+name: cycle1662 storyboard QA
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1662/**'
+      - '.github/workflows/cycle1662-storyboard.yml'
+  workflow_dispatch:
+jobs:
+  storyboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate storyboard
+        run: python -m unittest discover -s quality/cycle1662 -p 'test_*.py' -v
