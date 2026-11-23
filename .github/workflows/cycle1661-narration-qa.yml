@@ -1,0 +1,14 @@
+name: Cycle1661 narration evidence tests
+on:
+  pull_request:
+    paths:
+      - 'quality/cycle1661/**'
+      - '.github/workflows/cycle1661-narration-qa.yml'
+  workflow_dispatch:
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run narration contract tests
+        run: python -m unittest discover -s quality/cycle1661 -p 'test_*.py' -v
