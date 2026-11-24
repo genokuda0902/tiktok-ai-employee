@@ -1,0 +1,15 @@
+name: Review layout tests
+on:
+  pull_request:
+    paths:
+      - 'src/review_layout.py'
+      - 'tests/test_review_layout.py'
+      - '.github/workflows/review-layout.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest discover -s tests -p test_review_layout.py -v
