@@ -1,5 +1,8 @@
 name: Cycle2257 Japanese TTS smoke test
 on:
+  pull_request:
+    paths: [.github/workflows/cycle2257-tts.yml, src/generate_tts_samples.py]
+  workflow_dispatch:
   push:
     branches: [automation/cycle2257-tts-ci]
     paths: [.github/workflows/cycle2257-tts.yml]
