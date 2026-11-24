@@ -1,0 +1,35 @@
+name: Cycle2257 Japanese TTS smoke test
+on:
+  push:
+    branches: [automation/cycle2257-tts-ci]
+    paths: [.github/workflows/cycle2257-tts.yml]
+permissions:
+  contents: read
+jobs:
+  tts:
+    if: github.repository == 'genokuda0902/tiktok-ai-employee'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          pip install "kokoro>=0.9.4" soundfile "misaki[ja]" unidic
+          python -m unidic download
+          python src/generate_tts_samples.py
+      - run: |
+          python - <<'PY'
+          import pathlib, soundfile as sf, numpy as np
+          files=list(pathlib.Path('output').glob('*.wav'))
+          assert len(files)>=12
+          for p in files:
+              a,s=sf.read(p)
+              assert s==24000 and len(a)>s/2 and np.max(np.abs(a))>0.01
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cycle2257-japanese-tts
+          path: output/*.wav
+          retention-days: 1
